@@ -7,5 +7,5 @@ Class {
 { #category : #baseline }
 BaselineOfGToolkit4GraphQL >> baseline: spec [
 	<baseline>
-	spec for: #common do: [ "spec package: 'GToolkit4GraphQL'" ]
+	spec for: #common do: [ spec package: 'GToolkit4GraphQL' ]
 ]
