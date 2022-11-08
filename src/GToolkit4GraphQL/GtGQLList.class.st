@@ -8,6 +8,16 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLList >> baseType [
+	^ type baseType
+]
+
+{ #category : #testing }
+GtGQLList >> isList [
+	^ true
+]
+
+{ #category : #accessing }
 GtGQLList >> name [
 	^ '[' , type name , ']'
 ]

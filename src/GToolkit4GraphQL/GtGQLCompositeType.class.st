@@ -25,11 +25,10 @@ GtGQLCompositeType >> fields: aCollection [
 { #category : #accessing }
 GtGQLCompositeType >> gtFieldsFor: aView [
 	<gtView>
-	^ aView columnedList
-		title: 'Fields';
-		column: 'Name' text: [ :each | each name ];
-		column: 'Type' text: [ :each | each type name ];
-		items: [ fields asSortedCollection: [ :a :b | a name < b name ] ]
+	^ (GtGQLSchema
+		gtTypesFor: aView
+		items: [ fields asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Fields'
 ]
 
 { #category : #accessing }

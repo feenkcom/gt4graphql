@@ -8,6 +8,12 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLUnion >> gtTypesFor: aView [
+	<gtView>
+	^ GtGQLSchema gtTypesFor: aView items: [ types ]
+]
+
+{ #category : #accessing }
 GtGQLUnion >> types [
 	^ types
 ]

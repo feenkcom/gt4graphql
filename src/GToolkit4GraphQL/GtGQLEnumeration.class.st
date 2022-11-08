@@ -8,6 +8,15 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLEnumeration >> gtEnumValuesFor: aView [
+	<gtView>
+	^ aView list
+		title: 'Values';
+		priority: 10;
+		items: [ values ]
+]
+
+{ #category : #accessing }
 GtGQLEnumeration >> values [
 	^ values
 ]

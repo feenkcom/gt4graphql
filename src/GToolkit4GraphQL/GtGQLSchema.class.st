@@ -7,6 +7,25 @@ Class {
 	#category : #GToolkit4GraphQL
 }
 
+{ #category : #accessing }
+GtGQLSchema class >> gtTypesFor: aView items: aBlock [
+	<gtView>
+	^ aView columnedTree
+		priority: 10;
+		title: 'Types';
+		column: 'Name' text: [ :each | each name ];
+		column: 'Type' text: [ :each | (self typeForObject: each) name ];
+		column: 'Class'
+			text: [ :each | (self typeForObject: each) baseType typeName ];
+		items: aBlock;
+		children: [ :each | (self typeForObject: each) baseType fields ]
+]
+
+{ #category : #accessing }
+GtGQLSchema class >> typeForObject: aTypeOrField [
+	^ (aTypeOrField isKindOf: GtGQLField) ifTrue: [ aTypeOrField type ] ifFalse: [ aTypeOrField ]
+]
+
 { #category : #importing }
 GtGQLSchema >> createTypesFrom: aNode [
 	aNode
@@ -20,18 +39,37 @@ GtGQLSchema >> createTypesFrom: aNode [
 ]
 
 { #category : #accessing }
-GtGQLSchema >> gtTypesFor: aView [
-	<gtView>
-	^ aView columnedList
-		title: 'Types';
-		column: 'Name' text: [ :each | each name ];
-		column: 'Type' text: [ :each | each class name ];
-		items: [ types values asSortedCollection: [ :a :b | a name < b name ] ]
+GtGQLSchema >> gtSearchFieldsFor: aSearch [
+	<gtSearch>
+	^ aSearch list
+		priority: 20;
+		title: 'Fields';
+		items: [ (types values asArray asAsyncStream
+				collect: [ :each | each fields asArray asAsyncStream ]) flatten ];
+		itemName: #name;
+		filter: (GtSpotterSubstringFilter new itemString: #name);
+		wantsToDisplayOnEmptyQuery: false
 ]
 
 { #category : #accessing }
-GtGQLSchema >> gtTypesView [
-	
+GtGQLSchema >> gtSearchTypesFor: aSearch [
+	<gtSearch>
+	^ aSearch list
+		priority: 10;
+		title: 'Type';
+		items: [ types values asArray ];
+		itemName: #name;
+		filter: (GtSpotterSubstringFilter new itemString: #name);
+		wantsToDisplayOnEmptyQuery: false
+]
+
+{ #category : #accessing }
+GtGQLSchema >> gtTypesFor: aView [
+	<gtView>
+	^ self class
+		gtTypesFor: aView
+		items: [ (types values reject: [ :each | each isList or: [ each isNonNullable ] ])
+				asSortedCollection: [ :a :b | a name < b name ] ]
 ]
 
 { #category : #importing }

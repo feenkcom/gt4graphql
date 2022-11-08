@@ -25,6 +25,13 @@ GtGQLField >> arguments: aCollection [
 ]
 
 { #category : #accessing }
+GtGQLField >> gtTypeFor: aView [
+	<gtView>
+	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
+	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ]) title: 'Type'
+]
+
+{ #category : #accessing }
 GtGQLField >> initialize [
 	super initialize.
 	arguments := OrderedCollection new

@@ -8,6 +8,16 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLNonNullable >> baseType [
+	^ type baseType
+]
+
+{ #category : #testing }
+GtGQLNonNullable >> isNonNullable [
+	^ true
+]
+
+{ #category : #accessing }
 GtGQLNonNullable >> name [
 	^ type name , '!'
 ]
