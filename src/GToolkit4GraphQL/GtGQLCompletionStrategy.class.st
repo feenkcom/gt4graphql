@@ -34,8 +34,9 @@ GtGQLCompletionStrategy >> completionStreamForNode: node startingWith: prefix [
 				and: [ (operation := parents second) isKindOf: GraphQLOperationDefinitionNode ] ])
 		ifFalse: [ ^ #() asAsyncStream ].
 	type := (operation type isNil or: [ operation type source = 'query' ])
-			ifTrue: [ schema typeNamed: 'Query' ]
-			ifFalse: [ operation type source = 'mutation' ifTrue: [ schema typeNamed: 'Mutation' ] ].
+			ifTrue: [ self schema typeNamed: 'Query' ]
+			ifFalse: [ operation type source = 'mutation'
+					ifTrue: [ self schema typeNamed: 'Mutation' ] ].
 	index := 3.
 	[ type notNil and: [ index <= parents size ] ]
 		whileTrue: [ nameNode := parents at: index.
@@ -57,7 +58,7 @@ GtGQLCompletionStrategy >> isSeparatorCharacter: aCharacter [
 
 { #category : #accessing }
 GtGQLCompletionStrategy >> schema [
-	^ schema
+	^ schema ifNil: [ schema := GtGQLSchema new ]
 ]
 
 { #category : #accessing }
