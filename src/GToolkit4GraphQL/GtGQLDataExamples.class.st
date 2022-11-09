@@ -31,6 +31,91 @@ GtGQLDataExamples >> graphQLIntrospectionSchemaFile [
 ]
 
 { #category : #'examples - data' }
+GtGQLDataExamples >> inputTypeAst [
+	<gtExample>
+	| anAst |
+	anAst := GraphQLParser parse: self inputTypeGraphQLSchemaString.
+
+	self assert: anAst isNotNil.
+
+	^ anAst
+]
+
+{ #category : #'examples - data' }
+GtGQLDataExamples >> inputTypeGraphQLSchemaString [
+	<gtExample>
+	^ '
+input ReviewInput {
+  stars: Int!
+  commentary: String
+}
+'
+]
+
+{ #category : #'examples - data' }
+GtGQLDataExamples >> inputTypeSchema [
+	<gtExample>
+	| anAst aSchema |
+	anAst := self inputTypeAst.
+	aSchema := GtGQLSchema new.
+	aSchema import: anAst.
+
+	self assert: aSchema isNotNil.
+
+	^ aSchema
+]
+
+{ #category : #'examples - data' }
+GtGQLDataExamples >> interfaceAst [
+	<gtExample>
+	| anAst |
+	anAst := GraphQLParser parse: self interfaceGraphQLSchemaString.
+
+	self assert: anAst isNotNil.
+
+	^ anAst
+]
+
+{ #category : #'examples - data' }
+GtGQLDataExamples >> interfaceGraphQLSchemaString [
+	<gtExample>
+	^ '
+interface Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+}
+
+type Human implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  totalCredits: Int
+}
+
+type Droid implements Character {
+  id: ID!
+  name: String!
+  friends: [Character]
+  primaryFunction: String
+}
+'
+]
+
+{ #category : #'examples - data' }
+GtGQLDataExamples >> interfaceSchema [
+	<gtExample>
+	| anAst aSchema |
+	anAst := self interfaceAst.
+	aSchema := GtGQLSchema new.
+	aSchema import: anAst.
+
+	self assert: aSchema isNotNil.
+
+	^ aSchema
+]
+
+{ #category : #'examples - data' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
 	<gtExample>
 	| aFile |

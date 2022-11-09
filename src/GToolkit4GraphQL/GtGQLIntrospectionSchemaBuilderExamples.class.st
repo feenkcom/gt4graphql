@@ -1,25 +1,25 @@
 Class {
-	#name : #GtGQLIntrospectionModelBuilderExamples,
+	#name : #GtGQLIntrospectionSchemaBuilderExamples,
 	#superclass : #Object,
 	#category : #'GToolkit4GraphQL-Introspection-Examples'
 }
 
 { #category : #'examples - builder' }
-GtGQLIntrospectionModelBuilderExamples >> basicBuilder [
+GtGQLIntrospectionSchemaBuilderExamples >> basicIntrospectionSchemaBuilder [
 	<gtExample>
 	| aBuilder |
-	aBuilder := GtGQLIntrospectionModelBuilder new.
+	aBuilder := GtGQLIntrospectionSchemaBuilder new.
 
-	self assert: aBuilder stream isNil.
+	self assert: aBuilder schema isNil.
 
 	^ aBuilder
 ]
 
 { #category : #'examples - builder' }
-GtGQLIntrospectionModelBuilderExamples >> readStarWarsIntrospectionSchema [
+GtGQLIntrospectionSchemaBuilderExamples >> readStarWarsIntrospectionSchema [
 	<gtExample>
 	| aBuilder aSchema |
-	aBuilder := self starWarsBuilder.
+	aBuilder := self starWarsIntrospectionSchemaBuilder.
 
 	aSchema := aBuilder build.
 
@@ -29,10 +29,10 @@ GtGQLIntrospectionModelBuilderExamples >> readStarWarsIntrospectionSchema [
 ]
 
 { #category : #'examples - builder' }
-GtGQLIntrospectionModelBuilderExamples >> starWarsBuilder [
+GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchemaBuilder [
 	<gtExample>
 	| aBuilder aJson aConfiguration |
-	aBuilder := self basicBuilder.
+	aBuilder := self basicIntrospectionSchemaBuilder.
 	aJson := GtGQLDataExamples new starWarsGraphQLSchemaJsonString.
 	aConfiguration := GtGQLContext new
 			authentication: GtGQLNoAuthentication new;
@@ -40,7 +40,6 @@ GtGQLIntrospectionModelBuilderExamples >> starWarsBuilder [
 	aBuilder configuration: aConfiguration.
 
 	self assert: aBuilder configuration equals: aConfiguration.
-	self assert: aBuilder stream isNil.
 
 	^ aBuilder
 ]

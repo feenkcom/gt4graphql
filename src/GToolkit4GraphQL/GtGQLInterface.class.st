@@ -2,7 +2,9 @@ Class {
 	#name : #GtGQLInterface,
 	#superclass : #GtGQLCompositeType,
 	#instVars : [
-		'uses'
+		'uses',
+		'possibleTypes',
+		'interfaces'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -16,6 +18,26 @@ GtGQLInterface class >> kindName [
 GtGQLInterface >> initialize [
 	super initialize.
 	uses := OrderedCollection new
+]
+
+{ #category : #accessing }
+GtGQLInterface >> interfaces [
+	^ interfaces
+]
+
+{ #category : #accessing }
+GtGQLInterface >> interfaces: anObject [
+	interfaces := anObject
+]
+
+{ #category : #accessing }
+GtGQLInterface >> possibleTypes [
+	^ possibleTypes
+]
+
+{ #category : #accessing }
+GtGQLInterface >> possibleTypes: anObject [
+	possibleTypes := anObject
 ]
 
 { #category : #accessing }

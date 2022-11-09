@@ -41,6 +41,12 @@ GtGQLEnumerationValue >> fields [
 ]
 
 { #category : #accessing }
+GtGQLEnumerationValue >> initialize [
+	super initialize.
+	isDeprecated := false
+]
+
+{ #category : #accessing }
 GtGQLEnumerationValue >> isDeprecated [
 	^ isDeprecated
 ]

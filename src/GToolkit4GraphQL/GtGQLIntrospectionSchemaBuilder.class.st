@@ -1,8 +1,7 @@
 Class {
-	#name : #GtGQLIntrospectionModelBuilder,
+	#name : #GtGQLIntrospectionSchemaBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'stream',
 		'configuration',
 		'schema'
 	],
@@ -10,7 +9,7 @@ Class {
 }
 
 { #category : #'api - building' }
-GtGQLIntrospectionModelBuilder >> build [
+GtGQLIntrospectionSchemaBuilder >> build [
 	| aJsonResult aJsonTypes |
 	self
 		assert: [ self configuration isNotNil ]
@@ -20,7 +19,7 @@ GtGQLIntrospectionModelBuilder >> build [
 
 	aJsonTypes := ((GtJson forJsonString: aJsonResult)
 			atPath: #(data __schema types))
-			select: [ :aJson | aJson name jsonObject beginsWith: '__' ].
+			"select: [ :aJson | aJson name jsonObject beginsWith: '__' ]".
 
 	schema := GtGQLSchema new.
 	self createTypesFromJson: aJsonTypes.
@@ -29,19 +28,19 @@ GtGQLIntrospectionModelBuilder >> build [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionModelBuilder >> configuration [
+GtGQLIntrospectionSchemaBuilder >> configuration [
 
 	^ configuration
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionModelBuilder >> configuration: anObject [
+GtGQLIntrospectionSchemaBuilder >> configuration: anObject [
 
 	configuration := anObject
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> createEnumValueFromJson: aJson [
+GtGQLIntrospectionSchemaBuilder >> createEnumValueFromJson: aJson [
 	| aValue |
 	aValue := GtGQLEnumerationValue new.
 
@@ -69,12 +68,12 @@ GtGQLIntrospectionModelBuilder >> createEnumValueFromJson: aJson [
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> createEnumValuesFromJson: aJson [
+GtGQLIntrospectionSchemaBuilder >> createEnumValuesFromJson: aJson [
 	^ aJson collect: [ :aChild | self createEnumValueFromJson: aChild ]
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> createFieldFromJson: aJson [
+GtGQLIntrospectionSchemaBuilder >> createFieldFromJson: aJson [
 	| aField |
 	aField := GtGQLField new.
 
@@ -112,12 +111,55 @@ GtGQLIntrospectionModelBuilder >> createFieldFromJson: aJson [
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> createFieldsFromJson: aJson [
+GtGQLIntrospectionSchemaBuilder >> createFieldsFromJson: aJson [
 	^ aJson collect: [ :aJsonChild | self createFieldFromJson: aJsonChild ]
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> createTypeFromJson: aJson [
+GtGQLIntrospectionSchemaBuilder >> createInputFieldFromJson: aJson [
+	| aType |
+	aType := GtGQLInputObjectType new.
+
+	self
+		ifJson: aJson
+		at: #name
+		notNilDo: [ :aChild | aType name: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #description
+		notNilDo: [ :aChild | aType description: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #type
+		notNilDo: [ :aChild | aType type: (self createTypeFromJson: aChild) ].
+
+	self
+		ifJson: aJson
+		at: #defaultValue
+		notNilDo: [ :aChild | aType defaultValue: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #isDeprecated
+		notNilDo: [ :aChild | aType isDeprecated: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #deprecationReason
+		notNilDo: [ :aChild | aType deprecationReason: aChild jsonObject ].
+
+	^ aType
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> createInputFieldsFromJson: aJson [
+	^ aJson collect: [ :aChild | self createInputFieldFromJson: aChild ]
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> createTypeFromJson: aJson [
 	| aType |
 	aType := self typeNameOfTypeJson: aJson.
 
@@ -166,12 +208,12 @@ GtGQLIntrospectionModelBuilder >> createTypeFromJson: aJson [
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> createTypesFromJson: aJsonTypes [
+GtGQLIntrospectionSchemaBuilder >> createTypesFromJson: aJsonTypes [
 	^ aJsonTypes collect: [ :aJson | self createTypeFromJson: aJson ]
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> ifJson: aJson at: aKey notNilDo: aDoBlock [
+GtGQLIntrospectionSchemaBuilder >> ifJson: aJson at: aKey notNilDo: aDoBlock [
 	aJson
 		at: aKey
 		ifPresent: [ :aChildJson | aChildJson jsonObject ifNotNil: [ aDoBlock cull: aChildJson cull: aKey ] ]
@@ -179,34 +221,22 @@ GtGQLIntrospectionModelBuilder >> ifJson: aJson at: aKey notNilDo: aDoBlock [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionModelBuilder >> schema [
+GtGQLIntrospectionSchemaBuilder >> schema [
 	^ schema
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionModelBuilder >> schema: anObject [
+GtGQLIntrospectionSchemaBuilder >> schema: anObject [
 	schema := anObject
 ]
 
-{ #category : #accessing }
-GtGQLIntrospectionModelBuilder >> stream [
-
-	^ stream
-]
-
-{ #category : #'api - initialization' }
-GtGQLIntrospectionModelBuilder >> stream: anObject [
-
-	stream := anObject
-]
-
 { #category : #'api - building' }
-GtGQLIntrospectionModelBuilder >> typeClassOfKind: aName [
+GtGQLIntrospectionSchemaBuilder >> typeClassOfKind: aName [
 	^ GtGQLType typeClassForKindName: aName
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionModelBuilder >> typeNameOfTypeJson: aJson [
+GtGQLIntrospectionSchemaBuilder >> typeNameOfTypeJson: aJson [
 	^ GtGQLIntrospectionTypeBuilder new
 		json: aJson jsonObject;
 		schema: self schema;
