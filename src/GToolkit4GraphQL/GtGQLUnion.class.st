@@ -19,6 +19,11 @@ GtGQLUnion >> gtTypesFor: aView [
 ]
 
 { #category : #accessing }
+GtGQLUnion >> possibleTypes: aCollection [
+	self types: aCollection
+]
+
+{ #category : #accessing }
 GtGQLUnion >> types [
 	^ types
 ]

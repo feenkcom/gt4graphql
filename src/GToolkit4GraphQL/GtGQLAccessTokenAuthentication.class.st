@@ -4,7 +4,8 @@ Class {
 	#traits : 'TGtGQLAuthentication',
 	#classTraits : 'TGtGQLAuthentication classTrait',
 	#instVars : [
-		'accessToken'
+		'accessToken',
+		'headerName'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -19,6 +20,21 @@ GtGQLAccessTokenAuthentication >> accessToken [
 GtGQLAccessTokenAuthentication >> accessToken: anObject [
 
 	accessToken := anObject
+]
+
+{ #category : #'api - configuration' }
+GtGQLAccessTokenAuthentication >> configureZnClient: aZnClient [
+	aZnClient headerAt: self headerName put: self accessToken
+]
+
+{ #category : #accessing }
+GtGQLAccessTokenAuthentication >> headerName [
+	^ headerName
+]
+
+{ #category : #accessing }
+GtGQLAccessTokenAuthentication >> headerName: anObject [
+	headerName := anObject
 ]
 
 { #category : #printing }

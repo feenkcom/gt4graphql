@@ -5,3 +5,10 @@ Class {
 	#classTraits : 'TGtGQLAuthentication classTrait',
 	#category : #'GToolkit4GraphQL-Client'
 }
+
+{ #category : #'api - configuration' }
+GtGQLNoAuthentication >> configureZnClient: aZnClient [
+	"do nothing"
+
+	
+]
