@@ -13,7 +13,13 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
-		column: 'Name' text: [ :each | each name ];
+		column: 'Name'
+			text: [ :each | 
+				each isDeprecated
+					ifTrue: [ each name asRopedText
+							append: (' (deprecated)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ]
+					ifFalse: [ each name ] ];
 		column: 'Type' text: [ :each | (self typeForObject: each) name ];
 		column: 'Class'
 			text: [ :each | (self typeForObject: each) baseType typeName ];
@@ -113,7 +119,9 @@ GtGQLSchema >> importEnums: aNode [
 		do: [ :each | 
 			| type |
 			type := types at: each name source.
-			type values: (each definitions collect: [ :enum | enum value source ]) ]
+			type
+				values: (each definitions
+						collect: [ :enum | GtGQLEnumeration new name: enum value source ]) ]
 ]
 
 { #category : #importing }
@@ -164,4 +172,17 @@ GtGQLSchema >> typeNameFor: aType [
 			ifFalse: [ aType name source ].
 	aType bangToken notNil ifTrue: [ name := name , '!' ].
 	^ name
+]
+
+{ #category : #'importing - json' }
+GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbsentBlock [
+	^ types
+		at: aTypeName
+		ifPresent: aPresentBlock
+		ifAbsentPut: anAbsentBlock
+]
+
+{ #category : #accessing }
+GtGQLSchema >> types [
+	^ types values
 ]

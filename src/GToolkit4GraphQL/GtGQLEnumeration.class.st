@@ -15,10 +15,25 @@ GtGQLEnumeration class >> kindName [
 { #category : #accessing }
 GtGQLEnumeration >> gtEnumValuesFor: aView [
 	<gtView>
-	^ aView list
+	^ aView columnedList
 		title: 'Values';
 		priority: 10;
-		items: [ values ]
+		items: [ values ifNil: [ #() ] ];
+		column: 'Name'
+			text: [ :aValue | 
+				aValue isDeprecated
+					ifTrue: [ aValue name asRopedText
+							append: (' (deprecated)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ]
+					ifFalse: [ aValue name ] ];
+		column: 'Description'
+			text: #description
+			weight: 3
+]
+
+{ #category : #testing }
+GtGQLEnumeration >> isDeprecated [
+	^ false
 ]
 
 { #category : #accessing }

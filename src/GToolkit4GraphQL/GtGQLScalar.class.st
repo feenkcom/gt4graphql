@@ -57,6 +57,11 @@ GtGQLScalar class >> string [
 ]
 
 { #category : #testing }
+GtGQLScalar >> isDeprecated [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLScalar >> isScalar [
 	^ true
 ]

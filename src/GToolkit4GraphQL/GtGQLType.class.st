@@ -2,7 +2,8 @@ Class {
 	#name : #GtGQLType,
 	#superclass : #Object,
 	#instVars : [
-		'name'
+		'name',
+		'description'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -31,8 +32,28 @@ GtGQLType >> baseType [
 ]
 
 { #category : #accessing }
+GtGQLType >> description [
+	^ description
+]
+
+{ #category : #accessing }
+GtGQLType >> description: anObject [
+	description := anObject
+]
+
+{ #category : #accessing }
 GtGQLType >> fields [
 	^ #()
+]
+
+{ #category : #'gt - extensions' }
+GtGQLType >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Description';
+		priority: 40;
+		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
 ]
 
 { #category : #testing }
@@ -63,6 +84,18 @@ GtGQLType >> name [
 { #category : #accessing }
 GtGQLType >> name: aString [
 	name := aString
+]
+
+{ #category : #printing }
+GtGQLType >> printOn: aStream [
+	super printOn: aStream.
+
+	self name ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self name asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }

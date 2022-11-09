@@ -24,7 +24,7 @@ GtGQLNonNullable >> isNonNullable [
 
 { #category : #accessing }
 GtGQLNonNullable >> name [
-	^ type name , '!'
+	^ (type ifNotNil: #name ifNil: [ '?' ]) , '!'
 ]
 
 { #category : #accessing }
