@@ -174,6 +174,11 @@ GtGQLSchema >> typeNameFor: aType [
 	^ name
 ]
 
+{ #category : #accessing }
+GtGQLSchema >> typeNamed: aString [
+	^ types at: aString ifAbsent: [  ]
+]
+
 { #category : #'importing - json' }
 GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbsentBlock [
 	^ types

@@ -36,11 +36,6 @@ GtGQLEnumeration >> gtEnumValuesFor: aView [
 			weight: 3
 ]
 
-{ #category : #testing }
-GtGQLEnumeration >> isDeprecated [
-	^ false
-]
-
 { #category : #accessing }
 GtGQLEnumeration >> values [
 	^ values
