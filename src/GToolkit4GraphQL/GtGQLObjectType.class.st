@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLObjectType class >> kindName [
+	^ 'OBJECT'
+]
+
+{ #category : #accessing }
 GtGQLObjectType >> initialize [
 	super initialize.
 	interfaces := OrderedCollection new
@@ -21,4 +26,9 @@ GtGQLObjectType >> interfaces [
 { #category : #accessing }
 GtGQLObjectType >> interfaces: aCollection [
 	interfaces := aCollection
+]
+
+{ #category : #testing }
+GtGQLObjectType >> isDeprecated [
+	^ false
 ]

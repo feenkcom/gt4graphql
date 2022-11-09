@@ -4,7 +4,10 @@ Class {
 	#instVars : [
 		'name',
 		'arguments',
-		'type'
+		'type',
+		'description',
+		'isDeprecated',
+		'deprecationReason'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -25,6 +28,26 @@ GtGQLField >> arguments: aCollection [
 ]
 
 { #category : #accessing }
+GtGQLField >> deprecationReason [
+	^ deprecationReason
+]
+
+{ #category : #accessing }
+GtGQLField >> deprecationReason: anObject [
+	deprecationReason := anObject
+]
+
+{ #category : #accessing }
+GtGQLField >> description [
+	^ description
+]
+
+{ #category : #accessing }
+GtGQLField >> description: anObject [
+	description := anObject
+]
+
+{ #category : #accessing }
 GtGQLField >> gtTypeFor: aView [
 	<gtView>
 	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
@@ -34,7 +57,18 @@ GtGQLField >> gtTypeFor: aView [
 { #category : #accessing }
 GtGQLField >> initialize [
 	super initialize.
-	arguments := OrderedCollection new
+	arguments := OrderedCollection new.
+	isDeprecated := false
+]
+
+{ #category : #accessing }
+GtGQLField >> isDeprecated [
+	^ isDeprecated
+]
+
+{ #category : #accessing }
+GtGQLField >> isDeprecated: anObject [
+	isDeprecated := anObject
 ]
 
 { #category : #accessing }
@@ -45,6 +79,18 @@ GtGQLField >> name [
 { #category : #accessing }
 GtGQLField >> name: aString [
 	name := aString
+]
+
+{ #category : #printing }
+GtGQLField >> printOn: aStream [
+	super printOn: aStream.
+
+	self name ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self name;
+		nextPut: $)
 ]
 
 { #category : #accessing }

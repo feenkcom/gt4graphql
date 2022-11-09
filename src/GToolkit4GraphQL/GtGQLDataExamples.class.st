@@ -5,7 +5,34 @@ Class {
 }
 
 { #category : #'examples - data' }
+GtGQLDataExamples >> graphQLIntrospectionSchema [
+	<gtExample>
+	| aFile aSchema anAst |
+	aFile := self graphQLIntrospectionSchemaFile.
+
+	anAst := GraphQLParser parseFile: aFile.
+	aSchema := GtGQLSchema new
+			import: anAst;
+			yourself.
+
+	self assert: aSchema isNotNil.
+	^ aSchema
+]
+
+{ #category : #'examples - data' }
+GtGQLDataExamples >> graphQLIntrospectionSchemaFile [
+	<gtExample>
+	| aFile |
+	aFile := FileLocator gtResource
+			/ 'feenkcom/gt4graphql/data/examples/graphql-introspection.graphql'.
+
+	self assert: aFile exists.
+	^ aFile
+]
+
+{ #category : #'examples - data' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
+	<gtExample>
 	| aFile |
 	aFile := FileLocator gtResource
 			/ 'feenkcom/gt4graphql/data/examples/starwars-json-schema.json'.
@@ -14,7 +41,7 @@ GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
 	^ aFile
 ]
 
-{ #category : #accessing }
+{ #category : #'examples - data' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonObject [
 	<gtExample>
 	| aJson |

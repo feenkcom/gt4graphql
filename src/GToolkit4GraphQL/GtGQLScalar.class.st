@@ -44,11 +44,21 @@ GtGQLScalar class >> int [
 ]
 
 { #category : #accessing }
+GtGQLScalar class >> kindName [
+	^ 'SCALAR'
+]
+
+{ #category : #accessing }
 GtGQLScalar class >> string [
 	^ String
 		ifNil: [ String := self new
 					name: 'String';
 					yourself ]
+]
+
+{ #category : #testing }
+GtGQLScalar >> isDeprecated [
+	^ false
 ]
 
 { #category : #testing }
