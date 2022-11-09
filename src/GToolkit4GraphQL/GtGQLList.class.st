@@ -4,8 +4,18 @@ Class {
 	#instVars : [
 		'type'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
+
+{ #category : #accessing }
+GtGQLList >> baseType [
+	^ type baseType
+]
+
+{ #category : #testing }
+GtGQLList >> isList [
+	^ true
+]
 
 { #category : #accessing }
 GtGQLList >> name [

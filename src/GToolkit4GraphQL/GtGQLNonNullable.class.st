@@ -4,8 +4,18 @@ Class {
 	#instVars : [
 		'type'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
+
+{ #category : #accessing }
+GtGQLNonNullable >> baseType [
+	^ type baseType
+]
+
+{ #category : #testing }
+GtGQLNonNullable >> isNonNullable [
+	^ true
+]
 
 { #category : #accessing }
 GtGQLNonNullable >> name [

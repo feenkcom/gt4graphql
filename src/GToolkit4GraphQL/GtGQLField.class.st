@@ -6,7 +6,7 @@ Class {
 		'arguments',
 		'type'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
@@ -22,6 +22,13 @@ GtGQLField >> arguments [
 { #category : #accessing }
 GtGQLField >> arguments: aCollection [
 	arguments := aCollection
+]
+
+{ #category : #accessing }
+GtGQLField >> gtTypeFor: aView [
+	<gtView>
+	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
+	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ]) title: 'Type'
 ]
 
 { #category : #accessing }
