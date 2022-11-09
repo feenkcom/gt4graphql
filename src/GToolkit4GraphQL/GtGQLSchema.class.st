@@ -165,3 +165,8 @@ GtGQLSchema >> typeNameFor: aType [
 	aType bangToken notNil ifTrue: [ name := name , '!' ].
 	^ name
 ]
+
+{ #category : #accessing }
+GtGQLSchema >> typeNamed: aString [
+	^ types at: aString ifAbsent: [  ]
+]
