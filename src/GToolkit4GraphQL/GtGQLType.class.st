@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'name'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
@@ -25,6 +25,26 @@ GtGQLType class >> typeClassForKindName: aName [
 	self error: ('Cannot find type class for kind name: {1}' format: {aName})
 ]
 
+{ #category : #accessing }
+GtGQLType >> baseType [
+	^ self
+]
+
+{ #category : #accessing }
+GtGQLType >> fields [
+	^ #()
+]
+
+{ #category : #testing }
+GtGQLType >> isList [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isNonNullable [
+	^ false
+]
+
 { #category : #testing }
 GtGQLType >> isScalar [
 	^ false
@@ -43,4 +63,9 @@ GtGQLType >> name [
 { #category : #accessing }
 GtGQLType >> name: aString [
 	name := aString
+]
+
+{ #category : #accessing }
+GtGQLType >> typeName [
+	^ self class name asString allButFirst: 5
 ]

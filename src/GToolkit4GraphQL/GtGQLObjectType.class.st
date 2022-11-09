@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'interfaces'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }

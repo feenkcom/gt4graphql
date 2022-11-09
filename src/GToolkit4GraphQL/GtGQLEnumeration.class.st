@@ -4,12 +4,21 @@ Class {
 	#instVars : [
 		'values'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
 GtGQLEnumeration class >> kindName [
 	^ 'ENUM'
+]
+
+{ #category : #accessing }
+GtGQLEnumeration >> gtEnumValuesFor: aView [
+	<gtView>
+	^ aView list
+		title: 'Values';
+		priority: 10;
+		items: [ values ]
 ]
 
 { #category : #accessing }

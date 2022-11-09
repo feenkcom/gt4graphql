@@ -4,12 +4,18 @@ Class {
 	#instVars : [
 		'types'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
 GtGQLUnion class >> kindName [
 	^ 'UNION'
+]
+
+{ #category : #accessing }
+GtGQLUnion >> gtTypesFor: aView [
+	<gtView>
+	^ GtGQLSchema gtTypesFor: aView items: [ types ]
 ]
 
 { #category : #accessing }
