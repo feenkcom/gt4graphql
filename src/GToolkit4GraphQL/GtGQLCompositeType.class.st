@@ -7,6 +7,11 @@ Class {
 	#category : #GToolkit4GraphQL
 }
 
+{ #category : #testing }
+GtGQLCompositeType class >> isAbstract [
+	^ self name = #GtGQLCompositeType
+]
+
 { #category : #accessing }
 GtGQLCompositeType >> addField: aGQLField [
 	fields at: aGQLField name put: aGQLField

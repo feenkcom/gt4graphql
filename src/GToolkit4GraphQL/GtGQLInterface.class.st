@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLInterface class >> kindName [
+	^ 'INTERFACE'
+]
+
+{ #category : #accessing }
 GtGQLInterface >> initialize [
 	super initialize.
 	uses := OrderedCollection new

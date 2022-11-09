@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLNonNullable class >> kindName [
+	^ 'NON_NULL'
+]
+
+{ #category : #accessing }
 GtGQLNonNullable >> name [
 	^ type name , '!'
 ]

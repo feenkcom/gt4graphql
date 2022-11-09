@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLList class >> kindName [
+	^ 'LIST'
+]
+
+{ #category : #accessing }
 GtGQLList >> name [
 	^ '[' , type name , ']'
 ]

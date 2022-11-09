@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLEnumeration class >> kindName [
+	^ 'ENUM'
+]
+
+{ #category : #accessing }
 GtGQLEnumeration >> values [
 	^ values
 ]

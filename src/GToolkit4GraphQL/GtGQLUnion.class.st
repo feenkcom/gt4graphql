@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLUnion class >> kindName [
+	^ 'UNION'
+]
+
+{ #category : #accessing }
 GtGQLUnion >> types [
 	^ types
 ]
