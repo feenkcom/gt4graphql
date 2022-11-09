@@ -57,6 +57,11 @@ GtGQLType >> gtDescriptionFor: aView [
 ]
 
 { #category : #testing }
+GtGQLType >> isDeprecated [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLType >> isList [
 	^ false
 ]

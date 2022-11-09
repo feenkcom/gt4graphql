@@ -27,8 +27,3 @@ GtGQLObjectType >> interfaces [
 GtGQLObjectType >> interfaces: aCollection [
 	interfaces := aCollection
 ]
-
-{ #category : #testing }
-GtGQLObjectType >> isDeprecated [
-	^ false
-]
