@@ -6,7 +6,7 @@ Class {
 		'arguments',
 		'type'
 	],
-	#category : #GToolkit4GraphQL
+	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
