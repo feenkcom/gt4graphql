@@ -11,6 +11,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLEnumerationValue >> baseType [
+	^ self
+]
+
+{ #category : #accessing }
 GtGQLEnumerationValue >> deprecationReason [
 	^ deprecationReason
 ]
@@ -28,6 +33,11 @@ GtGQLEnumerationValue >> description [
 { #category : #accessing }
 GtGQLEnumerationValue >> description: anObject [
 	description := anObject
+]
+
+{ #category : #accessing }
+GtGQLEnumerationValue >> fields [
+	^ #()
 ]
 
 { #category : #accessing }
@@ -60,4 +70,9 @@ GtGQLEnumerationValue >> printOn: aStream [
 		nextPut: $(;
 		nextPutAll: self name asString;
 		nextPut: $)
+]
+
+{ #category : #accessing }
+GtGQLEnumerationValue >> typeName [
+	^ self class name asString allButFirst: 5
 ]

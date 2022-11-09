@@ -13,6 +13,11 @@ GtGQLEnumeration class >> kindName [
 ]
 
 { #category : #accessing }
+GtGQLEnumeration >> fields [
+	^ self values
+]
+
+{ #category : #accessing }
 GtGQLEnumeration >> gtEnumValuesFor: aView [
 	<gtView>
 	^ aView columnedList
