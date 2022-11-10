@@ -118,7 +118,11 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 
 { #category : #accessing }
 GtGQLSnippetElement >> executeQuery [
-	self context ifNotNil: [ :context | gqlElement phlow spawnObject: context ]
+	self context
+		ifNotNil: [ :context | 
+			[ ShopifyGraphQLApi new postJson: self json ] asAsyncPromise
+				then: [ :json | gqlElement phlow spawnObject: json ]
+				otherwise: [ :ex | gqlElement phlow spawnObject: ex ] ]
 ]
 
 { #category : #accessing }
@@ -158,6 +162,19 @@ GtGQLSnippetElement >> initialize [
 				label: 'Execute' asString;
 				action: [ self executeQuery ])
 		as: #executeButton
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> json [
+	| json |
+	json := GtJson new.
+	json jsonObject: OrderedDictionary new.
+	json
+		atKey: 'query'
+		put: (gqlElement childNamed: #operationEditor) text asString.
+	(gqlElement childNamed: #inputEditor) text asString
+		ifNotEmpty: [ :input | json atKey: 'variables' put: (GtJson forJsonString: input) jsonObject ].
+	^ json
 ]
 
 { #category : #accessing }

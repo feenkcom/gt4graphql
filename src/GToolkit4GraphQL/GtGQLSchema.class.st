@@ -47,6 +47,28 @@ GtGQLSchema >> createTypesFrom: aNode [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> gtMutationFor: aView [
+	<gtView>
+	self mutationType ifNil: [ ^ aView empty ].
+	^ aView forward
+		priority: 12;
+		title: 'Mutation';
+		object: [ self mutationType ];
+		view: #gtFieldsFor:
+]
+
+{ #category : #accessing }
+GtGQLSchema >> gtQueryFor: aView [
+	<gtView>
+	self queryType ifNil: [ ^ aView empty ].
+	^ aView forward
+		priority: 11;
+		title: 'Query';
+		object: [ self queryType ];
+		view: #gtFieldsFor:
+]
+
+{ #category : #accessing }
 GtGQLSchema >> gtSearchFieldsFor: aSearch [
 	<gtSearch>
 	^ aSearch list
