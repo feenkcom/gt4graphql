@@ -76,6 +76,43 @@ GtGQLField >> gtTypeFor: aView [
 	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ]) title: 'Type'
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLField >> gtTypesNameText [
+	| aText |
+	aText := self name asRopedText.
+
+	self hasArguments
+		ifTrue: [ | anArgumentsText |
+			anArgumentsText := '(' asRopedText.
+			self arguments
+				do: [ :eachArgument | 
+					| eachText |
+					eachText := eachArgument name asRopedText.
+					eachArgument isRequired
+						ifTrue: [ eachText
+								append: '!' asRopedText;
+								bold ].
+					anArgumentsText append: eachText ]
+				separatedBy: [ anArgumentsText append: ', ' asRopedText ].
+			anArgumentsText append: ')' asRopedText.
+			anArgumentsText foreground: BrGlamorousColors disabledButtonTextColor.
+			aText append: anArgumentsText ].
+
+	self isDeprecated
+		ifTrue: [ aText
+				lineThroughDo: [ :anAttribute |  ];
+				italic;
+				append: (' (deprecated)' asRopedText
+						foreground: BrGlamorousColors disabledButtonTextColor) ].
+
+	^ aText
+]
+
+{ #category : #testing }
+GtGQLField >> hasArguments [
+	^ self arguments isNotNil and: [ self arguments isNotEmpty ]
+]
+
 { #category : #accessing }
 GtGQLField >> initialize [
 	super initialize.

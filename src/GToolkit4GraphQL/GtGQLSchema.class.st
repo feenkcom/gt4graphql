@@ -17,13 +17,7 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
-		column: 'Name'
-			text: [ :each | 
-				each isDeprecated
-					ifTrue: [ each name asRopedText
-							append: (' (deprecated)' asRopedText
-									foreground: BrGlamorousColors disabledButtonTextColor) ]
-					ifFalse: [ each name ] ];
+		column: 'Name' text: [ :each | each gtTypesNameText ] weight: 2;
 		column: 'Type' text: [ :each | (self typeForObject: each) name ];
 		column: 'Class'
 			text: [ :each | (self typeForObject: each) baseType typeName ];

@@ -40,6 +40,11 @@ GtGQLEnumerationValue >> fields [
 	^ #()
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLEnumerationValue >> gtTypesNameText [
+	^ self name
+]
+
 { #category : #accessing }
 GtGQLEnumerationValue >> initialize [
 	super initialize.
