@@ -24,7 +24,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchema [
 	aSchema := aBuilder build.
 
 	self assert: aSchema isNotNil.
-	self assert: aSchema types size equals: 27.
+	self assert: aSchema baseTypes size equals: 27.
 	self assert: aSchema types size equals: 59.
 
 	^ aSchema

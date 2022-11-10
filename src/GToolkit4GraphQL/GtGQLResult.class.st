@@ -21,7 +21,7 @@ GtGQLResult >> gtResultJsonObjectFor: aView context: aContext [
 	
 	^ aView forward
 		title: 'JSON Object';
-		priority: 40;
+		priority: 21;
 		object: [ self data ];
 		view: #gtJsonObjectFor:context:
 ]
@@ -33,7 +33,7 @@ GtGQLResult >> gtResultJsonStringFor: aView [
 
 	^ aView forward
 		title: 'JSON String';
-		priority: 41;
+		priority: 20;
 		object: [ self data ];
 		view: #gtJsonStringFor:
 ]

@@ -16,7 +16,7 @@ GtGQLIntrospectionSchemaBuilder >> build [
 		description: [ 'Configuration must be non-nil' ].
 
 	aResultJson := self configuration client introspectionSchema.
-	aSchemaJson := (GtJson forJsonString: aResultJson) atPath: #(data __schema).
+	aSchemaJson := aResultJson atPath: #(data __schema).
 
 	schema := GtGQLSchema new.
 

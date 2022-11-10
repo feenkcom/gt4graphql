@@ -52,11 +52,16 @@ GtGQLClient >> graphql: aString [
 
 { #category : #'api - communication' }
 GtGQLClient >> introspectionSchema [
-	<return: #String>
+	<return: #GtJson>
 	| aResponse |
 	aResponse := self query: self introspectionSchemaQuery.
 
-	^ aResponse contents
+	aResponse isSuccess ifTrue: [ ^ aResponse result ].
+
+	^ GtGQLClientRequestError new
+		request: aResponse request;
+		response: aResponse response;
+		signal
 ]
 
 { #category : #'api - communication' }
