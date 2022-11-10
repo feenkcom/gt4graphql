@@ -118,7 +118,12 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 
 { #category : #accessing }
 GtGQLSnippetElement >> executeQuery [
-	self context ifNotNil: [ :context | gqlElement phlow spawnObject: self json ]
+	self context
+		ifNotNil: [ :context | 
+			[ context client query: (gqlElement childNamed: #operationEditor) text asString ]
+				asAsyncPromise
+				then: [ :json | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: json ] ]
+				otherwise: [ :ex | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: ex ] ] ]
 ]
 
 { #category : #accessing }
