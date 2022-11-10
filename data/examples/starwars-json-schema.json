@@ -3,36 +3,10 @@
     "__schema": {
       "description": null,
       "queryType": {
-        "fields": [
-          {
-            "name": "hero"
-          },
-          {
-            "name": "reviews"
-          },
-          {
-            "name": "search"
-          },
-          {
-            "name": "character"
-          },
-          {
-            "name": "droid"
-          },
-          {
-            "name": "human"
-          },
-          {
-            "name": "starship"
-          }
-        ]
+        "name": "Query"
       },
       "mutationType": {
-        "fields": [
-          {
-            "name": "createReview"
-          }
-        ]
+        "name": "Mutation"
       },
       "subscriptionType": null,
       "types": [
