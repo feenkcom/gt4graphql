@@ -152,8 +152,15 @@ fragment FullType on __Type {
 
 { #category : #'private - communication' }
 GtGQLClient >> newClient [
+	| anUrl |
+	anUrl := self configuration url.
+
+	self
+		assert: [ anUrl isNotNil ]
+		description: [ 'GraphQL end-point URL must be non-nil: {1}' format: {anUrl} ].
+
 	^ ZnClient new
-		url: self configuration url;
+		url: anUrl asZnUrl;
 		in: [ :theClient | self configuration authentication configureZnClient: theClient ];
 		yourself
 ]
@@ -170,10 +177,19 @@ GtGQLClient >> query: aQuery [
 
 { #category : #'private - communication' }
 GtGQLClient >> queryEntity: anEntity [
-	| aClient |
+	| aClient aResponse |
 	aClient := self newClient.
 	aClient entity: anEntity.
-	^ aClient
-		post;
-		response
+	aResponse := aClient
+			post;
+			response.
+
+	aResponse isSuccess
+		ifFalse: [ GtGQLClientRequestError new
+				response: aResponse;
+				request: aClient request;
+				messageText: aResponse printString;
+				signal ].
+
+	^ aResponse
 ]

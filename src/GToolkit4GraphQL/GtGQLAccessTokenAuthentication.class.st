@@ -17,13 +17,31 @@ GtGQLAccessTokenAuthentication >> accessToken [
 ]
 
 { #category : #accessing }
-GtGQLAccessTokenAuthentication >> accessToken: anObject [
+GtGQLAccessTokenAuthentication >> accessToken: aString [
+	self assertAccessToken: aString.
 
-	accessToken := anObject
+	accessToken := aString
+]
+
+{ #category : #accessing }
+GtGQLAccessTokenAuthentication >> assertAccessToken: aString [
+	self
+		assert: [ aString isNotNil and: [ aString isString and: [ aString size isZero not ] ] ]
+		description: [ 'Access token must be a non-empty string: {1}' format: {aString} ]
+]
+
+{ #category : #accessing }
+GtGQLAccessTokenAuthentication >> assertHeaderName: aString [
+	self
+		assert: [ aString isNotNil and: [ aString isString and: [ aString size isZero not ] ] ]
+		description: [ 'Access token header name must be a non-empty string: {1}' format: {aString} ]
 ]
 
 { #category : #'api - configuration' }
 GtGQLAccessTokenAuthentication >> configureZnClient: aZnClient [
+	self assertHeaderName: self headerName.
+	self assertAccessToken: self accessToken.
+	
 	aZnClient headerAt: self headerName put: self accessToken
 ]
 
@@ -33,8 +51,10 @@ GtGQLAccessTokenAuthentication >> headerName [
 ]
 
 { #category : #accessing }
-GtGQLAccessTokenAuthentication >> headerName: anObject [
-	headerName := anObject
+GtGQLAccessTokenAuthentication >> headerName: aString [
+	self assertHeaderName: aString.
+
+	headerName := aString
 ]
 
 { #category : #printing }

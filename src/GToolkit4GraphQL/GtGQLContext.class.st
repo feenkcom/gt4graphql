@@ -10,6 +10,13 @@ Class {
 	#category : #'GToolkit4GraphQL-Client'
 }
 
+{ #category : #asserting }
+GtGQLContext >> assertUrl: aGraphQLEndPointUrl [
+	self
+		assert: [ aGraphQLEndPointUrl isNotNil ]
+		description: [ 'GraphQL end-point URL must be non-nil: {1}' format: {aGraphQLEndPointUrl} ]
+]
+
 { #category : #accessing }
 GtGQLContext >> authentication [
 
@@ -106,5 +113,7 @@ GtGQLContext >> url [
 
 { #category : #accessing }
 GtGQLContext >> url: aGraphQLEndPointUrl [
+	self assertUrl: aGraphQLEndPointUrl.
+
 	graphQLUrl := aGraphQLEndPointUrl asZnUrl
 ]
