@@ -120,7 +120,12 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 GtGQLSnippetElement >> executeQuery [
 	self context
 		ifNotNil: [ :context | 
-			[ context client query: (gqlElement childNamed: #operationEditor) text asString ]
+			[ | operation input |
+			operation := (gqlElement childNamed: #operationEditor) text asString.
+			input := (gqlElement childNamed: #inputEditor) text asString trim.
+			input isEmpty
+				ifTrue: [ context client query: operation ]
+				ifFalse: [ context client query: operation variables: input ] ]
 				asAsyncPromise
 				then: [ :json | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: json ] ]
 				otherwise: [ :ex | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: ex ] ] ]
@@ -164,19 +169,6 @@ GtGQLSnippetElement >> initialize [
 				label: 'Execute' asString;
 				action: [ self executeQuery ])
 		as: #executeButton
-]
-
-{ #category : #accessing }
-GtGQLSnippetElement >> json [
-	| json |
-	json := GtJson new.
-	json jsonObject: OrderedDictionary new.
-	json
-		atKey: 'query'
-		put: (gqlElement childNamed: #operationEditor) text asString.
-	(gqlElement childNamed: #inputEditor) text asString
-		ifNotEmpty: [ :input | json atKey: 'variables' put: (GtJson forJsonString: input) jsonObject ].
-	^ json
 ]
 
 { #category : #accessing }
