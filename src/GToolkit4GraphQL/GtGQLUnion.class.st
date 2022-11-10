@@ -8,9 +8,19 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLUnion class >> kindName [
+	^ 'UNION'
+]
+
+{ #category : #accessing }
 GtGQLUnion >> gtTypesFor: aView [
 	<gtView>
 	^ GtGQLSchema gtTypesFor: aView items: [ types ]
+]
+
+{ #category : #accessing }
+GtGQLUnion >> possibleTypes: aCollection [
+	self types: aCollection
 ]
 
 { #category : #accessing }

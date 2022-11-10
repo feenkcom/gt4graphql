@@ -7,6 +7,11 @@ Class {
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
+{ #category : #testing }
+GtGQLCompositeType class >> isAbstract [
+	^ self name = #GtGQLCompositeType
+]
+
 { #category : #accessing }
 GtGQLCompositeType >> addField: aGQLField [
 	fields at: aGQLField name put: aGQLField
@@ -27,7 +32,8 @@ GtGQLCompositeType >> gtFieldsFor: aView [
 	<gtView>
 	^ (GtGQLSchema
 		gtTypesFor: aView
-		items: [ fields asSortedCollection: [ :a :b | a name < b name ] ])
+		items: [ fields
+				asSortedCollection: [ :a :b | (a name ifNil: [ '?' ]) < (b name ifNil: [ '?' ]) ] ])
 		title: 'Fields'
 ]
 

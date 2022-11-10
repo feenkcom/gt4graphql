@@ -2,7 +2,9 @@ Class {
 	#name : #GtGQLSchema,
 	#superclass : #Object,
 	#instVars : [
-		'types'
+		'types',
+		'queryType',
+		'mutationType'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -13,7 +15,13 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
-		column: 'Name' text: [ :each | each name ];
+		column: 'Name'
+			text: [ :each | 
+				each isDeprecated
+					ifTrue: [ each name asRopedText
+							append: (' (deprecated)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ]
+					ifFalse: [ each name ] ];
 		column: 'Type' text: [ :each | (self typeForObject: each) name ];
 		column: 'Class'
 			text: [ :each | (self typeForObject: each) baseType typeName ];
@@ -113,7 +121,9 @@ GtGQLSchema >> importEnums: aNode [
 		do: [ :each | 
 			| type |
 			type := types at: each name source.
-			type values: (each definitions collect: [ :enum | enum value source ]) ]
+			type
+				values: (each definitions
+						collect: [ :enum | GtGQLEnumeration new name: enum value source ]) ]
 ]
 
 { #category : #importing }
@@ -135,6 +145,26 @@ GtGQLSchema >> initialize [
 			| type |
 			type := GtGQLScalar perform: each.
 			types at: type name put: type ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> mutationType [
+	^ mutationType
+]
+
+{ #category : #accessing }
+GtGQLSchema >> mutationType: anObject [
+	mutationType := anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> queryType [
+	^ queryType
+]
+
+{ #category : #accessing }
+GtGQLSchema >> queryType: anObject [
+	queryType := anObject
 ]
 
 { #category : #importing }
@@ -164,4 +194,22 @@ GtGQLSchema >> typeNameFor: aType [
 			ifFalse: [ aType name source ].
 	aType bangToken notNil ifTrue: [ name := name , '!' ].
 	^ name
+]
+
+{ #category : #accessing }
+GtGQLSchema >> typeNamed: aString [
+	^ types at: aString ifAbsent: [  ]
+]
+
+{ #category : #'importing - json' }
+GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbsentBlock [
+	^ types
+		at: aTypeName
+		ifPresent: aPresentBlock
+		ifAbsentPut: anAbsentBlock
+]
+
+{ #category : #accessing }
+GtGQLSchema >> types [
+	^ types values
 ]

@@ -2,10 +2,29 @@ Class {
 	#name : #GtGQLType,
 	#superclass : #Object,
 	#instVars : [
-		'name'
+		'name',
+		'description'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
+
+{ #category : #accessing }
+GtGQLType class >> kindName [
+	^ self name
+]
+
+{ #category : #factory }
+GtGQLType class >> typeClassForKindName: aName [
+	| anUppercase |
+	anUppercase := aName asUppercase.
+
+	self
+		allSubclassesDo: [ :aClass | 
+			(aClass isAbstract not and: [ aClass kindName = anUppercase ])
+				ifTrue: [ ^ aClass ] ].
+
+	self error: ('Cannot find type class for kind name: {1}' format: {aName})
+]
 
 { #category : #accessing }
 GtGQLType >> baseType [
@@ -13,8 +32,33 @@ GtGQLType >> baseType [
 ]
 
 { #category : #accessing }
+GtGQLType >> description [
+	^ description
+]
+
+{ #category : #accessing }
+GtGQLType >> description: anObject [
+	description := anObject
+]
+
+{ #category : #accessing }
 GtGQLType >> fields [
 	^ #()
+]
+
+{ #category : #'gt - extensions' }
+GtGQLType >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Description';
+		priority: 40;
+		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
+]
+
+{ #category : #testing }
+GtGQLType >> isDeprecated [
+	^ false
 ]
 
 { #category : #testing }
@@ -33,6 +77,11 @@ GtGQLType >> isScalar [
 ]
 
 { #category : #accessing }
+GtGQLType >> kindName [
+	^ self class kindName
+]
+
+{ #category : #accessing }
 GtGQLType >> name [
 	^ name
 ]
@@ -40,6 +89,18 @@ GtGQLType >> name [
 { #category : #accessing }
 GtGQLType >> name: aString [
 	name := aString
+]
+
+{ #category : #printing }
+GtGQLType >> printOn: aStream [
+	super printOn: aStream.
+
+	self name ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self name asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }

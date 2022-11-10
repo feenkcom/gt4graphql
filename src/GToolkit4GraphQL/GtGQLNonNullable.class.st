@@ -8,6 +8,11 @@ Class {
 }
 
 { #category : #accessing }
+GtGQLNonNullable class >> kindName [
+	^ 'NON_NULL'
+]
+
+{ #category : #accessing }
 GtGQLNonNullable >> baseType [
 	^ type baseType
 ]
@@ -19,7 +24,7 @@ GtGQLNonNullable >> isNonNullable [
 
 { #category : #accessing }
 GtGQLNonNullable >> name [
-	^ type name , '!'
+	^ (type ifNotNil: #name ifNil: [ '?' ]) , '!'
 ]
 
 { #category : #accessing }

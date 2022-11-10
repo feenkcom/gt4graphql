@@ -44,6 +44,11 @@ GtGQLScalar class >> int [
 ]
 
 { #category : #accessing }
+GtGQLScalar class >> kindName [
+	^ 'SCALAR'
+]
+
+{ #category : #accessing }
 GtGQLScalar class >> string [
 	^ String
 		ifNil: [ String := self new
