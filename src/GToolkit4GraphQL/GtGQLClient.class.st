@@ -176,6 +176,20 @@ GtGQLClient >> query: aQuery [
 ]
 
 { #category : #'private - communication' }
+GtGQLClient >> query: aQuery variables: aJson [
+	| aVariablesObject aRequest anEntity |
+	aJson isDictionary ifTrue: [ aVariablesObject := aJson ].
+	aJson isString ifTrue: [ aVariablesObject := STONJSON fromString: aJson ].
+	
+	aRequest := Dictionary new
+			at: 'query' put: aQuery;
+			at: 'variables' put: aVariablesObject;
+			yourself.
+	anEntity := ZnEntity json: (STONJSON toString: aRequest).
+	^ self queryEntity: anEntity
+]
+
+{ #category : #'private - communication' }
 GtGQLClient >> queryEntity: anEntity [
 	| aClient aResponse aJson |
 	aClient := self newClient.
