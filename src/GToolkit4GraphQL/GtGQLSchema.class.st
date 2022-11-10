@@ -85,7 +85,9 @@ GtGQLSchema >> import: aNode [
 	self createTypesFrom: aNode.
 	self importEnums: aNode.
 	self importUnions: aNode.
-	self importComposites: aNode
+	self importComposites: aNode.
+	queryType := self typeNamed: 'Query'.
+	mutationType := self typeNamed: 'Mutation'
 ]
 
 { #category : #importing }
