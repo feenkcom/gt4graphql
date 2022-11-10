@@ -17,16 +17,21 @@ GtGQLContext >> assertUrl: aGraphQLEndPointUrl [
 		description: [ 'GraphQL end-point URL must be non-nil: {1}' format: {aGraphQLEndPointUrl} ]
 ]
 
-{ #category : #accessing }
+{ #category : #'api - authentication' }
 GtGQLContext >> authentication [
 
 	^ authentication
 ]
 
-{ #category : #accessing }
+{ #category : #'api - authentication' }
 GtGQLContext >> authentication: anObject [
 
 	authentication := anObject
+]
+
+{ #category : #'api - authentication' }
+GtGQLContext >> bearerToken: aToken [
+	self authentication: (GtGQLBearerAuthentication new token: aToken)
 ]
 
 { #category : #accessing }
@@ -84,7 +89,7 @@ GtGQLContext >> gtUrlFor: aView [
 		view: #gtUrlFor:
 ]
 
-{ #category : #accessing }
+{ #category : #'api - authentication' }
 GtGQLContext >> headerAt: aHeaderName accessToken: aToken [
 	self
 		authentication: (GtGQLAccessTokenAuthentication new
