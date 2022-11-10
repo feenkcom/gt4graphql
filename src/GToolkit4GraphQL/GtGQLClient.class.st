@@ -120,17 +120,14 @@ fragment FullType on __Type {
 			description
 		
 			queryType {
-				fields {
-					name
-				}
+				name
 			}
 			mutationType {
-				fields {
-					name
-				}
+				name
 			}
 			
 			subscriptionType {
+				name
 				fields {
 					name
 				}

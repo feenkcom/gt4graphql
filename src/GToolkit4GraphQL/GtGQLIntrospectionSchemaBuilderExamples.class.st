@@ -16,7 +16,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> basicIntrospectionSchemaBuilder [
 ]
 
 { #category : #'examples - builder' }
-GtGQLIntrospectionSchemaBuilderExamples >> readStarWarsIntrospectionSchema [
+GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchema [
 	<gtExample>
 	| aBuilder aSchema |
 	aBuilder := self starWarsIntrospectionSchemaBuilder.
@@ -24,6 +24,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> readStarWarsIntrospectionSchema [
 	aSchema := aBuilder build.
 
 	self assert: aSchema isNotNil.
+	self assert: aSchema types size equals: 57.
 
 	^ aSchema
 ]

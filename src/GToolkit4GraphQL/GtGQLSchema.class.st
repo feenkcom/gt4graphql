@@ -2,7 +2,9 @@ Class {
 	#name : #GtGQLSchema,
 	#superclass : #Object,
 	#instVars : [
-		'types'
+		'types',
+		'queryType',
+		'mutationType'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -143,6 +145,26 @@ GtGQLSchema >> initialize [
 			| type |
 			type := GtGQLScalar perform: each.
 			types at: type name put: type ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> mutationType [
+	^ mutationType
+]
+
+{ #category : #accessing }
+GtGQLSchema >> mutationType: anObject [
+	mutationType := anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> queryType [
+	^ queryType
+]
+
+{ #category : #accessing }
+GtGQLSchema >> queryType: anObject [
+	queryType := anObject
 ]
 
 { #category : #importing }

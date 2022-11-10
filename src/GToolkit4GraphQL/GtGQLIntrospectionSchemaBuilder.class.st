@@ -10,19 +10,48 @@ Class {
 
 { #category : #'api - building' }
 GtGQLIntrospectionSchemaBuilder >> build [
-	| aJsonResult aJsonTypes |
+	| aResultJson aSchemaJson |
 	self
 		assert: [ self configuration isNotNil ]
 		description: [ 'Configuration must be non-nil' ].
 
-	aJsonResult := self configuration client introspectionSchema.
-
-	aJsonTypes := ((GtJson forJsonString: aJsonResult)
-			atPath: #(data __schema types))
-			"select: [ :aJson | aJson name jsonObject beginsWith: '__' ]".
+	aResultJson := self configuration client introspectionSchema.
+	aSchemaJson := (GtJson forJsonString: aResultJson) atPath: #(data __schema).
 
 	schema := GtGQLSchema new.
-	self createTypesFromJson: aJsonTypes.
+
+	self
+		ifJson: aSchemaJson
+		at: #types
+		notNilDo: [ :aChild | self createTypesFromJson: aChild ].
+
+	self
+		ifJson: aSchemaJson
+		at: #queryType
+		notNilDo: [ :aChild | 
+			self
+				ifJson: aChild
+				at: #name
+				notNilDo: [ :aNameJson | 
+					| aType |
+					aType := schema typeNamed: aNameJson jsonObject.
+					schema queryType: aType ] ].
+
+
+	self
+		ifJson: aSchemaJson
+		at: #mutationType
+		notNilDo: [ :aChild | 
+			self
+				ifJson: aChild
+				at: #name
+				notNilDo: [ :aNameJson | 
+					| aType |
+					aType := schema typeNamed: aNameJson jsonObject.
+					schema mutationType: aType ] ].	"self
+		ifJson: aSchemaJson
+		at: #directives
+		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ]."
 
 	^ schema
 ]
