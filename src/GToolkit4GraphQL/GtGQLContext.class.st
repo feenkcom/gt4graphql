@@ -17,16 +17,21 @@ GtGQLContext >> assertUrl: aGraphQLEndPointUrl [
 		description: [ 'GraphQL end-point URL must be non-nil: {1}' format: {aGraphQLEndPointUrl} ]
 ]
 
-{ #category : #accessing }
+{ #category : #'api - authentication' }
 GtGQLContext >> authentication [
 
 	^ authentication
 ]
 
-{ #category : #accessing }
+{ #category : #'api - authentication' }
 GtGQLContext >> authentication: anObject [
 
 	authentication := anObject
+]
+
+{ #category : #'api - authentication' }
+GtGQLContext >> bearerToken: aToken [
+	self authentication: (GtGQLBearerAuthentication new token: aToken)
 ]
 
 { #category : #accessing }
@@ -57,6 +62,38 @@ GtGQLContext >> clientBuilder: aBuilder [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLContext >> gtMutationFor: aView [
+	<gtView>
+	self schema ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Mutation';
+		priority: 3;
+		object: [ self schema ];
+		view: #gtMutationFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Schema'
+			tooltip: 'Inspect schema'
+			action: [ :aButton | aButton phlow spawnObject: self schema ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtQueryFor: aView [
+	<gtView>
+	self schema ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Query';
+		priority: 2;
+		object: [ self schema ];
+		view: #gtQueryFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Schema'
+			tooltip: 'Inspect schema'
+			action: [ :aButton | aButton phlow spawnObject: self schema ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLContext >> gtTypesFor: aView [
 	<gtView>
 	self schema ifNil: [ ^ aView empty ].
@@ -84,7 +121,7 @@ GtGQLContext >> gtUrlFor: aView [
 		view: #gtUrlFor:
 ]
 
-{ #category : #accessing }
+{ #category : #'api - authentication' }
 GtGQLContext >> headerAt: aHeaderName accessToken: aToken [
 	self
 		authentication: (GtGQLAccessTokenAuthentication new

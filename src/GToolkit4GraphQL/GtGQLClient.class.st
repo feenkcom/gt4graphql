@@ -117,7 +117,7 @@ fragment FullType on __Type {
 
 	query MyQuery {
 		__schema {
-			description
+			#description
 		
 			queryType {
 				name
@@ -144,7 +144,7 @@ fragment FullType on __Type {
 				args(includeDeprecated: true) {
 					...InputValue
 				}
-				isRepeatable
+				#isRepeatable
 			}
 		}
 	}'
@@ -177,7 +177,7 @@ GtGQLClient >> query: aQuery [
 
 { #category : #'private - communication' }
 GtGQLClient >> queryEntity: anEntity [
-	| aClient aResponse |
+	| aClient aResponse aJson |
 	aClient := self newClient.
 	aClient entity: anEntity.
 	aResponse := aClient
@@ -190,6 +190,23 @@ GtGQLClient >> queryEntity: anEntity [
 				request: aClient request;
 				messageText: aResponse printString;
 				signal ].
+
+	aJson := aResponse asJson.
+	aJson
+		at: #errors
+		ifPresent: [ :anErrorJson | 
+			| aMessage |
+			anErrorJson jsonObject size = 1
+				ifTrue: [ aMessage := anErrorJson atPath: #(1 message) ].
+			aMessage
+				ifNil: [ aMessage := anErrorJson jsonObject size asString , ' GraphQL errors' ].
+
+			GtGQLClientRequestError new
+				response: aResponse;
+				request: aClient request;
+				messageText: aMessage;
+				signal ]
+		ifAbsent: [  "ignore" ].
 
 	^ aResponse
 ]
