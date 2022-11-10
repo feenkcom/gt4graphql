@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'types',
 		'queryType',
-		'mutationType'
+		'mutationType',
+		'subscriptionType',
+		'directives'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -47,6 +49,37 @@ GtGQLSchema >> createTypesFrom: aNode [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> directives [
+	^ directives
+]
+
+{ #category : #accessing }
+GtGQLSchema >> directives: anObject [
+	directives := anObject
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtDirectivesFor: aView [
+	<gtView>
+	self directives ifNil: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Directives';
+		priority: 10;
+		items: [ self directives ifNil: [ #() ] ];
+		column: 'Name'
+			text: [ :each | 
+				each isRepeatable
+					ifTrue: [ each name asRopedText
+							append: (' (repeatable)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ]
+					ifFalse: [ each name ] ];
+		column: 'Description'
+			text: [ :each | each description ifNil: [ '' ] ]
+			weight: 3
+]
+
+{ #category : #accessing }
 GtGQLSchema >> gtSearchFieldsFor: aSearch [
 	<gtSearch>
 	^ aSearch list
@@ -71,7 +104,7 @@ GtGQLSchema >> gtSearchTypesFor: aSearch [
 		wantsToDisplayOnEmptyQuery: false
 ]
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLSchema >> gtTypesFor: aView [
 	<gtView>
 	^ self class
@@ -165,6 +198,16 @@ GtGQLSchema >> queryType [
 { #category : #accessing }
 GtGQLSchema >> queryType: anObject [
 	queryType := anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> subscriptionType [
+	^ subscriptionType
+]
+
+{ #category : #accessing }
+GtGQLSchema >> subscriptionType: anObject [
+	subscriptionType := anObject
 ]
 
 { #category : #importing }
