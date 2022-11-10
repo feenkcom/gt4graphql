@@ -48,10 +48,24 @@ GtGQLIntrospectionSchemaBuilder >> build [
 				notNilDo: [ :aNameJson | 
 					| aType |
 					aType := schema typeNamed: aNameJson jsonObject.
-					schema mutationType: aType ] ].	"self
+					schema mutationType: aType ] ].
+
+	self
+		ifJson: aSchemaJson
+		at: #subscriptionType
+		notNilDo: [ :aChild | 
+			self
+				ifJson: aChild
+				at: #name
+				notNilDo: [ :aNameJson | 
+					| aType |
+					aType := schema typeNamed: aNameJson jsonObject.
+					schema subscriptionType: aType ] ].
+
+	self
 		ifJson: aSchemaJson
 		at: #directives
-		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ]."
+		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ].
 
 	^ schema
 ]
@@ -66,6 +80,44 @@ GtGQLIntrospectionSchemaBuilder >> configuration [
 GtGQLIntrospectionSchemaBuilder >> configuration: anObject [
 
 	configuration := anObject
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> createDirectiveFromJson: aJson [
+	| aDirective |
+	aDirective := GtGQLDirective new.
+
+	self
+		ifJson: aJson
+		at: #name
+		notNilDo: [ :aChild | aDirective name: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #description
+		notNilDo: [ :aChild | aDirective description: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #locations
+		notNilDo: [ :aChild | aDirective locations: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #args
+		notNilDo: [ :aChild | aDirective arguments: (self createInputFieldsFromJson: aChild) ].
+
+	self
+		ifJson: aJson
+		at: #isRepeatable
+		notNilDo: [ :aChild | aDirective isRepeatable: aChild jsonObject ].
+
+	^ aDirective
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> createDirectivesFromJson: aJson [
+	^ aJson collect: [ :aChild | self createDirectiveFromJson: aChild ]
 ]
 
 { #category : #'private - building' }
@@ -124,7 +176,7 @@ GtGQLIntrospectionSchemaBuilder >> createFieldFromJson: aJson [
 	self
 		ifJson: aJson
 		at: #args
-		notNilDo: [ :aChildJson | aField arguments: aChildJson jsonObject ].
+		notNilDo: [ :aChild | aField arguments: (self createInputFieldsFromJson: aChild) ].
 
 	self
 		ifJson: aJson

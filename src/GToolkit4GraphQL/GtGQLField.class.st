@@ -48,6 +48,28 @@ GtGQLField >> description: anObject [
 ]
 
 { #category : #accessing }
+GtGQLField >> gtArgumentsFor: aView [
+	<gtView>
+	self arguments ifNil: [ ^ aView empty ].
+	^ aView columnedList
+		title: 'Arguments';
+		priority: 20;
+		items: [ self arguments ifNil: [ #() ] ];
+		column: 'Name'
+			text: [ :each | 
+				each isDeprecated
+					ifTrue: [ each name asRopedText
+							append: (' (deprecated)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ]
+					ifFalse: [ each name ] ];
+		column: 'Type' text: [ :each | each type ifNotNil: #name ifNil: [ '' ] ];
+		column: 'Default Value' text: [ :each | each defaultValue ifNil: [ '' ] ];
+		column: 'Description'
+			text: [ :each | each description ifNil: [ '' ] ]
+			weight: 3
+]
+
+{ #category : #accessing }
 GtGQLField >> gtTypeFor: aView [
 	<gtView>
 	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
