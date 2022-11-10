@@ -153,6 +153,7 @@ GtGQLSnippetElement >> initialize [
 	gqlElement addChild: operationEditor as: #operationEditor.
 	gqlElement addChild: (self createLabel: 'Input:').
 	inputEditor := self createSourceEditor: #updateInput.
+	inputEditor editor styler: JSONParser gtStyler.
 	gqlElement addChild: inputEditor as: #inputEditor.
 	gqlElement
 		addChild: (BrButton new
