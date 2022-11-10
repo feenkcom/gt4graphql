@@ -118,11 +118,7 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 
 { #category : #accessing }
 GtGQLSnippetElement >> executeQuery [
-	self context
-		ifNotNil: [ :context | 
-			[ ShopifyGraphQLApi new postJson: self json ] asAsyncPromise
-				then: [ :json | gqlElement phlow spawnObject: json ]
-				otherwise: [ :ex | gqlElement phlow spawnObject: ex ] ]
+	self context ifNotNil: [ :context | gqlElement phlow spawnObject: self json ]
 ]
 
 { #category : #accessing }
