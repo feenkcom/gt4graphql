@@ -118,7 +118,7 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 
 { #category : #accessing }
 GtGQLSnippetElement >> executeQuery [
-	self context ifNotNil: [ :context | gqlElement phlow spawnObject: context ]
+	self context ifNotNil: [ :context | gqlElement phlow spawnObject: self json ]
 ]
 
 { #category : #accessing }
@@ -138,6 +138,7 @@ GtGQLSnippetElement >> initialize [
 	contextElement addChild: self contextDropDown as: #contextDropDown.
 	gqlElement addChild: contextElement.
 	operationEditor := self createSourceEditor: #updateOperation.
+	operationEditor when: BlFocusInEvent do: [ :event | self updateCompletion ].
 	operationEditor editor styler: GraphQLParser gtStyler.
 	completionStrategy := GtGQLCompletionStrategy new.
 	completionController := GtCompletionController
@@ -157,6 +158,19 @@ GtGQLSnippetElement >> initialize [
 				label: 'Execute' asString;
 				action: [ self executeQuery ])
 		as: #executeButton
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> json [
+	| json |
+	json := GtJson new.
+	json jsonObject: OrderedDictionary new.
+	json
+		atKey: 'query'
+		put: (gqlElement childNamed: #operationEditor) text asString.
+	(gqlElement childNamed: #inputEditor) text asString
+		ifNotEmpty: [ :input | json atKey: 'variables' put: (GtJson forJsonString: input) jsonObject ].
+	^ json
 ]
 
 { #category : #accessing }
@@ -207,10 +221,16 @@ GtGQLSnippetElement >> unsubscribeFromSnippetViewModel [
 ]
 
 { #category : #accessing }
+GtGQLSnippetElement >> updateCompletion [
+	self context ifNotNil: [ :context | completionStrategy schema: context schema ]
+]
+
+{ #category : #accessing }
 GtGQLSnippetElement >> updateContext [
 	gqlElement
 		childNamed: #contextButton
-		ifFound: [ :button | button label: self contextVariable ]
+		ifFound: [ :button | button label: self contextVariable ].
+	self updateCompletion
 ]
 
 { #category : #updating }

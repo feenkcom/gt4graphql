@@ -80,6 +80,28 @@ GtGQLSchema >> gtDirectivesFor: aView [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> gtMutationFor: aView [
+	<gtView>
+	self mutationType ifNil: [ ^ aView empty ].
+	^ aView forward
+		priority: 12;
+		title: 'Mutation';
+		object: [ self mutationType ];
+		view: #gtFieldsFor:
+]
+
+{ #category : #accessing }
+GtGQLSchema >> gtQueryFor: aView [
+	<gtView>
+	self queryType ifNil: [ ^ aView empty ].
+	^ aView forward
+		priority: 11;
+		title: 'Query';
+		object: [ self queryType ];
+		view: #gtFieldsFor:
+]
+
+{ #category : #accessing }
 GtGQLSchema >> gtSearchFieldsFor: aSearch [
 	<gtSearch>
 	^ aSearch list
@@ -118,7 +140,9 @@ GtGQLSchema >> import: aNode [
 	self createTypesFrom: aNode.
 	self importEnums: aNode.
 	self importUnions: aNode.
-	self importComposites: aNode
+	self importComposites: aNode.
+	queryType := self typeNamed: 'Query'.
+	mutationType := self typeNamed: 'Mutation'
 ]
 
 { #category : #importing }
