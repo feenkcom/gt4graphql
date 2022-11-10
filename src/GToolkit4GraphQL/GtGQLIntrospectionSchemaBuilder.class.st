@@ -176,7 +176,7 @@ GtGQLIntrospectionSchemaBuilder >> createFieldFromJson: aJson [
 	self
 		ifJson: aJson
 		at: #args
-		notNilDo: [ :aChildJson | aField arguments: aChildJson jsonObject ].
+		notNilDo: [ :aChild | aField arguments: (self createInputFieldsFromJson: aChild) ].
 
 	self
 		ifJson: aJson

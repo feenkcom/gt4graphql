@@ -65,7 +65,11 @@ GtGQLContext >> gtTypesFor: aView [
 		title: 'Types';
 		priority: 1;
 		object: [ self schema ];
-		view: #gtTypesFor:
+		view: #gtTypesFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Schema'
+			tooltip: 'Inspect schema'
+			action: [ :aButton | aButton phlow spawnObject: self schema ]
 ]
 
 { #category : #'gt - extensions' }

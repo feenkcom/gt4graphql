@@ -36,6 +36,16 @@ GtGQLSchema class >> typeForObject: aTypeOrField [
 	^ (aTypeOrField isKindOf: GtGQLField) ifTrue: [ aTypeOrField type ] ifFalse: [ aTypeOrField ]
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLSchema >> baseTypes [
+	^ types values reject: [ :each | each isList or: [ each isNonNullable ] ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> baseTypesCount [
+	^ types ifNotNil: [ self baseTypes size ] ifNil: [ 0 ]
+]
+
 { #category : #importing }
 GtGQLSchema >> createTypesFrom: aNode [
 	aNode
@@ -65,7 +75,7 @@ GtGQLSchema >> gtDirectivesFor: aView [
 
 	^ aView columnedList
 		title: 'Directives';
-		priority: 10;
+		priority: 20;
 		items: [ self directives ifNil: [ #() ] ];
 		column: 'Name'
 			text: [ :each | 
@@ -131,8 +141,7 @@ GtGQLSchema >> gtTypesFor: aView [
 	<gtView>
 	^ self class
 		gtTypesFor: aView
-		items: [ (types values reject: [ :each | each isList or: [ each isNonNullable ] ])
-				asSortedCollection: [ :a :b | a name < b name ] ]
+		items: [ self baseTypes asSortedCollection: [ :a :b | a name < b name ] ]
 ]
 
 { #category : #importing }
@@ -214,6 +223,22 @@ GtGQLSchema >> mutationType: anObject [
 	mutationType := anObject
 ]
 
+{ #category : #printing }
+GtGQLSchema >> printOn: aStream [
+	super printOn: aStream.
+
+	aStream
+		nextPut: $(;
+		print: self baseTypesCount;
+		space;
+		nextPutAll: ('base type' asPluralBasedOn: self baseTypesCount);
+		nextPutAll: ', ';
+		print: self typesCount;
+		space;
+		nextPutAll: ('all type' asPluralBasedOn: self typesCount);
+		nextPut: $)
+]
+
 { #category : #accessing }
 GtGQLSchema >> queryType [
 	^ queryType
@@ -279,4 +304,9 @@ GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbse
 { #category : #accessing }
 GtGQLSchema >> types [
 	^ types values
+]
+
+{ #category : #accessing }
+GtGQLSchema >> typesCount [
+	^ types ifNotNil: #size ifNil: [ 0 ]
 ]
