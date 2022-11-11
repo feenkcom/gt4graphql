@@ -88,9 +88,12 @@ GtGQLSnippet >> contextUsing: snippetContext [
 	| value variableBindings |
 	self context = 'self'
 		ifTrue: [ value := snippetContext selfObject ]
-		ifFalse: [ variableBindings := snippetContext sharedBindings.
-			(variableBindings hasBindingOf: (self context ifNil: [ '' ]))
-				ifTrue: [ value := (variableBindings bindingOf: self context) value ] ].
+		ifFalse: [ snippetContext selfObject class allInstVarNames
+				detect: [ :each | (snippetContext selfObject instVarNamed: each) isKindOf: GtGQLContext ]
+				ifFound: [ :each | value := snippetContext selfObject instVarNamed: each ]
+				ifNone: [ variableBindings := snippetContext sharedBindings.
+					(variableBindings hasBindingOf: (self context ifNil: [ '' ]))
+						ifTrue: [ value := (variableBindings bindingOf: self context) value ] ] ].
 	(value isKindOf: GtGQLContext) ifFalse: [ value := nil ].
 	^ value
 ]
@@ -107,6 +110,10 @@ GtGQLSnippet >> contextVariablesUsing: snippetContext [
 	variables sort.
 	(snippetContext selfObject isKindOf: GtGQLContext)
 		ifTrue: [ variables addFirst: 'self' ].
+	snippetContext selfObject class allInstVarNames
+		do: [ :each | 
+			((snippetContext selfObject instVarNamed: each) isKindOf: GtGQLContext)
+				ifTrue: [ variables addFirst: each ] ].
 	^ variables
 ]
 
