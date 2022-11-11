@@ -149,6 +149,11 @@ GtGQLSnippetElement >> initialize [
 	gqlElement addChild: contextElement.
 	operationEditor := self createSourceEditor: #updateOperation.
 	operationEditor when: BlFocusInEvent do: [ :event | self updateCompletion ].
+	operationEditor
+		addShortcut: (BlShortcutWithAction new
+				combination: BlKeyCombination primaryR;
+				repeatable: false;
+				action: [ :element | self renameInOperation ]).
 	operationEditor editor styler: GraphQLParser gtStyler.
 	completionStrategy := GtGQLCompletionStrategy new.
 	completionController := GtCompletionController
@@ -158,6 +163,11 @@ GtGQLSnippetElement >> initialize [
 	gqlElement addChild: operationEditor as: #operationEditor.
 	gqlElement addChild: (self createLabel: 'Input:').
 	inputEditor := self createSourceEditor: #updateInput.
+	inputEditor
+		addShortcut: (BlShortcutWithAction new
+				combination: BlKeyCombination primaryR;
+				repeatable: false;
+				action: [ :element | self renameInInput ]).
 	inputEditor editor styler: JSONParser gtStyler.
 	gqlElement addChild: inputEditor as: #inputEditor.
 	gqlElement
@@ -171,6 +181,36 @@ GtGQLSnippetElement >> initialize [
 		as: #executeButton
 ]
 
+{ #category : #refactoring }
+GtGQLSnippetElement >> inputAst [
+	^ self inputSource ifNotNil: [ :string | JSONParser parseWithErrors: string ]
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> inputCursor [
+	| cursors |
+	^ self inputEditor
+		ifNotNil: [ :editor | 
+			cursors := editor cursors.
+			cursors isSingle ifTrue: [ cursors first position ] ]
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> inputEditor [
+	^ gqlElement
+		childNamed: #inputEditor
+		ifFound: [ :editor | editor ]
+		ifNone: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> inputSource [
+	^ gqlElement
+		childNamed: #inputEditor
+		ifFound: [ :editor | editor editor text asString ]
+		ifNone: [ nil ]
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> onSnippetViewModelChanged [
 	super onSnippetViewModelChanged.
@@ -178,6 +218,92 @@ GtGQLSnippetElement >> onSnippetViewModelChanged [
 	self updateInputEditor.
 	self updateOperationEditor.
 	self updateContext
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> operationAst [
+	^ self operationSource
+		ifNotNil: [ :string | GraphQLParser parseWithErrors: string ]
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> operationEditor [
+	^ gqlElement
+		childNamed: #operationEditor
+		ifFound: [ :editor | editor ]
+		ifNone: [ nil ]
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> operationNodeAtCursor [
+	| gqlAst cursors |
+	^ self operationEditor
+		ifNotNil: [ :editor | 
+			cursors := editor cursors.
+			cursors isSingle
+				ifTrue: [ gqlAst := self operationAst.
+					gqlAst nodeAt: cursors first position ] ]
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> operationSource [
+	^ gqlElement
+		childNamed: #operationEditor
+		ifFound: [ :editor | editor editor text asString ]
+		ifNone: [ nil ]
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> renameInInput [
+	| jsonAst cursor jsonInterval name intervals action |
+	jsonAst := self inputAst.
+	(jsonAst isKindOf: JSONObjectNode) ifFalse: [ ^ self ].
+	cursor := self inputCursor.
+	jsonAst members
+		detect: [ :each | 
+			(each isKindOf: JSONMemberNode)
+				and: [ cursor between: each name startPosition + 1 and: each name stopPosition - 1 ] ]
+		ifFound: [ :each | 
+			name := '$' , each name source allButFirst allButLast.
+			jsonInterval := each name startPosition + 1 to: each name stopPosition - 1 ]
+		ifNone: [ ^ self ].
+	intervals := OrderedCollection new.
+	self operationAst
+		withAllNodesDo: [ :each | 
+			((each isKindOf: GraphQLVariableNode) and: [ each source = name ])
+				ifTrue: [ intervals add: (each startPosition + 1 to: each stopPosition) ] ].
+	action := GtCompositeRenameAction
+			locations: {jsonInterval}
+			element: self inputEditor.
+	action forVariableOrUnaryMessage.
+	action addLocations: intervals to: self operationEditor editor.
+	action install
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> renameInOperation [
+	| jsonAst nodeToRename intervals jsonInterval name action |
+	nodeToRename := self operationNodeAtCursor.
+	(nodeToRename isKindOf: GraphQLVariableNode) ifFalse: [ ^ self ].
+	intervals := OrderedCollection new.
+	intervals add: (nodeToRename startPosition + 1 to: nodeToRename stopPosition).
+	nodeToRename topParent
+		withAllNodesDo: [ :each | 
+			(each ~~ nodeToRename and: [ each = nodeToRename ])
+				ifTrue: [ intervals add: (each startPosition + 1 to: each stopPosition) ] ].
+	jsonAst := self inputAst.
+	(jsonAst isKindOf: JSONObjectNode)
+		ifTrue: [ name := '"' , nodeToRename source allButFirst , '"'.
+			jsonAst members
+				detect: [ :each | each name source = name ]
+				ifFound: [ :each | jsonInterval := each name startPosition + 1 to: each name stopPosition - 1 ] ].
+	action := GtCompositeRenameAction
+			locations: intervals
+			element: self operationEditor.
+	action forVariableOrUnaryMessage.
+	jsonInterval
+		ifNotNil: [ action addLocations: {jsonInterval} to: self inputEditor editor ].
+	action install
 ]
 
 { #category : #accessing }
@@ -261,11 +387,8 @@ GtGQLSnippetElement >> updateInputEditor [
 
 { #category : #updating }
 GtGQLSnippetElement >> updateOperation [
-	gqlElement
-		childNamed: #operationEditor
-		ifFound: [ :editor | 
-			| searchString |
-			searchString := editor editor text asString.
+	self operationSource
+		ifNotNil: [ :searchString | 
 			searchString ~= self snippet operation
 				ifTrue: [ self snippet operation: searchString ] ]
 ]
