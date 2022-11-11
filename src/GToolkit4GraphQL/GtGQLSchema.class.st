@@ -17,12 +17,21 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
-		column: 'Name' text: [ :each | each gtTypesNameText ] weight: 2;
-		column: 'Type' text: [ :each | (self typeForObject: each) name ];
+		column: 'Name'
+			text: [ :each | each gtTypesNameText ]
+			weight: 2;
+		column: 'Type'
+			text: [ :each | (self typeForObject: each) ifNotNil: #name ifNil: [ '' ] ];
 		column: 'Class'
-			text: [ :each | (self typeForObject: each) baseType typeName ];
+			text: [ :each | 
+				(self typeForObject: each)
+					ifNotNil: [ :aType | aType baseType typeName ]
+					ifNil: [ '' ] ];
 		items: aBlock;
-		children: [ :each | (self typeForObject: each) baseType fields ifNil: [ #() ] ]
+		children: [ :each | 
+			(self typeForObject: each)
+				ifNotNil: [ :aType | aType baseType fields ifNil: [ #() ] ]
+				ifNil: [ #() ] ]
 ]
 
 { #category : #accessing }

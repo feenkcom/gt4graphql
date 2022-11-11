@@ -71,6 +71,25 @@ GtGQLIntrospectionSchemaBuilder >> build [
 	^ schema
 ]
 
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> buildType [
+	<return: #GtGQLType>
+	| aResultJson aTypeJson |
+	self
+		assert: [ self configuration isNotNil ]
+		description: [ 'Configuration must be non-nil' ].
+	self assert: [ self json isNotNil ] description: [ 'JSON must be non-nil' ].
+
+	aResultJson := self json.
+	aTypeJson := aResultJson atPath: #(data __type).
+
+	schema := GtGQLSchema new.
+
+	aTypeJson exists ifFalse: [ ^ nil ].
+
+	^ self createTypeFromJson: aTypeJson
+]
+
 { #category : #accessing }
 GtGQLIntrospectionSchemaBuilder >> configuration [
 

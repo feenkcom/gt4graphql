@@ -72,6 +72,7 @@ GtGQLField >> gtArgumentsFor: aView [
 { #category : #accessing }
 GtGQLField >> gtTypeFor: aView [
 	<gtView>
+	type ifNil: [ ^ aView empty ].
 	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
 	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ]) title: 'Type'
 ]
