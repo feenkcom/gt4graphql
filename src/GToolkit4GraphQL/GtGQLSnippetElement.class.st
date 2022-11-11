@@ -174,9 +174,17 @@ GtGQLSnippetElement >> initialize [
 { #category : #accessing }
 GtGQLSnippetElement >> onSnippetViewModelChanged [
 	super onSnippetViewModelChanged.
+	self setDefaultContextVariable.
 	self updateInputEditor.
 	self updateOperationEditor.
 	self updateContext
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> setDefaultContextVariable [
+	self contextVariable trim notEmpty ifTrue: [ ^ self ].
+	(self snippet defaultContextUsing: self snippetContext)
+		ifNotNil: [ :each | self snippet context: each ]
 ]
 
 { #category : #'api - view' }
