@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'configuration',
-		'schema'
+		'schema',
+		'json'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
@@ -15,7 +16,7 @@ GtGQLIntrospectionSchemaBuilder >> build [
 		assert: [ self configuration isNotNil ]
 		description: [ 'Configuration must be non-nil' ].
 
-	aResultJson := self configuration client introspectionSchema.
+	aResultJson := self ensureJson.
 	aSchemaJson := aResultJson atPath: #(data __schema).
 
 	schema := GtGQLSchema new.
@@ -294,11 +295,39 @@ GtGQLIntrospectionSchemaBuilder >> createTypesFromJson: aJsonTypes [
 ]
 
 { #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> ensureJson [
+	<return: #GtJson>
+	| aResultJson |
+	self json ifNotNil: [ ^ self json ].
+	aResultJson := self retreiveJson.
+	self json: aResultJson.
+	^ self json
+]
+
+{ #category : #'private - building' }
 GtGQLIntrospectionSchemaBuilder >> ifJson: aJson at: aKey notNilDo: aDoBlock [
 	aJson
 		at: aKey
 		ifPresent: [ :aChildJson | aChildJson jsonObject ifNotNil: [ aDoBlock cull: aChildJson cull: aKey ] ]
 		ifAbsent: [ ^ self ]
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionSchemaBuilder >> json [
+	^ json
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionSchemaBuilder >> json: aJson [
+	self assert: [ aJson isNotNil ] description: [ 'JSON must be non-nil' ].
+
+	json := aJson
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> retreiveJson [
+	<return: #GtJson>
+	^ self configuration client introspectionSchema
 ]
 
 { #category : #accessing }

@@ -22,7 +22,7 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 		column: 'Class'
 			text: [ :each | (self typeForObject: each) baseType typeName ];
 		items: aBlock;
-		children: [ :each | (self typeForObject: each) baseType fields ]
+		children: [ :each | (self typeForObject: each) baseType fields ifNil: [ #() ] ]
 ]
 
 { #category : #accessing }
