@@ -56,6 +56,11 @@ GtGQLType >> gtDescriptionFor: aView [
 		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLType >> gtTypesNameText [
+	^ self name
+]
+
 { #category : #testing }
 GtGQLType >> isDeprecated [
 	^ false
@@ -68,6 +73,11 @@ GtGQLType >> isList [
 
 { #category : #testing }
 GtGQLType >> isNonNullable [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isRequired [
 	^ false
 ]
 

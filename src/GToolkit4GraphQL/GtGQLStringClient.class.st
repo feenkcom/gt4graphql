@@ -12,7 +12,7 @@ Class {
 { #category : #'api - communication' }
 GtGQLStringClient >> introspectionSchema [
 	<return: #String>
-	^ self string
+	^ GtJson forJsonString: self string
 ]
 
 { #category : #accessing }

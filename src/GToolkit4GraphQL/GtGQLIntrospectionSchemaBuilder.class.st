@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'configuration',
-		'schema'
+		'schema',
+		'json'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
@@ -15,8 +16,8 @@ GtGQLIntrospectionSchemaBuilder >> build [
 		assert: [ self configuration isNotNil ]
 		description: [ 'Configuration must be non-nil' ].
 
-	aResultJson := self configuration client introspectionSchema.
-	aSchemaJson := (GtJson forJsonString: aResultJson) atPath: #(data __schema).
+	aResultJson := self ensureJson.
+	aSchemaJson := aResultJson atPath: #(data __schema).
 
 	schema := GtGQLSchema new.
 
@@ -48,10 +49,24 @@ GtGQLIntrospectionSchemaBuilder >> build [
 				notNilDo: [ :aNameJson | 
 					| aType |
 					aType := schema typeNamed: aNameJson jsonObject.
-					schema mutationType: aType ] ].	"self
+					schema mutationType: aType ] ].
+
+	self
+		ifJson: aSchemaJson
+		at: #subscriptionType
+		notNilDo: [ :aChild | 
+			self
+				ifJson: aChild
+				at: #name
+				notNilDo: [ :aNameJson | 
+					| aType |
+					aType := schema typeNamed: aNameJson jsonObject.
+					schema subscriptionType: aType ] ].
+
+	self
 		ifJson: aSchemaJson
 		at: #directives
-		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ]."
+		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ].
 
 	^ schema
 ]
@@ -66,6 +81,44 @@ GtGQLIntrospectionSchemaBuilder >> configuration [
 GtGQLIntrospectionSchemaBuilder >> configuration: anObject [
 
 	configuration := anObject
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> createDirectiveFromJson: aJson [
+	| aDirective |
+	aDirective := GtGQLDirective new.
+
+	self
+		ifJson: aJson
+		at: #name
+		notNilDo: [ :aChild | aDirective name: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #description
+		notNilDo: [ :aChild | aDirective description: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #locations
+		notNilDo: [ :aChild | aDirective locations: aChild jsonObject ].
+
+	self
+		ifJson: aJson
+		at: #args
+		notNilDo: [ :aChild | aDirective arguments: (self createInputFieldsFromJson: aChild) ].
+
+	self
+		ifJson: aJson
+		at: #isRepeatable
+		notNilDo: [ :aChild | aDirective isRepeatable: aChild jsonObject ].
+
+	^ aDirective
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> createDirectivesFromJson: aJson [
+	^ aJson collect: [ :aChild | self createDirectiveFromJson: aChild ]
 ]
 
 { #category : #'private - building' }
@@ -124,7 +177,7 @@ GtGQLIntrospectionSchemaBuilder >> createFieldFromJson: aJson [
 	self
 		ifJson: aJson
 		at: #args
-		notNilDo: [ :aChildJson | aField arguments: aChildJson jsonObject ].
+		notNilDo: [ :aChild | aField arguments: (self createInputFieldsFromJson: aChild) ].
 
 	self
 		ifJson: aJson
@@ -242,11 +295,39 @@ GtGQLIntrospectionSchemaBuilder >> createTypesFromJson: aJsonTypes [
 ]
 
 { #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> ensureJson [
+	<return: #GtJson>
+	| aResultJson |
+	self json ifNotNil: [ ^ self json ].
+	aResultJson := self retreiveJson.
+	self json: aResultJson.
+	^ self json
+]
+
+{ #category : #'private - building' }
 GtGQLIntrospectionSchemaBuilder >> ifJson: aJson at: aKey notNilDo: aDoBlock [
 	aJson
 		at: aKey
 		ifPresent: [ :aChildJson | aChildJson jsonObject ifNotNil: [ aDoBlock cull: aChildJson cull: aKey ] ]
 		ifAbsent: [ ^ self ]
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionSchemaBuilder >> json [
+	^ json
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionSchemaBuilder >> json: aJson [
+	self assert: [ aJson isNotNil ] description: [ 'JSON must be non-nil' ].
+
+	json := aJson
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> retreiveJson [
+	<return: #GtJson>
+	^ self configuration client introspectionSchema
 ]
 
 { #category : #accessing }

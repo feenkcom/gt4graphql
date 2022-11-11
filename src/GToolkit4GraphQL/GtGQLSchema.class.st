@@ -4,7 +4,9 @@ Class {
 	#instVars : [
 		'types',
 		'queryType',
-		'mutationType'
+		'mutationType',
+		'subscriptionType',
+		'directives'
 	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
@@ -15,23 +17,27 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
-		column: 'Name'
-			text: [ :each | 
-				each isDeprecated
-					ifTrue: [ each name asRopedText
-							append: (' (deprecated)' asRopedText
-									foreground: BrGlamorousColors disabledButtonTextColor) ]
-					ifFalse: [ each name ] ];
+		column: 'Name' text: [ :each | each gtTypesNameText ] weight: 2;
 		column: 'Type' text: [ :each | (self typeForObject: each) name ];
 		column: 'Class'
 			text: [ :each | (self typeForObject: each) baseType typeName ];
 		items: aBlock;
-		children: [ :each | (self typeForObject: each) baseType fields ]
+		children: [ :each | (self typeForObject: each) baseType fields ifNil: [ #() ] ]
 ]
 
 { #category : #accessing }
 GtGQLSchema class >> typeForObject: aTypeOrField [
 	^ (aTypeOrField isKindOf: GtGQLField) ifTrue: [ aTypeOrField type ] ifFalse: [ aTypeOrField ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> baseTypes [
+	^ types values reject: [ :each | each isList or: [ each isNonNullable ] ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> baseTypesCount [
+	^ types ifNotNil: [ self baseTypes size ] ifNil: [ 0 ]
 ]
 
 { #category : #importing }
@@ -44,6 +50,37 @@ GtGQLSchema >> createTypesFrom: aNode [
 					name: each name source;
 					yourself.
 			types at: type name put: type ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> directives [
+	^ directives
+]
+
+{ #category : #accessing }
+GtGQLSchema >> directives: anObject [
+	directives := anObject
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtDirectivesFor: aView [
+	<gtView>
+	self directives ifNil: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Directives';
+		priority: 20;
+		items: [ self directives ifNil: [ #() ] ];
+		column: 'Name'
+			text: [ :each | 
+				each isRepeatable
+					ifTrue: [ each name asRopedText
+							append: (' (repeatable)' asRopedText
+									foreground: BrGlamorousColors disabledButtonTextColor) ]
+					ifFalse: [ each name ] ];
+		column: 'Description'
+			text: [ :each | each description ifNil: [ '' ] ]
+			weight: 3
 ]
 
 { #category : #accessing }
@@ -93,13 +130,12 @@ GtGQLSchema >> gtSearchTypesFor: aSearch [
 		wantsToDisplayOnEmptyQuery: false
 ]
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLSchema >> gtTypesFor: aView [
 	<gtView>
 	^ self class
 		gtTypesFor: aView
-		items: [ (types values reject: [ :each | each isList or: [ each isNonNullable ] ])
-				asSortedCollection: [ :a :b | a name < b name ] ]
+		items: [ self baseTypes asSortedCollection: [ :a :b | a name < b name ] ]
 ]
 
 { #category : #importing }
@@ -181,6 +217,22 @@ GtGQLSchema >> mutationType: anObject [
 	mutationType := anObject
 ]
 
+{ #category : #printing }
+GtGQLSchema >> printOn: aStream [
+	super printOn: aStream.
+
+	aStream
+		nextPut: $(;
+		print: self baseTypesCount;
+		space;
+		nextPutAll: ('base type' asPluralBasedOn: self baseTypesCount);
+		nextPutAll: ', ';
+		print: self typesCount;
+		space;
+		nextPutAll: ('all type' asPluralBasedOn: self typesCount);
+		nextPut: $)
+]
+
 { #category : #accessing }
 GtGQLSchema >> queryType [
 	^ queryType
@@ -189,6 +241,16 @@ GtGQLSchema >> queryType [
 { #category : #accessing }
 GtGQLSchema >> queryType: anObject [
 	queryType := anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> subscriptionType [
+	^ subscriptionType
+]
+
+{ #category : #accessing }
+GtGQLSchema >> subscriptionType: anObject [
+	subscriptionType := anObject
 ]
 
 { #category : #importing }
@@ -236,4 +298,9 @@ GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbse
 { #category : #accessing }
 GtGQLSchema >> types [
 	^ types values
+]
+
+{ #category : #accessing }
+GtGQLSchema >> typesCount [
+	^ types ifNotNil: #size ifNil: [ 0 ]
 ]

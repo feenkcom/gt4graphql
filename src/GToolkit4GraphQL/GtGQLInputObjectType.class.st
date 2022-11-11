@@ -61,6 +61,11 @@ GtGQLInputObjectType >> isDeprecated: anObject [
 	isDeprecated := anObject
 ]
 
+{ #category : #testing }
+GtGQLInputObjectType >> isRequired [
+	^ self type ifNotNil: #isRequired ifNil: [ false ]
+]
+
 { #category : #accessing }
 GtGQLInputObjectType >> type [
 	^ type

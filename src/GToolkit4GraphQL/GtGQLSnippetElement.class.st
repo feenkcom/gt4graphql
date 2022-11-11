@@ -118,7 +118,17 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 
 { #category : #accessing }
 GtGQLSnippetElement >> executeQuery [
-	self context ifNotNil: [ :context | gqlElement phlow spawnObject: self json ]
+	self context
+		ifNotNil: [ :context | 
+			[ | operation input |
+			operation := (gqlElement childNamed: #operationEditor) text asString.
+			input := (gqlElement childNamed: #inputEditor) text asString trim.
+			input isEmpty
+				ifTrue: [ context client query: operation ]
+				ifFalse: [ context client query: operation variables: input ] ]
+				asAsyncPromise
+				then: [ :json | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: json ] ]
+				otherwise: [ :ex | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: ex ] ] ]
 ]
 
 { #category : #accessing }
@@ -148,6 +158,7 @@ GtGQLSnippetElement >> initialize [
 	gqlElement addChild: operationEditor as: #operationEditor.
 	gqlElement addChild: (self createLabel: 'Input:').
 	inputEditor := self createSourceEditor: #updateInput.
+	inputEditor editor styler: JSONParser gtStyler.
 	gqlElement addChild: inputEditor as: #inputEditor.
 	gqlElement
 		addChild: (BrButton new
@@ -158,19 +169,6 @@ GtGQLSnippetElement >> initialize [
 				label: 'Execute' asString;
 				action: [ self executeQuery ])
 		as: #executeButton
-]
-
-{ #category : #accessing }
-GtGQLSnippetElement >> json [
-	| json |
-	json := GtJson new.
-	json jsonObject: OrderedDictionary new.
-	json
-		atKey: 'query'
-		put: (gqlElement childNamed: #operationEditor) text asString.
-	(gqlElement childNamed: #inputEditor) text asString
-		ifNotEmpty: [ :input | json atKey: 'variables' put: (GtJson forJsonString: input) jsonObject ].
-	^ json
 ]
 
 { #category : #accessing }

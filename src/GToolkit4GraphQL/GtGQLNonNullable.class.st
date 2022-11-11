@@ -23,6 +23,11 @@ GtGQLNonNullable >> isNonNullable [
 ]
 
 { #category : #accessing }
+GtGQLNonNullable >> isRequired [
+	^ true
+]
+
+{ #category : #accessing }
 GtGQLNonNullable >> name [
 	^ (type ifNotNil: #name ifNil: [ '?' ]) , '!'
 ]
