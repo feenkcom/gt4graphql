@@ -62,6 +62,16 @@ GtGQLType >> gtTypesNameText [
 ]
 
 { #category : #testing }
+GtGQLType >> isBoolean [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isComposite [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLType >> isDeprecated [
 	^ false
 ]

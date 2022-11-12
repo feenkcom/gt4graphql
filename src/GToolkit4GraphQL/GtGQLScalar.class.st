@@ -57,6 +57,11 @@ GtGQLScalar class >> string [
 ]
 
 { #category : #testing }
+GtGQLScalar >> isBoolean [
+	^ self = Boolean
+]
+
+{ #category : #testing }
 GtGQLScalar >> isScalar [
 	^ true
 ]

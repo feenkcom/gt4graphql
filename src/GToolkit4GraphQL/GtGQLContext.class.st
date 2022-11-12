@@ -37,9 +37,8 @@ GtGQLContext >> bearerToken: aToken [
 { #category : #accessing }
 GtGQLContext >> buildSchema [
 	| aBuilder |
-	aBuilder := GtGQLIntrospectionSchemaBuilder new.
-	aBuilder configuration: self.
-	self schema: aBuilder build.
+	aBuilder := self schemaBuilder.
+	self schema: aBuilder build
 ]
 
 { #category : #accessing }
@@ -145,6 +144,14 @@ GtGQLContext >> schema [
 { #category : #accessing }
 GtGQLContext >> schema: anObject [
 	schema := anObject
+]
+
+{ #category : #accessing }
+GtGQLContext >> schemaBuilder [
+	| aBuilder |
+	aBuilder := GtGQLIntrospectionSchemaBuilder new.
+	aBuilder configuration: self.
+	^ aBuilder
 ]
 
 { #category : #accessing }
