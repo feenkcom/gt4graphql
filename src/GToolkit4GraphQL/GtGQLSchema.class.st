@@ -217,6 +217,11 @@ GtGQLSchema >> initialize [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> interfaces [
+	^ self types select: [ :each | each isKindOf: GtGQLInterface ]
+]
+
+{ #category : #accessing }
 GtGQLSchema >> mutationType [
 	^ mutationType
 ]
@@ -224,6 +229,19 @@ GtGQLSchema >> mutationType [
 { #category : #accessing }
 GtGQLSchema >> mutationType: anObject [
 	mutationType := anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> paintInterfaceUsesWith: m [
+	m nodes
+		stencil: [ BlElement new
+				geometry: BlCircleGeometry new;
+				background: Color blue;
+				size: 5 @ 5 ];
+		with: self interfaces.
+	m nodes with: (self interfaces flatCollectAsSet: #possibleTypes).
+	m edges connect: self interfaces toAll: #possibleTypes.
+	^ m layout force
 ]
 
 { #category : #printing }
