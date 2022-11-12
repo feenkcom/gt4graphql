@@ -5,54 +5,29 @@ Class {
 		'configuration',
 		'essentialSchema',
 		'query',
-		'fullTypeFragment'
+		'fullTypeFragment',
+		'inputValueFragment',
+		'schemaQuery'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
 
-{ #category : #'private - building' }
-GtGQLIntrospectionSchemaQueryBuilder >> buildField: aField shift: anInteger into: aStream [
-	| aType |
-	self indentTimes: anInteger into: aStream.
-	aStream nextPutAll: aField name.
-	(self includeDeprecatedArgumentOfField: aField)
-		ifNotNil: [ :anArgument | 
-			aStream nextPut: $(.
-			self buildFieldArgument: anArgument into: aStream.
-			aStream nextPut: $) ].
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> build [
+	query := String
+			streamContents: [ :aStream | 
+				self nextPutTypeRefFragmentInto: aStream.
+				aStream cr.
 
-	aType := self typeNamed: aField type baseType name.
-	(self isOfTypeWithFields: aType)
-		ifFalse: [ aStream cr.
-			^ self ].
+				self nextPutFullTypeFragmentInto: aStream.
+				aStream cr.
 
-	(self isOfIntrospectionType: aType)
-		ifTrue: [ self
-				nextPutFragmentRefNamed: 'TypeRef'
-				shift: anInteger
-				into: aStream.
-			^ self ].
+				self nextPutInputValueFragmentInto: aStream.
+				aStream cr.
 
-	(self isOfIntrospectionInputValue: aType)
-		ifTrue: [ self
-				nextPutFragmentRefNamed: 'InputValue'
-				shift: anInteger
-				into: aStream.
-			^ self ].
+				self nextPutSchemaQueryInto: aStream ].
 
-	aStream
-		nextPutAll: ' {';
-		cr.
-
-	self
-		buildTypeFieldsForType: aType
-		shift: anInteger + 1
-		into: aStream.
-
-	self indentTimes: anInteger into: aStream.
-	aStream
-		nextPut: $};
-		cr
+	^ query
 ]
 
 { #category : #'private - building' }
@@ -65,26 +40,79 @@ GtGQLIntrospectionSchemaQueryBuilder >> buildFieldArgument: anArgument into: aSt
 { #category : #'api - building' }
 GtGQLIntrospectionSchemaQueryBuilder >> buildFullTypeFragment [
 	fullTypeFragment := String
-			streamContents: [ :aStream | 
-				| aType |
-				aStream
-					nextPutAll: 'fragment FullType on __Type {';
-					cr;
-					tab;
-					nextPutAll: '__typename';
-					cr.
-				aType := self typeNamed: '__Type'.
-
-				self
-					buildTypeFieldsForType: aType
-					shift: 1
-					into: aStream.
-
-				aStream
-					nextPut: $};
-					cr ].
+			streamContents: [ :aStream | self nextPutFullTypeFragmentInto: aStream ].
 
 	^ fullTypeFragment
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> buildInputValueFragment [
+	inputValueFragment := String
+			streamContents: [ :aStream | self nextPutInputValueFragmentInto: aStream ].
+
+	^ inputValueFragment
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> buildSchemaQuery [
+	schemaQuery := String
+			streamContents: [ :aStream | self nextPutSchemaQueryInto: aStream ].
+
+	^ schemaQuery
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> buildType: aType field: aField shift: anInteger into: aStream [
+	| aFieldType |
+	self indentTimes: anInteger into: aStream.
+	aStream nextPutAll: aField name.
+	(self includeDeprecatedArgumentOfField: aField)
+		ifNotNil: [ :anArgument | 
+			aStream nextPut: $(.
+			self buildFieldArgument: anArgument into: aStream.
+			aStream nextPut: $) ].
+
+	aFieldType := self typeNamed: aField type baseType name.
+
+	(self isOfTypeWithFields: aFieldType)
+		ifFalse: [ aStream cr.
+			^ self ].
+
+	((self isOfIntrospectionType: aFieldType)
+		and: [ aType name = '__Schema' and: [ aField name = 'types' ] ])
+		ifTrue: [ self
+				nextPutFragmentRefNamed: 'FullType'
+				shift: anInteger
+				into: aStream.
+			^ self ].
+
+	(self isOfIntrospectionType: aFieldType)
+		ifTrue: [ self
+				nextPutFragmentRefNamed: 'TypeRef'
+				shift: anInteger
+				into: aStream.
+			^ self ].
+
+	(self isOfIntrospectionInputValue: aFieldType)
+		ifTrue: [ self
+				nextPutFragmentRefNamed: 'InputValue'
+				shift: anInteger
+				into: aStream.
+			^ self ].
+
+	aStream
+		nextPutAll: ' {';
+		cr.
+
+	self
+		buildTypeFieldsForType: aFieldType
+		shift: anInteger + 1
+		into: aStream.
+
+	self indentTimes: anInteger into: aStream.
+	aStream
+		nextPut: $};
+		cr
 ]
 
 { #category : #'private - building' }
@@ -92,7 +120,8 @@ GtGQLIntrospectionSchemaQueryBuilder >> buildTypeFieldsForType: aType shift: anI
 	aType fields
 		do: [ :eachField | 
 			self
-				buildField: eachField
+				buildType: aType
+				field: eachField
 				shift: anInteger
 				into: aStream ]
 ]
@@ -165,6 +194,114 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutFragmentRefNamed: aName shift: an
 	self indentTimes: anInteger into: aStream.
 	aStream
 		nextPut: $};
+		cr
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> nextPutFullTypeFragmentInto: aStream [
+	| aType |
+	aStream
+		nextPutAll: 'fragment FullType on __Type {';
+		cr;
+		tab;
+		nextPutAll: '__typename';
+		cr.
+	aType := self typeNamed: '__Type'.
+
+	self
+		buildTypeFieldsForType: aType
+		shift: 1
+		into: aStream.
+	aStream
+		nextPut: $};
+		cr
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> nextPutInputValueFragmentInto: aStream [
+	| aType |
+	aStream
+		nextPutAll: 'fragment InputValue on __InputValue {';
+		cr;
+		tab;
+		nextPutAll: '__typename';
+		cr.
+	aType := self typeNamed: '__InputValue'.
+
+	self
+		buildTypeFieldsForType: aType
+		shift: 1
+		into: aStream.
+	aStream
+		nextPut: $};
+		cr
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> nextPutSchemaQueryInto: aStream [
+	| aType |
+	aStream
+		nextPutAll: 'query SchemaQuery {';
+		cr;
+		tab;
+		nextPutAll: '__schema {';
+		cr;
+		tab;
+		tab;
+		nextPutAll: '__typename';
+		cr.
+	aType := self typeNamed: '__Schema'.
+
+	self
+		buildTypeFieldsForType: aType
+		shift: 2
+		into: aStream.
+	aStream
+		tab;
+		nextPut: $};
+		cr;
+		nextPut: $};
+		cr
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaQueryBuilder >> nextPutTypeRefFragmentInto: aStream [
+	aStream
+		nextPutAll: 'fragment TypeRef on __Type {
+	__typename
+	kind
+	name
+	ofType {
+		__typename
+		kind
+		name
+		ofType {
+			__typename
+			kind
+			name
+			ofType {
+				kind
+				name
+				ofType {
+					kind
+					name
+					ofType {
+						kind
+						name
+						ofType {
+							kind
+							name
+							ofType {
+								kind
+								name
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}';
 		cr
 ]
 

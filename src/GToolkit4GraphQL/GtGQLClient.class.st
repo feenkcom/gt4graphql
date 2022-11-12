@@ -247,6 +247,16 @@ GtGQLClient >> post [
 				request: aClient request ].
 
 	aJson := aClient response asJson.
+
+	aJson
+		at: #data
+		ifPresent: [ ^ GtGQLResult new
+				configuration: self configuration;
+				query: self graphql;
+				variables: self variables;
+				result: aJson ]
+		ifAbsent: [  ].
+
 	aJson
 		at: #errors
 		ifPresent: [ :anErrorJson | 

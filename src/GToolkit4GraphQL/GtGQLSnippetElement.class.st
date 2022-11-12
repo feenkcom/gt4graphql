@@ -117,9 +117,11 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 ]
 
 { #category : #accessing }
-GtGQLSnippetElement >> executeQuery [
+GtGQLSnippetElement >> executeQuery: aButton [
 	self context
 		ifNotNil: [ :context | 
+			aButton disable.
+
 			[ | operation input |
 			operation := (gqlElement childNamed: #operationEditor) text asString.
 			input := (gqlElement childNamed: #inputEditor) text asString trim.
@@ -127,8 +129,14 @@ GtGQLSnippetElement >> executeQuery [
 				ifTrue: [ context client query: operation ]
 				ifFalse: [ context client query: operation variables: input ] ]
 				asAsyncPromise
-				then: [ :json | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: json ] ]
-				otherwise: [ :ex | gqlElement inUIProcessDo: [ gqlElement phlow spawnObject: ex ] ] ]
+				then: [ :json | 
+					gqlElement
+						inUIProcessDo: [ gqlElement phlow spawnObject: json.
+							aButton enable ] ]
+				otherwise: [ :ex | 
+					gqlElement
+						inUIProcessDo: [ gqlElement phlow spawnObject: ex.
+							aButton enable ] ] ]
 ]
 
 { #category : #accessing }
@@ -177,7 +185,7 @@ GtGQLSnippetElement >> initialize [
 				aptitude: BrGlamorousButtonWithIconAptitude;
 				icon: BrGlamorousIcons playinspect asElement;
 				label: 'Execute' asString;
-				action: [ self executeQuery ])
+				action: [ :aButton | self executeQuery: aButton ])
 		as: #executeButton
 ]
 
