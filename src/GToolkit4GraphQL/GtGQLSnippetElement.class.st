@@ -118,25 +118,21 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 
 { #category : #accessing }
 GtGQLSnippetElement >> executeQuery: aButton [
-	self context
-		ifNotNil: [ :context | 
-			aButton disable.
+	| aContext aFuture |
+	aContext := self context.
+	aContext ifNil: [ ^ self ].
 
-			[ | operation input |
-			operation := (gqlElement childNamed: #operationEditor) text asString.
-			input := (gqlElement childNamed: #inputEditor) text asString trim.
-			input isEmpty
-				ifTrue: [ context client query: operation ]
-				ifFalse: [ context client query: operation variables: input ] ]
-				asAsyncPromise
-				then: [ :json | 
-					gqlElement
-						inUIProcessDo: [ gqlElement phlow spawnObject: json.
-							aButton enable ] ]
-				otherwise: [ :ex | 
-					gqlElement
-						inUIProcessDo: [ gqlElement phlow spawnObject: ex.
-							aButton enable ] ] ]
+	aButton disable.
+
+	aFuture := [ | operation input |
+		operation := (gqlElement childNamed: #operationEditor) text asString.
+		input := (gqlElement childNamed: #inputEditor) text asString trim.
+		input isEmpty
+			ifTrue: [ aContext client query: operation ]
+			ifFalse: [ aContext client query: operation variables: input ] ].
+
+	aButton
+		withAsyncFutureDo: [ :anElementFuture | anElementFuture future: aFuture asAsyncFuture ]
 ]
 
 { #category : #accessing }
@@ -185,7 +181,16 @@ GtGQLSnippetElement >> initialize [
 				aptitude: BrGlamorousButtonWithIconAptitude;
 				icon: BrGlamorousIcons playinspect asElement;
 				label: 'Execute' asString;
-				action: [ :aButton | self executeQuery: aButton ])
+				action: [ :aButton | self executeQuery: aButton ];
+				withAsyncFutureDo: [ :anElementFuture | 
+					anElementFuture
+						whenPending: [ :theButton | theButton disable ];
+						whenError: [ :theButton :anError | 
+							theButton phlow spawnObject: anError.
+							theButton enable ];
+						whenSuccess: [ :theButton :aResult | 
+							theButton phlow spawnObject: aResult.
+							theButton enable ] ])
 		as: #executeButton
 ]
 
