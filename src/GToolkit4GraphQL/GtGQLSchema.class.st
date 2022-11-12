@@ -13,7 +13,6 @@ Class {
 
 { #category : #accessing }
 GtGQLSchema class >> gtTypesFor: aView items: aBlock [
-	<gtView>
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
@@ -39,7 +38,7 @@ GtGQLSchema class >> typeForObject: aTypeOrField [
 	^ (aTypeOrField isKindOf: GtGQLField) ifTrue: [ aTypeOrField type ] ifFalse: [ aTypeOrField ]
 ]
 
-{ #category : #'gt - extensions' }
+{ #category : #accessing }
 GtGQLSchema >> baseTypes [
 	^ types values reject: [ :each | each isList or: [ each isNonNullable ] ]
 ]
@@ -90,6 +89,16 @@ GtGQLSchema >> gtDirectivesFor: aView [
 		column: 'Description'
 			text: [ :each | each description ifNil: [ '' ] ]
 			weight: 3
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtMetaMetaModelFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self metaMetaModelTypes asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Meta-Meta-Model';
+		priority: 40
 ]
 
 { #category : #accessing }
@@ -219,6 +228,11 @@ GtGQLSchema >> initialize [
 { #category : #accessing }
 GtGQLSchema >> interfaces [
 	^ self types select: [ :each | each isKindOf: GtGQLInterface ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> metaMetaModelTypes [
+	^ self baseTypes select: [ :each | each name beginsWith: '__' ]
 ]
 
 { #category : #accessing }

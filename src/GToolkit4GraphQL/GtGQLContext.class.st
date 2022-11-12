@@ -5,7 +5,9 @@ Class {
 		'authentication',
 		'clientBuilder',
 		'graphQLUrl',
-		'schema'
+		'schema',
+		'introspectionSchemaQuery',
+		'introspectionEssentialSchema'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -134,6 +136,26 @@ GtGQLContext >> initialize [
 
 	authentication := GtGQLNoAuthentication new.
 	clientBuilder := GtGQLClientBuilder new
+]
+
+{ #category : #'api - introspection' }
+GtGQLContext >> introspectionEssentialSchema [
+	<return: #String>
+	^ introspectionEssentialSchema
+		ifNil: [ introspectionEssentialSchema := GtGQLIntrospectionEssentialSchemaBuilder new
+					configuration: self;
+					build;
+					schema ]
+]
+
+{ #category : #'api - introspection' }
+GtGQLContext >> introspectionSchemaQuery [
+	<return: #String>
+	^ introspectionSchemaQuery
+		ifNil: [ introspectionSchemaQuery := GtGQLIntrospectionSchemaQueryBuilder new
+					configuration: self;
+					essentialSchema: self introspectionEssentialSchema;
+					build ]
 ]
 
 { #category : #accessing }
