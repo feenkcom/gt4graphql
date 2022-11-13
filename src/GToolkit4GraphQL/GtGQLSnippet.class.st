@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'operation',
 		'context',
-		'input'
+		'input',
+		'resultVariableName'
 	],
 	#category : #'GToolkit4GraphQL-Snippet-Model'
 }
@@ -23,6 +24,7 @@ GtGQLSnippet class >> empty [
 		operation: '';
 		input: '';
 		context: nil;
+		resultVariableName: '';
 		yourself
 ]
 
@@ -32,6 +34,7 @@ GtGQLSnippet class >> leJsonV3AttributeMapping [
 		add: #operation -> #operation;
 		add: #input -> #input;
 		add: #context -> #context;
+		add: #resultVariableName -> #resultVariableName;
 		yourself
 ]
 
@@ -46,6 +49,7 @@ GtGQLSnippet class >> leJsonV4AttributeMapping [
 		add: #operation -> #operation;
 		add: #input -> #input;
 		add: #context -> #context;
+		add: #resultVariableName -> #resultVariableName;
 		yourself
 ]
 
@@ -155,4 +159,21 @@ GtGQLSnippet >> operation: aString [
 				source: self;
 				snippet: self;
 				operation: aString)
+]
+
+{ #category : #accessing }
+GtGQLSnippet >> resultVariableName [
+
+	^ resultVariableName
+]
+
+{ #category : #accessing }
+GtGQLSnippet >> resultVariableName: aString [
+	resultVariableName := aString.
+
+	self
+		notifyAnnouncement: (GtGQLSnippetResultVariableNameChanged new
+				source: self;
+				snippet: self;
+				resultVariableName: aString)
 ]

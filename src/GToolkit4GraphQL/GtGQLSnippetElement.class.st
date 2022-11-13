@@ -137,7 +137,7 @@ GtGQLSnippetElement >> executeQuery: aButton [
 
 { #category : #accessing }
 GtGQLSnippetElement >> initialize [
-	| contextElement operationEditor completionController inputEditor |
+	| contextElement operationEditor completionController inputEditor toolbar |
 	super initialize.
 	gqlElement := BrVerticalPane new.
 	gqlElement padding: (BlInsets all: 5).
@@ -174,10 +174,14 @@ GtGQLSnippetElement >> initialize [
 				action: [ :element | self renameInInput ]).
 	inputEditor editor styler: JSONParser gtStyler.
 	gqlElement addChild: inputEditor as: #inputEditor.
-	gqlElement
+	toolbar := BrHorizontalPane new
+			fitContent;
+			margin: (BlInsets top: 5).
+	gqlElement addChild: toolbar as: #toolbar.
+	toolbar
 		addChild: (BrButton new
-				margin: (BlInsets top: 3 bottom: 3);
 				beSmallSize;
+				constraintsDo: [ :c | c linear vertical alignCenter ];
 				aptitude: BrGlamorousButtonWithIconAptitude;
 				icon: BrGlamorousIcons playinspect asElement;
 				label: 'Execute' asString;
@@ -185,13 +189,23 @@ GtGQLSnippetElement >> initialize [
 				withAsyncFutureDo: [ :anElementFuture | 
 					anElementFuture
 						whenPending: [ :theButton | theButton disable ];
-						whenError: [ :theButton :anError | 
-							theButton phlow spawnObject: anError.
-							theButton enable ];
-						whenSuccess: [ :theButton :aResult | 
-							theButton phlow spawnObject: aResult.
-							theButton enable ] ])
-		as: #executeButton
+						whenError: [ :theButton :anError | self onExecutionError: anError from: theButton ];
+						whenSuccess: [ :theButton :aResult | self onExecutionSuccess: aResult from: theButton ] ])
+		as: #executeButton.
+	toolbar
+		addChild: ((self createLabel: 'Result:')
+				constraintsDo: [ :c | c linear vertical alignCenter ];
+				margin: (BlInsets
+						top: 0
+						left: 10
+						bottom: 0
+						right: 3));
+		addChild: ((self createSourceEditor: #updateVariable)
+					aptitude: (BrGlamorousCodeEditorAptitude new fontSize: 12)
+							+ (BrGlamorousEditableLabelAptitude new minWidth: 100);
+					constraintsDo: [ :c | c linear vertical alignCenter ];
+					padding: (BlInsets all: 3))
+			as: #variableEditor
 ]
 
 { #category : #refactoring }
@@ -224,13 +238,28 @@ GtGQLSnippetElement >> inputSource [
 		ifNone: [ nil ]
 ]
 
+{ #category : #'private - event handling' }
+GtGQLSnippetElement >> onExecutionError: anError from: theButton [
+	self snippetViewModel resultValue: anError.
+	theButton phlow spawnObject: anError.
+	theButton enable
+]
+
+{ #category : #'private - event handling' }
+GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
+	self snippetViewModel resultValue: aResult.
+	theButton phlow spawnObject: aResult.
+	theButton enable
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> onSnippetViewModelChanged [
 	super onSnippetViewModelChanged.
 	self setDefaultContextVariable.
 	self updateInputEditor.
 	self updateOperationEditor.
-	self updateContext
+	self updateContext.
+	self updateVariableEditor
 ]
 
 { #category : #refactoring }
@@ -356,6 +385,10 @@ GtGQLSnippetElement >> subscribeToSnippetViewModel [
 	self snippetViewModel weak
 		when: GtGQLSnippetOperationChanged
 		send: #updateOperationEditor
+		to: self.
+	self snippetViewModel weak
+		when: GtGQLSnippetOperationChanged
+		send: #updateVariableEditor
 		to: self
 ]
 
@@ -413,4 +446,29 @@ GtGQLSnippetElement >> updateOperationEditor [
 		ifFound: [ :editor | 
 			editor editor text asString ~= self snippet operation
 				ifTrue: [ editor editor text: self snippet operation asRopedText ] ]
+]
+
+{ #category : #updating }
+GtGQLSnippetElement >> updateVariable [
+	self variableSource
+		ifNotNil: [ :searchString | 
+			searchString ~= self snippet resultVariableName
+				ifTrue: [ self snippet resultVariableName: searchString  ] ]
+]
+
+{ #category : #updating }
+GtGQLSnippetElement >> updateVariableEditor [
+	gqlElement
+		childNamed: #variableEditor
+		ifFound: [ :editor | 
+			editor editor text asString ~= self snippet resultVariableName
+				ifTrue: [ editor editor text: self snippet resultVariableName asRopedText ] ]
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> variableSource [
+	^ gqlElement
+		childNamed: #variableEditor
+		ifFound: [ :editor | editor editor text asString ]
+		ifNone: [ nil ]
 ]
