@@ -267,41 +267,7 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutSchemaQueryInto: aStream [
 { #category : #'private - building' }
 GtGQLIntrospectionSchemaQueryBuilder >> nextPutTypeRefFragmentInto: aStream [
 	aStream
-		nextPutAll: 'fragment TypeRef on __Type {
-	__typename
-	kind
-	name
-	ofType {
-		__typename
-		kind
-		name
-		ofType {
-			__typename
-			kind
-			name
-			ofType {
-				kind
-				name
-				ofType {
-					kind
-					name
-					ofType {
-						kind
-						name
-						ofType {
-							kind
-							name
-							ofType {
-								kind
-								name
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}';
+		nextPutAll: GtGQLIntrospectionConstants typeRefFragment;
 		cr
 ]
 

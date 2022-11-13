@@ -13,27 +13,31 @@ Class {
 
 { #category : #'api - building' }
 GtGQLIntrospectionEssentialSchemaBuilder >> build [
-	^ self buildEssentialTypes
+	self buildEssentialTypes.
+
+	^ self schema
 ]
 
 { #category : #'private - building' }
-GtGQLIntrospectionEssentialSchemaBuilder >> buildEssentialType: aTypeName schema: aSchema [
+GtGQLIntrospectionEssentialSchemaBuilder >> buildEssentialType: aTypeName [
 	| aResponse |
 	self
 		assert: [ aTypeName isNotNil ]
 		description: [ 'Type name must be non-nil' ].
-	self
-		assert: [ aSchema isNotNil ]
-		description: [ 'Schema name must be non-nil' ].
 
 	aResponse := self client
 			query: self essentialTypeGraphQL
 			variables: {'name' -> aTypeName asString} asDictionary.
 	log add: aResponse.
-	aResponse isSuccess ifFalse: [ ^ nil ].
+
+	self
+		assert: [ aResponse isSuccess ]
+		description: [ 'Essential type query response for {1} type must be successful: {2}'
+				format: {aTypeName.
+						aResponse} ].
 
 	^ self configuration schemaBuilder
-		schema: aSchema;
+		schema: self schema;
 		json: aResponse result;
 		buildType
 ]
@@ -50,37 +54,27 @@ GtGQLIntrospectionEssentialSchemaBuilder >> buildEssentialTypes [
 		push: '__Type'.
 
 	self buildPendingEssentialTypes.
-
-	self populateEssentialTypesIntoSchema: self schema.
-
-	^ self schema
 ]
 
 { #category : #'private - building' }
 GtGQLIntrospectionEssentialSchemaBuilder >> buildPendingEssentialTypes [
-	| aTypeName aSchema aRequestedType anExistingTypes anEmptyTypes |
+	| aTypeName anEssentialType anExistingTypes aNewTypes |
 	aTypeName := pendingTypeNames pop.
-	aSchema := GtGQLSchema new.
-	self populateEssentialTypesIntoSchema: aSchema.
 
-	anExistingTypes := aSchema baseTypes copy.
-	aRequestedType := self buildEssentialType: aTypeName schema: aSchema.
+	anExistingTypes := self schema baseTypes copy.
+	anEssentialType := self buildEssentialType: aTypeName.
 
-	self
-		assert: [ aRequestedType isNotNil ]
-		description: [ 'Type must be non-nil' ].
+	aNewTypes := self schema baseTypes copy
+			reject: [ :aSchemaType | 
+				(anExistingTypes includes: aSchemaType)
+					or: [ aSchemaType = anEssentialType ] ].
 
-	anEmptyTypes := aSchema baseTypes copy
-			reject: [ :eachSchemaType | 
-				(anExistingTypes includes: eachSchemaType)
-					or: [ eachSchemaType = aRequestedType ] ].
+	essentialTypes add: anEssentialType.
 
-	essentialTypes add: aRequestedType.
-
-	anEmptyTypes
-		do: [ :eachEmptyType | 
-			(pendingTypeNames includes: eachEmptyType name)
-				ifFalse: [ pendingTypeNames push: eachEmptyType name ] ].
+	aNewTypes
+		do: [ :eachNewType | 
+			(pendingTypeNames includes: eachNewType name)
+				ifFalse: [ pendingTypeNames push: eachNewType name ] ].
 
 	pendingTypeNames ifNotEmpty: [ self buildPendingEssentialTypes ]
 ]
@@ -107,75 +101,7 @@ GtGQLIntrospectionEssentialSchemaBuilder >> essentialType [
 
 { #category : #accessing }
 GtGQLIntrospectionEssentialSchemaBuilder >> essentialTypeGraphQL [
-	^ 'fragment TypeRef on __Type {
-	__typename
-	kind
-	name
-	ofType {
-		__typename
-		kind
-		name
-		ofType {
-			__typename
-			kind
-			name
-			ofType {
-				kind
-				name
-				ofType {
-					kind
-					name
-					ofType {
-						kind
-						name
-						ofType {
-							kind
-							name
-							ofType {
-								kind
-								name
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-fragment EssentialField on __Field {
-	__typename
-	name
-	type {
-		...TypeRef
-	}
-	args {
-		__typename
-		name
-		type {
-			...TypeRef
-		}
-		defaultValue
-	}
-}
-
-fragment EssentialType on __Type {
-		__typename
-		kind
-		name
-		ofType {
-			...TypeRef
-		}
-		fields {
-			...EssentialField
-		}
-	}
-
-query SchemaFields($name: String = "__Type") {
-	__type(name: $name) {
-		...EssentialType
-	}
-}'
+	^ GtGQLIntrospectionConstants essentialTypeQuery
 ]
 
 { #category : #accessing }
@@ -197,17 +123,16 @@ GtGQLIntrospectionEssentialSchemaBuilder >> log [
 	^ log
 ]
 
-{ #category : #'private - building' }
-GtGQLIntrospectionEssentialSchemaBuilder >> populateEssentialTypesIntoSchema: aSchema [
-	essentialTypes
-		do: [ :eachEssentialType | 
-			aSchema
-				typeNamed: eachEssentialType name
-				ifPresent: [ :aType | aType ]
-				ifAbsentPut: [ eachEssentialType ] ]
-]
-
 { #category : #accessing }
 GtGQLIntrospectionEssentialSchemaBuilder >> schema [
 	^ schema
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionEssentialSchemaBuilder >> schema: aSchema [
+	self
+		assert: [ aSchema isNotNil ]
+		description: [ 'Schema name must be non-nil' ].
+
+	schema := aSchema
 ]
