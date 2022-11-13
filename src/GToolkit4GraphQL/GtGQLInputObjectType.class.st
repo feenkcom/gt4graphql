@@ -35,6 +35,23 @@ GtGQLInputObjectType >> deprecationReason: anObject [
 	deprecationReason := anObject
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLInputObjectType >> gtTypesNameText [
+	| aText |
+	aText := self name asRopedText.
+
+	self isRequired
+		ifTrue: [ aText
+				append: '!' asRopedText;
+				bold ].
+	self isDeprecated
+		ifTrue: [ aText
+				lineThroughDo: [ :anAttribute |  ];
+				italic ].
+
+	^ aText
+]
+
 { #category : #accessing }
 GtGQLInputObjectType >> initialize [
 	super initialize.

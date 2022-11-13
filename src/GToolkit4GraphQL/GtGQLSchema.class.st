@@ -109,7 +109,11 @@ GtGQLSchema >> gtMutationFor: aView [
 		priority: 12;
 		title: 'Mutation';
 		object: [ self mutationType ];
-		view: #gtFieldsFor:
+		view: #gtFieldsFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Mutation'
+			tooltip: 'Inspect mutation'
+			action: [ :aButton | aButton phlow spawnObject: self mutationType ]
 ]
 
 { #category : #accessing }
@@ -120,7 +124,11 @@ GtGQLSchema >> gtQueryFor: aView [
 		priority: 11;
 		title: 'Query';
 		object: [ self queryType ];
-		view: #gtFieldsFor:
+		view: #gtFieldsFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Query'
+			tooltip: 'Inspect query'
+			action: [ :aButton | aButton phlow spawnObject: self queryType ]
 ]
 
 { #category : #accessing }

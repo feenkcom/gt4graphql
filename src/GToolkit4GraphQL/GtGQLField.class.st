@@ -57,11 +57,19 @@ GtGQLField >> gtArgumentsFor: aView [
 		items: [ self arguments ifNil: [ #() ] ];
 		column: 'Name'
 			text: [ :each | 
+				| aText |
+				aText := each name asRopedText.
+
+				each isRequired ifTrue: [ aText bold ].
+
 				each isDeprecated
-					ifTrue: [ each name asRopedText
-							append: (' (deprecated)' asRopedText
-									foreground: BrGlamorousColors disabledButtonTextColor) ]
-					ifFalse: [ each name ] ];
+					ifTrue: [ aText
+							lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors disabledButtonTextColor ];
+							append: ' (deprecated)' asRopedText;
+							foreground: BrGlamorousColors disabledButtonTextColor;
+							italic ].
+
+				aText ];
 		column: 'Type' text: [ :each | each type ifNotNil: #name ifNil: [ '' ] ];
 		column: 'Default Value' text: [ :each | each defaultValue ifNil: [ '' ] ];
 		column: 'Description'
@@ -74,7 +82,9 @@ GtGQLField >> gtTypeFor: aView [
 	<gtView>
 	type ifNil: [ ^ aView empty ].
 	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
-	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ]) title: 'Type'
+	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ])
+		title: 'Type';
+		expandUpTo: 1
 ]
 
 { #category : #'gt - extensions' }
@@ -82,18 +92,15 @@ GtGQLField >> gtTypesNameText [
 	| aText |
 	aText := self name asRopedText.
 
+	self isRequired ifTrue: [ aText bold ].
+
+	self isDeprecated ifTrue: [ aText lineThroughDo: [ :anAttribute |  ] ].
+
 	self hasArguments
 		ifTrue: [ | anArgumentsText |
 			anArgumentsText := '(' asRopedText.
 			self arguments
-				do: [ :eachArgument | 
-					| eachText |
-					eachText := eachArgument name asRopedText.
-					eachArgument isRequired
-						ifTrue: [ eachText
-								append: '!' asRopedText;
-								bold ].
-					anArgumentsText append: eachText ]
+				do: [ :eachArgument | anArgumentsText append: eachArgument gtTypesNameText ]
 				separatedBy: [ anArgumentsText append: ', ' asRopedText ].
 			anArgumentsText append: ')' asRopedText.
 			anArgumentsText foreground: BrGlamorousColors disabledButtonTextColor.
@@ -101,9 +108,9 @@ GtGQLField >> gtTypesNameText [
 
 	self isDeprecated
 		ifTrue: [ aText
-				lineThroughDo: [ :anAttribute |  ];
 				italic;
 				append: (' (deprecated)' asRopedText
+						italic;
 						foreground: BrGlamorousColors disabledButtonTextColor) ].
 
 	^ aText
@@ -129,6 +136,11 @@ GtGQLField >> isDeprecated [
 { #category : #accessing }
 GtGQLField >> isDeprecated: anObject [
 	isDeprecated := anObject
+]
+
+{ #category : #testing }
+GtGQLField >> isRequired [
+	^ self type ifNotNil: #isRequired ifNil: [ false ]
 ]
 
 { #category : #accessing }
