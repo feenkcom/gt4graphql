@@ -8,6 +8,25 @@ Class {
 	#category : #'GToolkit4GraphQL-Snippet-Element'
 }
 
+{ #category : #'private - event handling' }
+GtGQLSnippetElement >> browseSchema [
+	| schema |
+	schema := self context ifNotNil: [ :context | context schema ].
+	schema ifNil: [ ^ self ].
+	self operationNodeAtCursor
+		ifNotNil: [ :node | 
+			| obj |
+			(node isKindOf: GraphQLFieldNode) ifTrue: [ obj := node fieldIn: schema ].
+			(node isKindOf: GraphQLNamedTypeNode)
+				ifTrue: [ obj := (schema typeNamed: node source) ifNotNil: [ :t | t baseType ] ].
+			((node isKindOf: GraphQLArgumentNode)
+				and: [ (node name sourceInterval includes: self operationCursor)
+						and: [ node parent isKindOf: GraphQLFieldNode ] ])
+				ifTrue: [ obj := (node parent fieldIn: schema)
+							ifNotNil: [ :field | field arguments detect: [ :each | each name = node name source ] ifNone: [  ] ] ].
+			obj ifNotNil: [ gqlElement phlow spawnObject: obj ] ]
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> context [
 	^ self snippet contextUsing: self snippetContext
@@ -157,7 +176,11 @@ GtGQLSnippetElement >> initialize [
 		addShortcut: (BlShortcutWithAction new
 				combination: BlKeyCombination primaryR;
 				repeatable: false;
-				action: [ :element | self renameInOperation ]).
+				action: [ :element | self renameInOperation ]);
+		addShortcut: (BlShortcutWithAction new
+				combination: BlKeyCombination primaryB;
+				repeatable: false;
+				action: [ :element | self browseSchema ]).
 	operationEditor editor styler: GraphQLParser gtStyler.
 	completionStrategy := GtGQLCompletionStrategy new.
 	completionController := GtCompletionController
@@ -268,6 +291,15 @@ GtGQLSnippetElement >> operationAst [
 		ifNotNil: [ :string | GraphQLParser parseWithErrors: string ]
 ]
 
+{ #category : #refactoring }
+GtGQLSnippetElement >> operationCursor [
+	| cursors |
+	^ self operationEditor
+		ifNotNil: [ :editor | 
+			cursors := editor cursors.
+			cursors isSingle ifTrue: [ cursors first position ] ]
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> operationEditor [
 	^ gqlElement
@@ -278,13 +310,13 @@ GtGQLSnippetElement >> operationEditor [
 
 { #category : #refactoring }
 GtGQLSnippetElement >> operationNodeAtCursor [
-	| gqlAst cursors |
-	^ self operationEditor
-		ifNotNil: [ :editor | 
-			cursors := editor cursors.
-			cursors isSingle
-				ifTrue: [ gqlAst := self operationAst.
-					gqlAst nodeAt: cursors first position ] ]
+	| gqlAst |
+	^ self operationCursor
+		ifNotNil: [ :position | 
+			self operationEditor
+				ifNotNil: [ :editor | 
+					gqlAst := self operationAst.
+					gqlAst nodeAt: position ] ]
 ]
 
 { #category : #accessing }
@@ -387,7 +419,7 @@ GtGQLSnippetElement >> subscribeToSnippetViewModel [
 		send: #updateOperationEditor
 		to: self.
 	self snippetViewModel weak
-		when: GtGQLSnippetOperationChanged
+		when: GtGQLSnippetResultVariableNameChanged
 		send: #updateVariableEditor
 		to: self
 ]
@@ -462,7 +494,8 @@ GtGQLSnippetElement >> updateVariableEditor [
 		childNamed: #variableEditor
 		ifFound: [ :editor | 
 			editor editor text asString ~= self snippet resultVariableName
-				ifTrue: [ editor editor text: self snippet resultVariableName asRopedText ] ]
+				ifTrue: [ editor editor
+						text: (self snippet resultVariableName ifNil: [ '' ]) asRopedText ] ]
 ]
 
 { #category : #accessing }
