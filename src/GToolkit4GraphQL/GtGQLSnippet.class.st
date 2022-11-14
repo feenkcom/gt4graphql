@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'operation',
 		'context',
-		'input'
+		'input',
+		'resultVariableName'
 	],
 	#category : #'GToolkit4GraphQL-Snippet-Model'
 }
@@ -23,6 +24,7 @@ GtGQLSnippet class >> empty [
 		operation: '';
 		input: '';
 		context: nil;
+		resultVariableName: '';
 		yourself
 ]
 
@@ -32,6 +34,7 @@ GtGQLSnippet class >> leJsonV3AttributeMapping [
 		add: #operation -> #operation;
 		add: #input -> #input;
 		add: #context -> #context;
+		add: #resultVariableName -> #resultVariableName;
 		yourself
 ]
 
@@ -46,6 +49,7 @@ GtGQLSnippet class >> leJsonV4AttributeMapping [
 		add: #operation -> #operation;
 		add: #input -> #input;
 		add: #context -> #context;
+		add: #resultVariableName -> #resultVariableName;
 		yourself
 ]
 
@@ -89,32 +93,42 @@ GtGQLSnippet >> contextUsing: snippetContext [
 	self context = 'self'
 		ifTrue: [ value := snippetContext selfObject ]
 		ifFalse: [ snippetContext selfObject class allInstVarNames
-				detect: [ :each | (snippetContext selfObject instVarNamed: each) isKindOf: GtGQLContext ]
+				detect: [ :each | self isContext: (snippetContext selfObject instVarNamed: each) ]
 				ifFound: [ :each | value := snippetContext selfObject instVarNamed: each ]
 				ifNone: [ variableBindings := snippetContext sharedBindings.
 					(variableBindings hasBindingOf: (self context ifNil: [ '' ]))
 						ifTrue: [ value := (variableBindings bindingOf: self context) value ] ] ].
-	(value isKindOf: GtGQLContext) ifFalse: [ value := nil ].
+	(self isContext: value) ifFalse: [ value := nil ].
 	^ value
 ]
 
 { #category : #accessing }
 GtGQLSnippet >> contextVariablesUsing: snippetContext [
-	| variableBindings variables |
+	| variableBindings variables selfObj |
 	variableBindings := snippetContext sharedBindings.
 	variables := (self allSnippetVariables
 			select: [ :each | 
 				(variableBindings hasBindingOf: each asSymbol) not
-					or: [ (variableBindings bindingOf: each asSymbol) value isKindOf: GtGQLContext ] ])
+					or: [ self isContext: (variableBindings bindingOf: each asSymbol) value ] ])
 			asOrderedCollection.
 	variables sort.
-	(snippetContext selfObject isKindOf: GtGQLContext)
-		ifTrue: [ variables addFirst: 'self' ].
-	snippetContext selfObject class allInstVarNames
+	selfObj := snippetContext selfObject.
+	(self isContext: selfObj) ifTrue: [ variables addFirst: 'self' ].
+	selfObj class allInstVarNames
 		do: [ :each | 
-			((snippetContext selfObject instVarNamed: each) isKindOf: GtGQLContext)
+			(self isContext: (selfObj instVarNamed: each))
 				ifTrue: [ variables addFirst: each ] ].
 	^ variables
+]
+
+{ #category : #accessing }
+GtGQLSnippet >> defaultContextUsing: snippetContext [
+	| obj |
+	obj := snippetContext selfObject.
+	(self isContext: obj) ifTrue: [ ^ 'self' ].
+	obj class allInstVarNames
+		do: [ :each | (self isContext: (obj instVarNamed: each)) ifTrue: [ ^ each ] ].
+	^ nil
 ]
 
 { #category : #accessing }
@@ -125,6 +139,11 @@ GtGQLSnippet >> input [
 { #category : #accessing }
 GtGQLSnippet >> input: aString [
 	input := aString
+]
+
+{ #category : #accessing }
+GtGQLSnippet >> isContext: obj [
+	^ obj isKindOf: GtGQLContext
 ]
 
 { #category : #accessing }
@@ -140,4 +159,21 @@ GtGQLSnippet >> operation: aString [
 				source: self;
 				snippet: self;
 				operation: aString)
+]
+
+{ #category : #accessing }
+GtGQLSnippet >> resultVariableName [
+
+	^ resultVariableName
+]
+
+{ #category : #accessing }
+GtGQLSnippet >> resultVariableName: aString [
+	resultVariableName := aString.
+
+	self
+		notifyAnnouncement: (GtGQLSnippetResultVariableNameChanged new
+				source: self;
+				snippet: self;
+				resultVariableName: aString)
 ]

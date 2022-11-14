@@ -5,7 +5,9 @@ Class {
 		'authentication',
 		'clientBuilder',
 		'graphQLUrl',
-		'schema'
+		'schema',
+		'introspectionSchemaQuery',
+		'introspectionEssentialSchema'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -37,9 +39,8 @@ GtGQLContext >> bearerToken: aToken [
 { #category : #accessing }
 GtGQLContext >> buildSchema [
 	| aBuilder |
-	aBuilder := GtGQLIntrospectionSchemaBuilder new.
-	aBuilder configuration: self.
-	self schema: aBuilder build.
+	aBuilder := self schemaBuilder.
+	self schema: aBuilder build
 ]
 
 { #category : #accessing }
@@ -137,6 +138,26 @@ GtGQLContext >> initialize [
 	clientBuilder := GtGQLClientBuilder new
 ]
 
+{ #category : #'api - introspection' }
+GtGQLContext >> introspectionEssentialSchema [
+	<return: #String>
+	^ introspectionEssentialSchema
+		ifNil: [ introspectionEssentialSchema := GtGQLIntrospectionEssentialSchemaBuilder new
+					configuration: self;
+					build;
+					schema ]
+]
+
+{ #category : #'api - introspection' }
+GtGQLContext >> introspectionSchemaQuery [
+	<return: #String>
+	^ introspectionSchemaQuery
+		ifNil: [ introspectionSchemaQuery := GtGQLIntrospectionSchemaQueryBuilder new
+					configuration: self;
+					essentialSchema: self introspectionEssentialSchema;
+					build ]
+]
+
 { #category : #accessing }
 GtGQLContext >> schema [
 	^ schema
@@ -145,6 +166,14 @@ GtGQLContext >> schema [
 { #category : #accessing }
 GtGQLContext >> schema: anObject [
 	schema := anObject
+]
+
+{ #category : #accessing }
+GtGQLContext >> schemaBuilder [
+	| aBuilder |
+	aBuilder := GtGQLIntrospectionSchemaBuilder new.
+	aBuilder configuration: self.
+	^ aBuilder
 ]
 
 { #category : #accessing }

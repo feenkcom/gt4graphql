@@ -66,122 +66,8 @@ GtGQLClient >> introspectionSchema [
 
 { #category : #'api - communication' }
 GtGQLClient >> introspectionSchemaQuery [
-	^ '
-fragment FullType on __Type {
-  kind
-  name
-  description
-  fields(includeDeprecated: true) {
-    name
-    description
-    args {
-      ...InputValue
-    }
-    type {
-      ...TypeRef
-    }
-    isDeprecated
-    deprecationReason
-  }
-  inputFields {
-    ...InputValue
-  }
-  interfaces {
-    ...TypeRef
-  }
-  enumValues(includeDeprecated: true) {
-    name
-    description
-    isDeprecated
-    deprecationReason
-  }
-  possibleTypes {
-    ...TypeRef
-  }
-  ofType {
-  	...TypeRef
-  }
-}
-
-
-	fragment InputValue on __InputValue {
-		name
-		description
-		type {
-			...TypeRef
-		}
-		defaultValue
-		isDeprecated
-		deprecationReason
-	}
-	
-	fragment TypeRef on __Type {
-		kind
-		name
-		ofType {
-			kind
-			name
-			ofType {
-				kind
-				name
-				ofType {
-					kind
-					name
-					ofType {
-          kind
-          name
-          ofType {
-            kind
-            name
-            ofType {
-              kind
-              name
-              ofType {
-                kind
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-
-	query MyQuery {
-		__schema {
-			#description
-		
-			queryType {
-				name
-			}
-			mutationType {
-				name
-			}
-			
-			subscriptionType {
-				name
-				fields {
-					name
-				}
-			}
-			
-			types {
-				...FullType
-			}
-			
-			directives {
-				name
-				description
-				locations
-				args(includeDeprecated: true) {
-					...InputValue
-				}
-				#isRepeatable
-			}
-		}
-	}'
+	<return: #String>
+	^ self configuration introspectionSchemaQuery
 ]
 
 { #category : #'private - communication' }
@@ -247,6 +133,16 @@ GtGQLClient >> post [
 				request: aClient request ].
 
 	aJson := aClient response asJson.
+
+	aJson
+		at: #data
+		ifPresent: [ ^ GtGQLResult new
+				configuration: self configuration;
+				query: self graphql;
+				variables: self variables;
+				result: aJson ]
+		ifAbsent: [  ].
+
 	aJson
 		at: #errors
 		ifPresent: [ :anErrorJson | 

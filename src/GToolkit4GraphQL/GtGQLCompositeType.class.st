@@ -42,3 +42,8 @@ GtGQLCompositeType >> initialize [
 	super initialize.
 	fields := Dictionary new
 ]
+
+{ #category : #testing }
+GtGQLCompositeType >> isComposite [
+	^ true
+]

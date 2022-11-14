@@ -14,6 +14,26 @@ GtGQLResult >> data [
 	^ self result at: #data
 ]
 
+{ #category : #'api - results' }
+GtGQLResult >> errors [
+	<return: #GtJson or: nil>
+	self hasErrors ifFalse: [ ^ nil ].
+
+	^ self result at: #errors
+]
+
+{ #category : #'gt - extensions' }
+GtGQLResult >> gtErrorsFor: aView [
+	<gtView>
+	self hasErrors ifFalse: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Errors';
+		priority: 15;
+		object: [ self errors ];
+		view: #gtJsonObjectFor:context:
+]
+
 { #category : #'gt - extensions' }
 GtGQLResult >> gtResultJsonObjectFor: aView context: aContext [
 	<gtView>
@@ -68,6 +88,11 @@ GtGQLResult >> gtTypeFor: aView [
 			label: 'Type'
 			tooltip: 'Inspect type'
 			action: [ :aButton | self type ifNotNil: [ :aType | aButton phlow spawnObject: aType ] ]
+]
+
+{ #category : #testing }
+GtGQLResult >> hasErrors [
+	^ self result isNotNil and: [ (self result at: #errors) exists ]
 ]
 
 { #category : #'api - results' }

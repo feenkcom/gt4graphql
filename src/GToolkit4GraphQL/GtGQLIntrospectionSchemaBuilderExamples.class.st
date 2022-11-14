@@ -10,7 +10,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> basicIntrospectionSchemaBuilder [
 	| aBuilder |
 	aBuilder := GtGQLIntrospectionSchemaBuilder new.
 
-	self assert: aBuilder schema isNil.
+	self assert: aBuilder schema isNotNil.
 
 	^ aBuilder
 ]

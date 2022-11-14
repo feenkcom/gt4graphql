@@ -13,7 +13,6 @@ Class {
 
 { #category : #accessing }
 GtGQLSchema class >> gtTypesFor: aView items: aBlock [
-	<gtView>
 	^ aView columnedTree
 		priority: 10;
 		title: 'Types';
@@ -39,7 +38,7 @@ GtGQLSchema class >> typeForObject: aTypeOrField [
 	^ (aTypeOrField isKindOf: GtGQLField) ifTrue: [ aTypeOrField type ] ifFalse: [ aTypeOrField ]
 ]
 
-{ #category : #'gt - extensions' }
+{ #category : #accessing }
 GtGQLSchema >> baseTypes [
 	^ types values reject: [ :each | each isList or: [ each isNonNullable ] ]
 ]
@@ -92,6 +91,16 @@ GtGQLSchema >> gtDirectivesFor: aView [
 			weight: 3
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtMetaMetaModelFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self metaMetaModelTypes asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Meta-Meta-Model';
+		priority: 40
+]
+
 { #category : #accessing }
 GtGQLSchema >> gtMutationFor: aView [
 	<gtView>
@@ -100,7 +109,11 @@ GtGQLSchema >> gtMutationFor: aView [
 		priority: 12;
 		title: 'Mutation';
 		object: [ self mutationType ];
-		view: #gtFieldsFor:
+		view: #gtFieldsFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Mutation'
+			tooltip: 'Inspect mutation'
+			action: [ :aButton | aButton phlow spawnObject: self mutationType ]
 ]
 
 { #category : #accessing }
@@ -111,7 +124,11 @@ GtGQLSchema >> gtQueryFor: aView [
 		priority: 11;
 		title: 'Query';
 		object: [ self queryType ];
-		view: #gtFieldsFor:
+		view: #gtFieldsFor:;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Query'
+			tooltip: 'Inspect query'
+			action: [ :aButton | aButton phlow spawnObject: self queryType ]
 ]
 
 { #category : #accessing }
@@ -217,6 +234,16 @@ GtGQLSchema >> initialize [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> interfaces [
+	^ self types select: [ :each | each isKindOf: GtGQLInterface ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> metaMetaModelTypes [
+	^ self baseTypes select: [ :each | each name beginsWith: '__' ]
+]
+
+{ #category : #accessing }
 GtGQLSchema >> mutationType [
 	^ mutationType
 ]
@@ -224,6 +251,19 @@ GtGQLSchema >> mutationType [
 { #category : #accessing }
 GtGQLSchema >> mutationType: anObject [
 	mutationType := anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> paintInterfaceUsesWith: m [
+	m nodes
+		stencil: [ BlElement new
+				geometry: BlCircleGeometry new;
+				background: Color blue;
+				size: 5 @ 5 ];
+		with: self interfaces.
+	m nodes with: (self interfaces flatCollectAsSet: #possibleTypes).
+	m edges connect: self interfaces toAll: #possibleTypes.
+	^ m layout force
 ]
 
 { #category : #printing }

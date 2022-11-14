@@ -9,6 +9,11 @@ Class {
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
 
+{ #category : #asserting }
+GtGQLIntrospectionSchemaBuilder >> assertSchema: aSchema [
+	self assert: [ aSchema isNotNil ] description: [ 'Schema must be non-nil' ]
+]
+
 { #category : #'api - building' }
 GtGQLIntrospectionSchemaBuilder >> build [
 	| aResultJson aSchemaJson |
@@ -18,8 +23,6 @@ GtGQLIntrospectionSchemaBuilder >> build [
 
 	aResultJson := self ensureJson.
 	aSchemaJson := aResultJson atPath: #(data __schema).
-
-	schema := GtGQLSchema new.
 
 	self
 		ifJson: aSchemaJson
@@ -82,9 +85,6 @@ GtGQLIntrospectionSchemaBuilder >> buildType [
 
 	aResultJson := self json.
 	aTypeJson := aResultJson atPath: #(data __type).
-
-	schema := GtGQLSchema new.
-
 	aTypeJson exists ifFalse: [ ^ nil ].
 
 	^ self createTypeFromJson: aTypeJson
@@ -331,6 +331,12 @@ GtGQLIntrospectionSchemaBuilder >> ifJson: aJson at: aKey notNilDo: aDoBlock [
 		ifAbsent: [ ^ self ]
 ]
 
+{ #category : #initialization }
+GtGQLIntrospectionSchemaBuilder >> initialize [
+	super initialize.
+	schema := GtGQLSchema new
+]
+
 { #category : #accessing }
 GtGQLIntrospectionSchemaBuilder >> json [
 	^ json
@@ -355,8 +361,10 @@ GtGQLIntrospectionSchemaBuilder >> schema [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionSchemaBuilder >> schema: anObject [
-	schema := anObject
+GtGQLIntrospectionSchemaBuilder >> schema: aSchema [
+	self assertSchema: aSchema.
+
+	schema := aSchema
 ]
 
 { #category : #'api - building' }
