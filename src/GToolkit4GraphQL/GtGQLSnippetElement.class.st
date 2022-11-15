@@ -282,10 +282,10 @@ GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
+	self snippetViewModel resultValue: aResult.
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
 		ifTrue: [ self showInlineError: aResult ]
-		ifFalse: [ self snippetViewModel resultValue: aResult.
-			theButton phlow spawnObject: aResult ].
+		ifFalse: [ theButton phlow spawnObject: aResult ].
 	theButton enable
 ]
 
