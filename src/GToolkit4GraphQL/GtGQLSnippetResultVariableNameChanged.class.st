@@ -2,17 +2,30 @@ Class {
 	#name : #GtGQLSnippetResultVariableNameChanged,
 	#superclass : #LeSnippetContentChanged,
 	#instVars : [
-		'resultVariableName'
+		'newName',
+		'oldName'
 	],
 	#category : #'GToolkit4GraphQL-Snippet-Events'
 }
 
 { #category : #accessing }
+GtGQLSnippetResultVariableNameChanged >> oldName [
+
+	^ oldName
+]
+
+{ #category : #accessing }
+GtGQLSnippetResultVariableNameChanged >> oldName: anObject [
+
+	oldName := anObject
+]
+
+{ #category : #accessing }
 GtGQLSnippetResultVariableNameChanged >> resultVariableName [
-	^ resultVariableName
+	^ newName
 ]
 
 { #category : #accessing }
 GtGQLSnippetResultVariableNameChanged >> resultVariableName: anObject [
-	resultVariableName := anObject
+	newName := anObject
 ]

@@ -107,8 +107,7 @@ GtGQLClient >> post [
 		do: [ :anError | 
 			^ GtGQLPreparationProblem new
 				configuration: self configuration;
-				query: self graphql;
-				variables: self variables;
+				operation: self graphql input: self variables;
 				exception: anError;
 				messageText: ('Cannot prepare client: {1}' format: anError) ].
 
@@ -117,8 +116,7 @@ GtGQLClient >> post [
 		do: [ :anError | 
 			^ GtGQLPreparationProblem new
 				configuration: self configuration;
-				query: self graphql;
-				variables: self variables;
+				operation: self graphql input: self variables;
 				exception: anError;
 				messageText: ('Cannot prepare client entity: {1}' format: anError) ].
 
@@ -127,8 +125,7 @@ GtGQLClient >> post [
 	aClient response isSuccess
 		ifFalse: [ ^ GtGQLRequestProblem new
 				configuration: self configuration;
-				query: self graphql;
-				variables: self variables;
+				operation: self graphql input: self variables;
 				response: aClient response;
 				request: aClient request ].
 
@@ -138,8 +135,7 @@ GtGQLClient >> post [
 		at: #data
 		ifPresent: [ ^ GtGQLResult new
 				configuration: self configuration;
-				query: self graphql;
-				variables: self variables;
+				operation: self graphql input: self variables;
 				result: aJson ]
 		ifAbsent: [  ].
 
@@ -148,8 +144,7 @@ GtGQLClient >> post [
 		ifPresent: [ :anErrorJson | 
 			^ GtGQLQueryProblem new
 				configuration: self configuration;
-				query: self graphql;
-				variables: self variables;
+				operation: self graphql input: self variables;
 				response: aClient response;
 				request: aClient request;
 				result: aJson ]
@@ -157,8 +152,7 @@ GtGQLClient >> post [
 
 	^ GtGQLResult new
 		configuration: self configuration;
-		query: self graphql;
-		variables: self variables;
+		operation: self graphql input: self variables;
 		result: aJson
 ]
 

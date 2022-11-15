@@ -29,8 +29,12 @@ GtGQLSnippetElement >> browseSchema [
 
 { #category : #private }
 GtGQLSnippetElement >> clearPreviousErrors [
-	self operationEditor editor text
-		clearAttributes: [ :each | each class == GtSourceCoderErrorAttribute ]
+	| text |
+	text := self operationEditor editor text.
+	text
+		clearAttributes: 0
+		to: text size
+		if: [ :each | each class == GtSourceCoderErrorAttribute ]
 ]
 
 { #category : #accessing }
@@ -230,6 +234,9 @@ GtGQLSnippetElement >> initialize [
 						bottom: 0
 						right: 3));
 		addChild: ((self createSourceEditor: #updateVariable)
+					hFitContentLimited;
+					styler: GtSelectorStyler new forUnary;
+					inputFilter: GtSelectorInputFilter forUnaryMessage;
 					aptitude: (BrGlamorousCodeEditorAptitude new fontSize: 12)
 							+ (BrGlamorousEditableLabelAptitude new minWidth: 100);
 					constraintsDo: [ :c | c linear vertical alignCenter ];
@@ -270,16 +277,15 @@ GtGQLSnippetElement >> inputSource [
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 	self snippetViewModel resultValue: anError.
-	theButton phlow spawnObject: anError.
 	theButton enable
 ]
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
-		ifTrue: [ self showInlineError: aResult ].
-	self snippetViewModel resultValue: aResult.
-	theButton phlow spawnObject: aResult.
+		ifTrue: [ self showInlineError: aResult ]
+		ifFalse: [ self snippetViewModel resultValue: aResult.
+			theButton phlow spawnObject: aResult ].
 	theButton enable
 ]
 
@@ -406,8 +412,11 @@ GtGQLSnippetElement >> showInlineError: aResult [
 			(message isNil or: [ line isNil or: [ column isNil ] ])
 				ifFalse: [ (text gtIndexOfLineNumber: line)
 						ifNotNil: [ :location | 
-							(editor text from: location key + column - 2 to: location key + column - 2)
-								attributes: {(GtSourceCoderErrorAttribute for: message) beOverwritableByStyler} ] ] ]
+							editor text
+								attributes: {(GtSourceCoderErrorAttribute for: message)
+											beOverwritableByStyler}
+								from: location key + column - 2
+								to: location key + column - 2 ] ] ]
 ]
 
 { #category : #'api - view' }

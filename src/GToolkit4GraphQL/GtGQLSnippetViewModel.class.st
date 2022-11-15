@@ -8,8 +8,36 @@ Class {
 }
 
 { #category : #'private - announcement handling' }
+GtGQLSnippetViewModel >> onInputChanged: anAnnouncement [
+	self
+		resultValue: (GtGQLPreparation new
+				operation: self snippetModel operation
+				input: anAnnouncement input).
+
+	self announce: anAnnouncement
+]
+
+{ #category : #'private - announcement handling' }
+GtGQLSnippetViewModel >> onOperationChanged: anAnnouncement [
+	self
+		resultValue: (GtGQLPreparation new
+				operation: anAnnouncement operation
+				input: self snippetModel input).
+
+	self announce: anAnnouncement
+]
+
+{ #category : #'private - announcement handling' }
 GtGQLSnippetViewModel >> onResultVariableNameChanged: anAnnouncement [
-	"self updateResultVariableBindings."
+	| aName |
+	aName := self resultVariableName.
+	aName ifNil: [ ^ self ].
+	aName ifEmpty: [ ^ self ].
+
+	anAnnouncement oldName
+		ifNotNil: [ self snippetBindings removeBindingOf: anAnnouncement oldName ].
+
+	(self snippetBindings bindingOf: aName) value: self resultValue.
 
 	self announce: anAnnouncement
 ]
@@ -17,6 +45,9 @@ GtGQLSnippetViewModel >> onResultVariableNameChanged: anAnnouncement [
 { #category : #'api - result variable' }
 GtGQLSnippetViewModel >> resultValue [
 	^ resultValue
+		ifNil: [ resultValue := GtGQLPreparation new
+					operation: self snippetModel operation
+					input: self snippetModel input ]
 ]
 
 { #category : #'api - result variable' }
@@ -50,12 +81,12 @@ GtGQLSnippetViewModel >> subscribeToSnippetModel [
 		send: #announce:
 		to: self.
 	self snippetModel weak
-		when: GtGQLSnippetInputChanged
-		send: #announce:
+		when: GtGQLSnippetOperationChanged
+		send: #onOperationChanged:
 		to: self.
 	self snippetModel weak
-		when: GtGQLSnippetOperationChanged
-		send: #announce:
+		when: GtGQLSnippetInputChanged
+		send: #onInputChanged:
 		to: self.
 	self snippetModel weak
 		when: GtGQLSnippetResultVariableNameChanged
