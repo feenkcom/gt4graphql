@@ -1,10 +1,6 @@
 Class {
 	#name : #GtGQLType,
-	#superclass : #Object,
-	#instVars : [
-		'name',
-		'description'
-	],
+	#superclass : #GtGQLModel,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -33,12 +29,12 @@ GtGQLType >> baseType [
 
 { #category : #accessing }
 GtGQLType >> description [
-	^ description
+	^ self propertyAt: #description
 ]
 
 { #category : #accessing }
 GtGQLType >> description: anObject [
-	description := anObject
+	self propertyAt: #description put: anObject
 ]
 
 { #category : #accessing }
@@ -103,12 +99,12 @@ GtGQLType >> kindName [
 
 { #category : #accessing }
 GtGQLType >> name [
-	^ name
+	^ self propertyAt: #name
 ]
 
 { #category : #accessing }
 GtGQLType >> name: aString [
-	name := aString
+	self propertyAt: #name put: aString
 ]
 
 { #category : #printing }

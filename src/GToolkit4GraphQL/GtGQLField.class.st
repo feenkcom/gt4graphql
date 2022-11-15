@@ -1,50 +1,42 @@
 Class {
 	#name : #GtGQLField,
-	#superclass : #Object,
-	#instVars : [
-		'name',
-		'arguments',
-		'type',
-		'description',
-		'isDeprecated',
-		'deprecationReason'
-	],
+	#superclass : #GtGQLModel,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
 GtGQLField >> addArgument: aGQLField [
-	arguments add: aGQLField
+	self arguments add: aGQLField
 ]
 
 { #category : #accessing }
 GtGQLField >> arguments [
-	^ arguments
+	^ self propertyAt: #arguments ifAbsentPut: [ OrderedCollection new ]
 ]
 
 { #category : #accessing }
 GtGQLField >> arguments: aCollection [
-	arguments := aCollection
+	self propertyAt: #arguments put: aCollection
 ]
 
 { #category : #accessing }
 GtGQLField >> deprecationReason [
-	^ deprecationReason
+	^ self propertyAt: #fdeprecationReason
 ]
 
 { #category : #accessing }
 GtGQLField >> deprecationReason: anObject [
-	deprecationReason := anObject
+	self propertyAt: #deprecationReason put: anObject
 ]
 
 { #category : #accessing }
 GtGQLField >> description [
-	^ description
+	^ self propertyAt: #description
 ]
 
 { #category : #accessing }
 GtGQLField >> description: anObject [
-	description := anObject
+	self propertyAt: #description put: anObject
 ]
 
 { #category : #accessing }
@@ -80,9 +72,10 @@ GtGQLField >> gtArgumentsFor: aView [
 { #category : #accessing }
 GtGQLField >> gtTypeFor: aView [
 	<gtView>
-	type ifNil: [ ^ aView empty ].
-	(type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
-	^ (GtGQLSchema gtTypesFor: aView items: [ {type baseType} ])
+	self type ifNil: [ ^ aView empty ].
+	(self type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
+
+	^ (GtGQLSchema gtTypesFor: aView items: [ {self type baseType} ])
 		title: 'Type';
 		expandUpTo: 1
 ]
@@ -122,20 +115,13 @@ GtGQLField >> hasArguments [
 ]
 
 { #category : #accessing }
-GtGQLField >> initialize [
-	super initialize.
-	arguments := OrderedCollection new.
-	isDeprecated := false
-]
-
-{ #category : #accessing }
 GtGQLField >> isDeprecated [
-	^ isDeprecated
+	^ self propertyAt: #isDeprecated ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtGQLField >> isDeprecated: anObject [
-	isDeprecated := anObject
+	self propertyAt: #isDeprecated put: anObject
 ]
 
 { #category : #testing }
@@ -145,12 +131,12 @@ GtGQLField >> isRequired [
 
 { #category : #accessing }
 GtGQLField >> name [
-	^ name
+	^ self propertyAt: #name
 ]
 
 { #category : #accessing }
 GtGQLField >> name: aString [
-	name := aString
+	self propertyAt: #name put: aString
 ]
 
 { #category : #printing }
@@ -167,10 +153,10 @@ GtGQLField >> printOn: aStream [
 
 { #category : #accessing }
 GtGQLField >> type [
-	^ type
+	^ self propertyAt: #type
 ]
 
 { #category : #accessing }
 GtGQLField >> type: aGQLType [
-	type := aGQLType
+	self propertyAt: #type put: aGQLType
 ]

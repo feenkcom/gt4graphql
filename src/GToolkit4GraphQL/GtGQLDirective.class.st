@@ -1,34 +1,27 @@
 Class {
 	#name : #GtGQLDirective,
-	#superclass : #Object,
-	#instVars : [
-		'name',
-		'description',
-		'locations',
-		'arguments',
-		'isRepeatable'
-	],
+	#superclass : #GtGQLModel,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
 GtGQLDirective >> arguments [
-	^ arguments
+	^ self propertyAt: #arguments ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLDirective >> arguments: anObject [
-	arguments := anObject
+	self propertyAt: #arguments put: anObject
 ]
 
 { #category : #accessing }
 GtGQLDirective >> description [
-	^ description
+	^ self propertyAt: #description
 ]
 
 { #category : #accessing }
 GtGQLDirective >> description: anObject [
-	description := anObject
+	self propertyAt: #description put: anObject
 ]
 
 { #category : #'gt - extensions' }
@@ -73,40 +66,34 @@ GtGQLDirective >> gtLocationsFor: aView [
 		column: 'Name' text: #yourself
 ]
 
-{ #category : #initiailize }
-GtGQLDirective >> initialize [
-	super initialize.
-	isRepeatable := false
-]
-
 { #category : #accessing }
 GtGQLDirective >> isRepeatable [
-	^ isRepeatable
+	^ self propertyAt: #isRepeatable ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtGQLDirective >> isRepeatable: anObject [
-	isRepeatable := anObject
+	self propertyAt: #isRepeatable put: anObject
 ]
 
 { #category : #accessing }
 GtGQLDirective >> locations [
-	^ locations
+	^ self propertyAt: #locations ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLDirective >> locations: anObject [
-	locations := anObject
+	self propertyAt: #locations put: anObject
 ]
 
 { #category : #accessing }
 GtGQLDirective >> name [
-	^ name
+	^ self propertyAt: #name
 ]
 
 { #category : #accessing }
 GtGQLDirective >> name: anObject [
-	name := anObject
+	self propertyAt: #name put: anObject
 ]
 
 { #category : #printing }

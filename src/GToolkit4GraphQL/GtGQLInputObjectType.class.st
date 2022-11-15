@@ -1,12 +1,6 @@
 Class {
 	#name : #GtGQLInputObjectType,
 	#superclass : #GtGQLCompositeType,
-	#instVars : [
-		'type',
-		'defaultValue',
-		'isDeprecated',
-		'deprecationReason'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -17,22 +11,27 @@ GtGQLInputObjectType class >> kindName [
 
 { #category : #accessing }
 GtGQLInputObjectType >> defaultValue [
-	^ defaultValue
+	^ self propertyAt: #defaultValue
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> defaultValue: anObject [
-	defaultValue := anObject
+	self propertyAt: #defaultValue put: anObject
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> deprecationReason [
-	^ deprecationReason
+	^ self propertyAt: #deprecationReason
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> deprecationReason: anObject [
-	deprecationReason := anObject
+	self propertyAt: #deprecationReason put: anObject
+]
+
+{ #category : #accessing }
+GtGQLInputObjectType >> fields [
+	^ self inputFields
 ]
 
 { #category : #'gt - extensions' }
@@ -53,29 +52,23 @@ GtGQLInputObjectType >> gtTypesNameText [
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> initialize [
-	super initialize.
-	isDeprecated := false
-]
-
-{ #category : #accessing }
 GtGQLInputObjectType >> inputFields [
-	^ self fields
+	^ self propertyAt: #inputFields ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> inputFields: aCollection [
-	self fields: aCollection
+	self propertyAt: #inputFields put: aCollection
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> isDeprecated [
-	^ isDeprecated
+	^ self propertyAt: #isDeprecated ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> isDeprecated: anObject [
-	isDeprecated := anObject
+	self propertyAt: #isDeprecated put: anObject
 ]
 
 { #category : #testing }
@@ -85,10 +78,10 @@ GtGQLInputObjectType >> isRequired [
 
 { #category : #accessing }
 GtGQLInputObjectType >> type [
-	^ type
+	^ self propertyAt: #type
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> type: anObject [
-	type := anObject
+	self propertyAt: #type put: anObject
 ]

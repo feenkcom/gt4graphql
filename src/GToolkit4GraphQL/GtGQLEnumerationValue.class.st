@@ -1,12 +1,6 @@
 Class {
 	#name : #GtGQLEnumerationValue,
-	#superclass : #Object,
-	#instVars : [
-		'name',
-		'description',
-		'isDeprecated',
-		'deprecationReason'
-	],
+	#superclass : #GtGQLModel,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -17,22 +11,22 @@ GtGQLEnumerationValue >> baseType [
 
 { #category : #accessing }
 GtGQLEnumerationValue >> deprecationReason [
-	^ deprecationReason
+	^ self propertyAt: #deprecationReason
 ]
 
 { #category : #accessing }
 GtGQLEnumerationValue >> deprecationReason: anObject [
-	deprecationReason := anObject
+	self propertyAt: #deprecationReason put: anObject
 ]
 
 { #category : #accessing }
 GtGQLEnumerationValue >> description [
-	^ description
+	^ self propertyAt: #description
 ]
 
 { #category : #accessing }
 GtGQLEnumerationValue >> description: anObject [
-	description := anObject
+	self propertyAt: #description put: anObject
 ]
 
 { #category : #accessing }
@@ -46,29 +40,23 @@ GtGQLEnumerationValue >> gtTypesNameText [
 ]
 
 { #category : #accessing }
-GtGQLEnumerationValue >> initialize [
-	super initialize.
-	isDeprecated := false
-]
-
-{ #category : #accessing }
 GtGQLEnumerationValue >> isDeprecated [
-	^ isDeprecated
+	^ self propertyAt: #isDeprecated ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
 GtGQLEnumerationValue >> isDeprecated: anObject [
-	isDeprecated := anObject
+	self propertyAt: #isDeprecated put: anObject
 ]
 
 { #category : #accessing }
 GtGQLEnumerationValue >> name [
-	^ name
+	^ self propertyAt: #name
 ]
 
 { #category : #accessing }
 GtGQLEnumerationValue >> name: anObject [
-	name := anObject
+	self propertyAt: #name put: anObject
 ]
 
 { #category : #printing }

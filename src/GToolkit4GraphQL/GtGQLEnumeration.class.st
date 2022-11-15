@@ -1,9 +1,6 @@
 Class {
 	#name : #GtGQLEnumeration,
 	#superclass : #GtGQLType,
-	#instVars : [
-		'values'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -23,7 +20,7 @@ GtGQLEnumeration >> gtEnumValuesFor: aView [
 	^ aView columnedList
 		title: 'Values';
 		priority: 10;
-		items: [ values ifNil: [ #() ] ];
+		items: [ self values ifNil: [ #() ] ];
 		column: 'Name'
 			text: [ :aValue | 
 				aValue isDeprecated
@@ -38,10 +35,10 @@ GtGQLEnumeration >> gtEnumValuesFor: aView [
 
 { #category : #accessing }
 GtGQLEnumeration >> values [
-	^ values
+	^ self propertyAt: #values ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLEnumeration >> values: aCollection [
-	values := aCollection
+	self propertyAt: #values put: aCollection
 ]

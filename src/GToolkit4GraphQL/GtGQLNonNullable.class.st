@@ -1,9 +1,6 @@
 Class {
 	#name : #GtGQLNonNullable,
 	#superclass : #GtGQLType,
-	#instVars : [
-		'type'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -14,7 +11,7 @@ GtGQLNonNullable class >> kindName [
 
 { #category : #accessing }
 GtGQLNonNullable >> baseType [
-	^ type baseType
+	^ self type ifNotNil: #baseType
 ]
 
 { #category : #testing }
@@ -29,15 +26,15 @@ GtGQLNonNullable >> isRequired [
 
 { #category : #accessing }
 GtGQLNonNullable >> name [
-	^ (type ifNotNil: #name ifNil: [ '?' ]) , '!'
+	^ (self type ifNotNil: #name ifNil: [ '?' ]) , '!'
 ]
 
 { #category : #accessing }
 GtGQLNonNullable >> type [
-	^ type
+	^ self propertyAt: #type
 ]
 
 { #category : #accessing }
 GtGQLNonNullable >> type: aGQLType [
-	type := aGQLType
+	self propertyAt: #type put: aGQLType
 ]

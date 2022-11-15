@@ -1,9 +1,6 @@
 Class {
 	#name : #GtGQLUnion,
 	#superclass : #GtGQLType,
-	#instVars : [
-		'types'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -15,7 +12,7 @@ GtGQLUnion class >> kindName [
 { #category : #accessing }
 GtGQLUnion >> gtTypesFor: aView [
 	<gtView>
-	^ GtGQLSchema gtTypesFor: aView items: [ types ]
+	^ GtGQLSchema gtTypesFor: aView items: [ self types ]
 ]
 
 { #category : #accessing }
@@ -25,10 +22,10 @@ GtGQLUnion >> possibleTypes: aCollection [
 
 { #category : #accessing }
 GtGQLUnion >> types [
-	^ types
+	^ self propertyAt: #types ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLUnion >> types: aCollection [
-	types := aCollection
+	self propertyAt: #types put: aCollection
 ]

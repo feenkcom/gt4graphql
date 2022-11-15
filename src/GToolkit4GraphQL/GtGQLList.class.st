@@ -1,9 +1,6 @@
 Class {
 	#name : #GtGQLList,
 	#superclass : #GtGQLType,
-	#instVars : [
-		'type'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -14,7 +11,7 @@ GtGQLList class >> kindName [
 
 { #category : #accessing }
 GtGQLList >> baseType [
-	^ type baseType
+	^ self type ifNotNil: #baseType
 ]
 
 { #category : #testing }
@@ -24,15 +21,15 @@ GtGQLList >> isList [
 
 { #category : #accessing }
 GtGQLList >> name [
-	^ '[' , type name , ']'
+	^ '[' , (self type ifNotNil: #name ifNil: [ '?' ]) , ']'
 ]
 
 { #category : #accessing }
 GtGQLList >> type [
-	^ type
+	^ self propertyAt: #type
 ]
 
 { #category : #accessing }
 GtGQLList >> type: aGQLType [
-	type := aGQLType
+	self propertyAt: #type put: aGQLType
 ]
