@@ -83,6 +83,11 @@ GtGQLType >> isNonNullable [
 ]
 
 { #category : #testing }
+GtGQLType >> isPrimitive [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLType >> isRequired [
 	^ false
 ]

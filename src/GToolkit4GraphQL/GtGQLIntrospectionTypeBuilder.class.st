@@ -1,3 +1,16 @@
+"
+I build basic {{gtClass:GtGQLType}} , filling its name. 
+I use a JSON introspection GraphQL response to build a given type.
+I am used by {{gtClass:GtGQLIntrospectionSchemaBuilder}}.
+#Examples
+##Scalar String Type
+By providing the following JSON response: {{gtExample:GtGQLIntrospectionTypeBuilderExamples >> #scalarStringTypeJson | noCode | previewShow=#gtJsonStringFor: | previewHeight=120}}
+I create the following type: {{gtExample:GtGQLIntrospectionTypeBuilderExamples >> #scalarStringType | noCode}} 
+##Non-Null List Type
+By providing the following JSON response: {{gtExample:GtGQLIntrospectionTypeBuilderExamples >> #nonNullListTypeJson | noCode | previewShow=#gtJsonStringFor: | previewHeight=330}} 
+I create the following type: {{gtExample: GtGQLIntrospectionTypeBuilderExamples >> #nonNullListType | noCode}} 
+
+"
 Class {
 	#name : #GtGQLIntrospectionTypeBuilder,
 	#superclass : #Object,

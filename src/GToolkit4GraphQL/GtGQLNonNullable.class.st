@@ -19,6 +19,11 @@ GtGQLNonNullable >> isNonNullable [
 	^ true
 ]
 
+{ #category : #testing }
+GtGQLNonNullable >> isPrimitive [
+	^ self baseType isPrimitive
+]
+
 { #category : #accessing }
 GtGQLNonNullable >> isRequired [
 	^ true

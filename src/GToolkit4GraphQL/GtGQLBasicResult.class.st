@@ -19,6 +19,18 @@ GtGQLBasicResult >> configuration: anObject [
 	configuration := anObject
 ]
 
+{ #category : #accessing }
+GtGQLBasicResult >> errorMessagesAndLocationsDo: aBlock [
+	(self result atKey: 'errors')
+		do: [ :each | 
+			| location |
+			location := (each atKey: 'locations') atIndex: 1.
+			aBlock
+				value: (each atKey: 'message') jsonObject
+				value: (location atKey: 'line') jsonObject
+				value: (location atKey: 'column') jsonObject ]
+]
+
 { #category : #'gt - extensions' }
 GtGQLBasicResult >> gtQueryFor: aView [
 	<gtView>
@@ -42,6 +54,11 @@ GtGQLBasicResult >> gtVariablesFor: aView [
 		priority: 31;
 		object: [ self variables ];
 		view: #gtTreeFor:context:
+]
+
+{ #category : #testing }
+GtGQLBasicResult >> isQueryProblem [
+	^ false
 ]
 
 { #category : #accessing }
