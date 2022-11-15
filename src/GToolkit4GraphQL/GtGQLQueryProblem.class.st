@@ -9,6 +9,11 @@ Class {
 	#category : #'GToolkit4GraphQL-Client'
 }
 
+{ #category : #testing }
+GtGQLQueryProblem >> isQueryProblem [
+	^ true
+]
+
 { #category : #accessing }
 GtGQLQueryProblem >> result [
 	^ result

@@ -27,6 +27,12 @@ GtGQLSnippetElement >> browseSchema [
 			obj ifNotNil: [ gqlElement phlow spawnObject: obj ] ]
 ]
 
+{ #category : #private }
+GtGQLSnippetElement >> clearPreviousErrors [
+	self operationEditor editor text
+		clearAttributes: [ :each | each class == GtSourceCoderErrorAttribute ]
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> context [
 	^ self snippet contextUsing: self snippetContext
@@ -140,7 +146,7 @@ GtGQLSnippetElement >> executeQuery: aButton [
 	| aContext aFuture |
 	aContext := self context.
 	aContext ifNil: [ ^ self ].
-
+	self clearPreviousErrors.
 	aButton disable.
 
 	aFuture := [ | operation input |
@@ -270,6 +276,8 @@ GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
+	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
+		ifTrue: [ self showInlineError: aResult ].
 	self snippetViewModel resultValue: aResult.
 	theButton phlow spawnObject: aResult.
 	theButton enable
@@ -385,6 +393,21 @@ GtGQLSnippetElement >> setDefaultContextVariable [
 	self contextVariable trim notEmpty ifTrue: [ ^ self ].
 	(self snippet defaultContextUsing: self snippetContext)
 		ifNotNil: [ :each | self snippet context: each ]
+]
+
+{ #category : #'private - event handling' }
+GtGQLSnippetElement >> showInlineError: aResult [
+	| editor text |
+	editor := self operationEditor editor.
+	text := editor text asString.
+	text = aResult query ifFalse: [ ^ self ].
+	aResult
+		errorMessagesAndLocationsDo: [ :message :line :column | 
+			(message isNil or: [ line isNil or: [ column isNil ] ])
+				ifFalse: [ (text gtIndexOfLineNumber: line)
+						ifNotNil: [ :location | 
+							(editor text from: location key + column - 2 to: location key + column - 2)
+								attributes: {(GtSourceCoderErrorAttribute for: message) beOverwritableByStyler} ] ] ]
 ]
 
 { #category : #'api - view' }
