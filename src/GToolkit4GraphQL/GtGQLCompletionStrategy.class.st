@@ -2,7 +2,8 @@ Class {
 	#name : #GtGQLCompletionStrategy,
 	#superclass : #GtStreamedCompletionStrategy,
 	#instVars : [
-		'schema'
+		'schema',
+		'typeNames'
 	],
 	#category : #'GToolkit4GraphQL-Completer'
 }
@@ -26,7 +27,28 @@ GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger 
 ]
 
 { #category : #accessing }
+GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: prefix [
+	(prefix = '$' and: [ aNode parent isKindOf: GraphQLArgumentNode ])
+		ifTrue: [ ^ self completionStreamForVariable: aNode startingWith: prefix ].
+	^ (aNode parent isKindOf: GraphQLFieldNode)
+		ifTrue: [ (aNode parent arguments identityIncludes: aNode)
+				ifTrue: [ (aNode parent fieldIn: self schema)
+						ifNotNil: [ :field | 
+							(field arguments asOrderedCollection asAsyncStream
+								select: [ :each | each name beginsWith: prefix ])
+								collect: [ :each | each name , ':' ] ] ] ]
+]
+
+{ #category : #accessing }
 GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix [
+	(aNode isKindOf: GraphQLNamedTypeNode)
+		ifTrue: [ ^ self typeNames asyncStreamStartingWith: prefix ].
+	aNode isErrorNode
+		ifTrue: [ (self completionStreamForErrorNode: aNode startingWith: prefix)
+				ifNotNil: [ :stream | ^ stream ] ].
+	(aNode isKindOf: GraphQLVariableNode)
+		ifTrue: [ (self completionStreamForVariable: aNode startingWith: prefix)
+				ifNotNil: [ :stream | ^ stream ] ].
 	^ ((aNode parentOfType: GraphQLFieldNode)
 		ifNil: [ aNode isPartOfQuery
 				ifTrue: [ self schema queryType ]
@@ -38,9 +60,20 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix [
 				select: [ :each | each name beginsWith: prefix ]) collect: #name ]
 ]
 
+{ #category : #accessing }
+GtGQLCompletionStrategy >> completionStreamForVariable: aNode startingWith: prefix [
+	(aNode parent isKindOf: GraphQLVariableDefinitionNode) ifTrue: [ ^ nil ].
+	^ (aNode parentOfType: GraphQLOperationDefinitionNode)
+		ifNotNil: [ :operation | 
+			(operation variableDefinitions asAsyncStream
+				select: [ :each | each isErrorNode not and: [ each variable source beginsWith: prefix ] ])
+				collect: [ :each | each variable source ] ]
+]
+
 { #category : #testing }
 GtGQLCompletionStrategy >> isSeparatorCharacter: aCharacter [
-	^ aCharacter isLetter not
+	^ (aCharacter isLetter
+		or: [ aCharacter isDigit or: [ '_$' includes: aCharacter ] ]) not
 ]
 
 { #category : #accessing }
@@ -50,5 +83,16 @@ GtGQLCompletionStrategy >> schema [
 
 { #category : #accessing }
 GtGQLCompletionStrategy >> schema: aGQLSchema [
-	schema := aGQLSchema
+	aGQLSchema ~~ schema
+		ifTrue: [ schema := aGQLSchema.
+			typeNames := nil ]
+]
+
+{ #category : #accessing }
+GtGQLCompletionStrategy >> typeNames [
+	typeNames
+		ifNil: [ typeNames := GtPrefixTree new.
+			self schema types
+				do: [ :each | each isList ifFalse: [ typeNames add: each name ] ] ].
+	^ typeNames
 ]
