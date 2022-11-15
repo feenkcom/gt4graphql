@@ -29,8 +29,12 @@ GtGQLSnippetElement >> browseSchema [
 
 { #category : #private }
 GtGQLSnippetElement >> clearPreviousErrors [
-	self operationEditor editor text
-		clearAttributes: [ :each | each class == GtSourceCoderErrorAttribute ]
+	| text |
+	text := self operationEditor editor text.
+	text
+		clearAttributes: 0
+		to: text size
+		if: [ :each | each class == GtSourceCoderErrorAttribute ]
 ]
 
 { #category : #accessing }
@@ -270,16 +274,15 @@ GtGQLSnippetElement >> inputSource [
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 	self snippetViewModel resultValue: anError.
-	theButton phlow spawnObject: anError.
 	theButton enable
 ]
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
-		ifTrue: [ self showInlineError: aResult ].
-	self snippetViewModel resultValue: aResult.
-	theButton phlow spawnObject: aResult.
+		ifTrue: [ self showInlineError: aResult ]
+		ifFalse: [ self snippetViewModel resultValue: aResult.
+			theButton phlow spawnObject: aResult ].
 	theButton enable
 ]
 
