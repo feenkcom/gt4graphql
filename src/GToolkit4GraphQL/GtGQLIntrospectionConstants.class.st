@@ -45,6 +45,11 @@ query SchemaFields($name: String = "__Type") {
 ]
 
 { #category : #'api - constants' }
+GtGQLIntrospectionConstants class >> metaMetaTypeName [
+	^ #__typename
+]
+
+{ #category : #'api - constants' }
 GtGQLIntrospectionConstants class >> typeRefFragment [
 	^ 'fragment TypeRef on __Type {
 	__typename

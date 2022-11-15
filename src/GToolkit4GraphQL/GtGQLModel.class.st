@@ -18,18 +18,20 @@ GtGQLModel >> gtPropertiesFor: aView context: aContext [
 	^ aView columnedTree
 		title: 'Properties';
 		priority: 49;
-		items: [ self properties associations ];
+		items: [ self properties associations asSortedCollection: [ :a :b | a key < b key ] ];
 		column: 'Name' text: #key;
 		column: 'Value' text: #value;
 		send: #value;
 		children: [ :anAssoc | 
 			(anAssoc value isKindOf: GtGQLModel)
-				ifTrue: [ anAssoc value properties associations ]
+				ifTrue: [ anAssoc value properties associations
+						asSortedCollection: [ :a :b | a key < b key ] ]
 				ifFalse: [ (anAssoc value isCollection
 						and: [ anAssoc value allSatisfy: [ :each | each isKindOf: GtGQLModel ] ])
-						ifTrue: [ Array
+						ifTrue: [ (Array
 								new: anAssoc value size
-								streamContents: [ :aStream | anAssoc value withIndexDo: [ :each :index | aStream nextPut: index -> each ] ] ]
+								streamContents: [ :aStream | anAssoc value withIndexDo: [ :each :index | aStream nextPut: each name -> each ] ])
+								asSortedCollection: [ :a :b | a key < b key ] ]
 						ifFalse: [ #() ] ] ]
 ]
 
@@ -47,6 +49,16 @@ GtGQLModel >> initialize [
 { #category : #testing }
 GtGQLModel >> isInterface [
 	^ false
+]
+
+{ #category : #accessing }
+GtGQLModel >> metaType [
+	^ self propertyAt: #__type
+]
+
+{ #category : #accessing }
+GtGQLModel >> metaType: aName [
+	self propertyAt: #__type put: aName
 ]
 
 { #category : #accessing }
