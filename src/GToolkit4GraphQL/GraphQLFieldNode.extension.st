@@ -24,9 +24,7 @@ GraphQLFieldNode >> typeIn: schema [
 	(stack size >= 2
 		and: [ (operation := stack second) isKindOf: GraphQLOperationDefinitionNode ])
 		ifFalse: [ ^ nil ].
-	type := (operation type isNil or: [ operation type source = 'query' ])
-			ifTrue: [ schema queryType ]
-			ifFalse: [ operation type source = 'mutation' ifTrue: [ schema mutationType ] ].
+	type := operation typeIn: schema.
 	index := 3.
 	[ type notNil and: [ index <= stack size ] ]
 		whileTrue: [ nameNode := stack at: index.

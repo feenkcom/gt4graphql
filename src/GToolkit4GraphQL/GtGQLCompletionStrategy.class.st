@@ -94,17 +94,19 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix a
 		ifTrue: [ (self completionStreamForVariable: aNode startingWith: prefix)
 				ifNotNil: [ :stream | ^ stream ] ].
 	prefix isEmpty
-		ifTrue: [ (aNode isKindOf: GraphQLFieldNode)
+		ifTrue: [ ((aNode isKindOf: GraphQLFieldNode)
+				or: [ aNode isKindOf: GraphQLOperationDefinitionNode ])
 				ifTrue: [ (positionInteger
 						between: aNode leftBrace startPosition
 						and: aNode rightBrace stopPosition)
 						ifTrue: [ ^ (aNode typeIn: self schema)
-								ifNotNil: [ :type | self completeField: type fields asArray asAsyncStream ] ].
-					(positionInteger
+								ifNotNil: [ :type | self completeField: type fields asArray asAsyncStream ] ] ].
+			(aNode isKindOf: GraphQLFieldNode)
+				ifTrue: [ (positionInteger
 						between: aNode leftParen startPosition
 						and: aNode rightParen stopPosition)
 						ifTrue: [ ^ (aNode fieldIn: self schema)
-								ifNotNil: [ :type | self completeArgument: type arguments asArray asAsyncStream ] ] ] ].
+								ifNotNil: [ :field | self completeArgument: field arguments asArray asAsyncStream ] ] ] ].
 	^ ((aNode parentOfType: GraphQLFieldNode)
 		ifNil: [ aNode isPartOfQuery
 				ifTrue: [ self schema queryType ]
