@@ -19,6 +19,11 @@ GtGQLList >> isList [
 	^ true
 ]
 
+{ #category : #testing }
+GtGQLList >> isPrimitive [
+	^ self baseType isPrimitive
+]
+
 { #category : #accessing }
 GtGQLList >> name [
 	^ '[' , (self type ifNotNil: #name ifNil: [ '?' ]) , ']'

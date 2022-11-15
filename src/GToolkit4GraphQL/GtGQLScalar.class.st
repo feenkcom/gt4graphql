@@ -50,6 +50,11 @@ GtGQLScalar >> isBoolean [
 ]
 
 { #category : #testing }
+GtGQLScalar >> isPrimitive [
+	^ true
+]
+
+{ #category : #testing }
 GtGQLScalar >> isScalar [
 	^ true
 ]
