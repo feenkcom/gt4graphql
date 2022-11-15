@@ -138,7 +138,12 @@ GtGQLSnippet >> input [
 
 { #category : #accessing }
 GtGQLSnippet >> input: aString [
-	input := aString
+	input := aString.
+	self
+		notifyAnnouncement: (GtGQLSnippetInputChanged new
+				source: self;
+				snippet: self;
+				input: aString)
 ]
 
 { #category : #accessing }
@@ -169,11 +174,16 @@ GtGQLSnippet >> resultVariableName [
 
 { #category : #accessing }
 GtGQLSnippet >> resultVariableName: aString [
+	| anOldName |
+	resultVariableName = aString ifTrue: [ ^ self ].
+
+	anOldName := resultVariableName.
 	resultVariableName := aString.
 
 	self
 		notifyAnnouncement: (GtGQLSnippetResultVariableNameChanged new
 				source: self;
 				snippet: self;
+				oldName: anOldName;
 				resultVariableName: aString)
 ]

@@ -3,8 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'configuration',
-		'query',
-		'variables'
+		'query'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -24,24 +23,23 @@ GtGQLBasicResult >> gtQueryFor: aView [
 	<gtView>
 	self query ifNil: [ ^ aView empty ].
 
-	^ aView textEditor
+	^ aView forward
 		title: 'Query';
 		priority: 30;
-		aptitude: [ BrGlamorousCodeEditorAptitude ];
-		styler: [ GraphQLParser gtStyler ];
-		text: [ self query ]
+		object: [ self query ];
+		view: #gtQueryFor:
 ]
 
 { #category : #'gt - extensions' }
 GtGQLBasicResult >> gtVariablesFor: aView [
 	<gtView>
-	self variables ifNil: [ ^ aView empty ].
+	self query ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Variables';
 		priority: 31;
-		object: [ self variables ];
-		view: #gtTreeFor:context:
+		object: [ self query ];
+		view: #gtVariablesFor:
 ]
 
 { #category : #accessing }
@@ -50,21 +48,19 @@ GtGQLBasicResult >> isSuccess [
 ]
 
 { #category : #accessing }
+GtGQLBasicResult >> operation: aQuery input: aVariables [
+	query := GtGQLQuery new
+			operation: aQuery;
+			input: aVariables
+]
+
+{ #category : #accessing }
 GtGQLBasicResult >> query [
+	<return: #GtGQLQuery>
 	^ query
 ]
 
 { #category : #accessing }
-GtGQLBasicResult >> query: anObject [
-	query := anObject
-]
-
-{ #category : #accessing }
-GtGQLBasicResult >> variables [
-	^ variables
-]
-
-{ #category : #accessing }
-GtGQLBasicResult >> variables: anObject [
-	variables := anObject
+GtGQLBasicResult >> query: aGtGQLQuery [
+	query := aGtGQLQuery
 ]
