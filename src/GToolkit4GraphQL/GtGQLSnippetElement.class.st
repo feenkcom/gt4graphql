@@ -224,6 +224,9 @@ GtGQLSnippetElement >> initialize [
 						bottom: 0
 						right: 3));
 		addChild: ((self createSourceEditor: #updateVariable)
+					hFitContentLimited;
+					styler: GtSelectorStyler new forUnary;
+					inputFilter: GtSelectorInputFilter forUnaryMessage;
 					aptitude: (BrGlamorousCodeEditorAptitude new fontSize: 12)
 							+ (BrGlamorousEditableLabelAptitude new minWidth: 100);
 					constraintsDo: [ :c | c linear vertical alignCenter ];
