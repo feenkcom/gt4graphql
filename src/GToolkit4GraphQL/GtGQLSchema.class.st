@@ -1,17 +1,10 @@
 Class {
 	#name : #GtGQLSchema,
-	#superclass : #Object,
-	#instVars : [
-		'types',
-		'queryType',
-		'mutationType',
-		'subscriptionType',
-		'directives'
-	],
+	#superclass : #GtGQLModel,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 	^ aView columnedTree
 		priority: 10;
@@ -33,19 +26,24 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 				ifNil: [ #() ] ]
 ]
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLSchema class >> typeForObject: aTypeOrField [
-	^ (aTypeOrField isKindOf: GtGQLField) ifTrue: [ aTypeOrField type ] ifFalse: [ aTypeOrField ]
+	^ (aTypeOrField isKindOf: GtGQLField)
+		ifTrue: [ aTypeOrField type ]
+		ifFalse: [ aTypeOrField ]
 ]
 
 { #category : #accessing }
 GtGQLSchema >> baseTypes [
-	^ types values reject: [ :each | each isList or: [ each isNonNullable ] ]
+	^ self types reject: [ :each | each isList or: [ each isNonNullable ] ]
 ]
 
 { #category : #accessing }
 GtGQLSchema >> baseTypesCount [
-	^ types ifNotNil: [ self baseTypes size ] ifNil: [ 0 ]
+	^ self
+		propertyAt: #types
+		ifPresent: [ :aDict | self baseTypes size ]
+		ifAbsent: [ 0 ]
 ]
 
 { #category : #importing }
@@ -57,17 +55,17 @@ GtGQLSchema >> createTypesFrom: aNode [
 			type := each gtTypeClass new
 					name: each name source;
 					yourself.
-			types at: type name put: type ]
+			self typesDictionary at: type name put: type ]
 ]
 
 { #category : #accessing }
 GtGQLSchema >> directives [
-	^ directives
+	^ self propertyAt: #directives ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLSchema >> directives: anObject [
-	directives := anObject
+	self propertyAt: #directives put: anObject
 ]
 
 { #category : #'gt - extensions' }
@@ -137,7 +135,7 @@ GtGQLSchema >> gtSearchFieldsFor: aSearch [
 	^ aSearch list
 		priority: 20;
 		title: 'Fields';
-		items: [ (types values asArray asAsyncStream
+		items: [ (self types asArray asAsyncStream
 				collect: [ :each | each fields asArray asAsyncStream ]) flatten ];
 		itemName: #name;
 		filter: (GtSpotterSubstringFilter new itemString: #name);
@@ -150,7 +148,7 @@ GtGQLSchema >> gtSearchTypesFor: aSearch [
 	^ aSearch list
 		priority: 10;
 		title: 'Type';
-		items: [ types values asArray ];
+		items: [ self types asArray ];
 		itemName: #name;
 		filter: (GtSpotterSubstringFilter new itemString: #name);
 		wantsToDisplayOnEmptyQuery: false
@@ -170,8 +168,8 @@ GtGQLSchema >> import: aNode [
 	self importEnums: aNode.
 	self importUnions: aNode.
 	self importComposites: aNode.
-	queryType := self typeNamed: 'Query'.
-	mutationType := self typeNamed: 'Mutation'
+	self queryType: (self typeNamed: 'Query').
+	self mutationType: (self typeNamed: 'Mutation')
 ]
 
 { #category : #importing }
@@ -182,7 +180,7 @@ GtGQLSchema >> importComposites: aNode [
 			((each isKindOf: GraphQLInputObjectTypeDefinitionNode)
 				or: [ (each isKindOf: GraphQLInterfaceTypeDefinitionNode)
 						or: [ each isKindOf: GraphQLObjectTypeDefinitionNode ] ])
-				ifTrue: [ type := types at: each name source.
+				ifTrue: [ type := self typesDictionary at: each name source.
 					each definitions
 						do: [ :def | 
 							| field |
@@ -206,7 +204,7 @@ GtGQLSchema >> importEnums: aNode [
 		withAllNodesOfType: GraphQLEnumTypeDefinitionNode
 		do: [ :each | 
 			| type |
-			type := types at: each name source.
+			type := self typesDictionary at: each name source.
 			type
 				values: (each definitions
 						collect: [ :enum | GtGQLEnumeration new name: enum value source ]) ]
@@ -218,24 +216,24 @@ GtGQLSchema >> importUnions: aNode [
 		withAllNodesOfType: GraphQLUnionTypeDefinitionNode
 		do: [ :each | 
 			| type |
-			type := types at: each name source.
+			type := self typesDictionary at: each name source.
 			type types: (each types collect: [ :union | self typeFor: union ]) ]
 ]
 
 { #category : #initialization }
 GtGQLSchema >> initialize [
 	super initialize.
-	types := Dictionary new.
+
 	#(boolean float id int string)
 		do: [ :each | 
 			| type |
 			type := GtGQLScalar perform: each.
-			types at: type name put: type ]
+			self typesDictionary at: type name put: type ]
 ]
 
 { #category : #accessing }
 GtGQLSchema >> interfaces [
-	^ self types select: [ :each | each isKindOf: GtGQLInterface ]
+	^ self types select: #isInterface
 ]
 
 { #category : #accessing }
@@ -245,15 +243,15 @@ GtGQLSchema >> metaMetaModelTypes [
 
 { #category : #accessing }
 GtGQLSchema >> mutationType [
-	^ mutationType
+	^ self propertyAt: #mutationType
 ]
 
 { #category : #accessing }
 GtGQLSchema >> mutationType: anObject [
-	mutationType := anObject
+	self propertyAt: #mutationType put: anObject
 ]
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLSchema >> paintInterfaceUsesWith: m [
 	m nodes
 		stencil: [ BlElement new
@@ -284,36 +282,36 @@ GtGQLSchema >> printOn: aStream [
 
 { #category : #accessing }
 GtGQLSchema >> queryType [
-	^ queryType
+	^ self propertyAt: #queryType
 ]
 
 { #category : #accessing }
 GtGQLSchema >> queryType: anObject [
-	queryType := anObject
+	self propertyAt: #queryType put: anObject
 ]
 
 { #category : #accessing }
 GtGQLSchema >> subscriptionType [
-	^ subscriptionType
+	^ self propertyAt: #subscriptionType
 ]
 
 { #category : #accessing }
 GtGQLSchema >> subscriptionType: anObject [
-	subscriptionType := anObject
+	self propertyAt: #subscriptionType put: anObject
 ]
 
 { #category : #importing }
 GtGQLSchema >> typeFor: aType [
 	| name |
 	name := self typeNameFor: aType.
-	^ types
+	^ self typesDictionary
 		at: name
 		ifAbsentPut: [ | baseType |
 			baseType := (aType isKindOf: GraphQLListTypeNode)
 					ifTrue: [ GtGQLList new
 							type: (self typeFor: aType type);
 							yourself ]
-					ifFalse: [ types at: aType name source ].
+					ifFalse: [ self typesDictionary at: aType name source ].
 			aType bangToken notNil
 				ifTrue: [ GtGQLNonNullable new
 						type: baseType;
@@ -333,12 +331,12 @@ GtGQLSchema >> typeNameFor: aType [
 
 { #category : #accessing }
 GtGQLSchema >> typeNamed: aString [
-	^ types at: aString ifAbsent: [  ]
+	^ self typesDictionary at: aString ifAbsent: [ nil ]
 ]
 
 { #category : #'importing - json' }
 GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbsentBlock [
-	^ types
+	^ self typesDictionary
 		at: aTypeName
 		ifPresent: aPresentBlock
 		ifAbsentPut: anAbsentBlock
@@ -346,10 +344,21 @@ GtGQLSchema >> typeNamed: aTypeName ifPresent: aPresentBlock ifAbsentPut: anAbse
 
 { #category : #accessing }
 GtGQLSchema >> types [
-	^ types values
+	^ self
+		propertyAt: #types
+		ifPresent: #values
+		ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLSchema >> typesCount [
-	^ types ifNotNil: #size ifNil: [ 0 ]
+	^ self
+		propertyAt: #types
+		ifPresent: #size
+		ifAbsent: [ 0 ]
+]
+
+{ #category : #'private - accessing' }
+GtGQLSchema >> typesDictionary [
+	^ self propertyAt: #types ifAbsentPut: [ Dictionary new ]
 ]

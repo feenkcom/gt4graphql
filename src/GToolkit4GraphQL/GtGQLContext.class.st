@@ -1,13 +1,13 @@
 Class {
 	#name : #GtGQLContext,
 	#superclass : #Object,
+	#traits : 'TGtOptions',
+	#classTraits : 'TGtOptions classTrait',
 	#instVars : [
 		'authentication',
 		'clientBuilder',
 		'graphQLUrl',
-		'schema',
-		'introspectionSchemaQuery',
-		'introspectionEssentialSchema'
+		'schema'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -40,7 +40,9 @@ GtGQLContext >> bearerToken: aToken [
 GtGQLContext >> buildSchema [
 	| aBuilder |
 	aBuilder := self schemaBuilder.
-	self schema: aBuilder build
+	aBuilder build.
+	self schema: aBuilder schema.
+	self jsonSchema: aBuilder json
 ]
 
 { #category : #accessing }
@@ -141,21 +143,34 @@ GtGQLContext >> initialize [
 { #category : #'api - introspection' }
 GtGQLContext >> introspectionEssentialSchema [
 	<return: #String>
-	^ introspectionEssentialSchema
-		ifNil: [ introspectionEssentialSchema := GtGQLIntrospectionEssentialSchemaBuilder new
-					configuration: self;
-					build;
-					schema ]
+	^ self
+		optionAt: #introspectionEssentialSchema
+		ifAbsentPut: [ GtGQLIntrospectionEssentialSchemaBuilder new
+				configuration: self;
+				build;
+				schema ]
 ]
 
 { #category : #'api - introspection' }
 GtGQLContext >> introspectionSchemaQuery [
 	<return: #String>
-	^ introspectionSchemaQuery
-		ifNil: [ introspectionSchemaQuery := GtGQLIntrospectionSchemaQueryBuilder new
-					configuration: self;
-					essentialSchema: self introspectionEssentialSchema;
-					build ]
+	^ self
+		optionAt: #introspectionSchemaQuery
+		ifAbsentPut: [ GtGQLIntrospectionSchemaQueryBuilder new
+				configuration: self;
+				essentialSchema: self introspectionEssentialSchema;
+				build;
+				query ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> jsonSchema [
+	^ self optionAt: #jsonSchema ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> jsonSchema: aJson [
+	self optionAt: #jsonSchema put: aJson
 ]
 
 { #category : #accessing }

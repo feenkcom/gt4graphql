@@ -71,6 +71,12 @@ GtGQLIntrospectionSchemaBuilder >> build [
 		at: #directives
 		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ].
 
+	self
+		ifJson: aSchemaJson
+		at: #types
+		notNilDo: [ :aChild | self populateTypesExtraPropertiesFromJson: aChild ].
+
+
 	^ schema
 ]
 
@@ -347,6 +353,44 @@ GtGQLIntrospectionSchemaBuilder >> json: aJson [
 	self assert: [ aJson isNotNil ] description: [ 'JSON must be non-nil' ].
 
 	json := aJson
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> populateTypeExtraPropertiesFromJson: aJson [
+	| aMetaTypeName aMetaType aType |
+	aMetaTypeName := aJson
+			at: GtGQLIntrospectionConstants metaMetaTypeName
+			ifPresent: [ :aChild | aChild jsonObject ]
+			ifAbsent: [ ^ self ].
+
+	self assert: [ aMetaTypeName = '__Type' ].
+
+	aMetaType := self schema typeNamed: aMetaTypeName.
+	aMetaType
+		ifNil: [ self error: ('"{1}" type must exist' format: {aMetaTypeName}) ].
+
+	aType := aJson
+			at: #name
+			ifPresent: [ :aChild | self schema typeNamed: aChild jsonObject ]
+			ifAbsent: [ self error: 'Inconsistent JSON' ].
+
+	aType metaType: aMetaType.
+
+	aJson
+		do: [ :aChild :aKey | 
+			aChild jsonObject
+				ifNotNil: [ aType
+						propertyAt: aKey
+						ifPresent: [ :aValue | aValue ]
+						ifAbsentPut: [ aMetaType fields
+								detect: [ :eachField | eachField name = aKey ]
+								ifFound: [ :aField | aType propertyAt: aKey put: aChild jsonObject ]
+								ifNone: [ aType propertyAt: aKey put: aChild jsonObject ] ] ] ]
+]
+
+{ #category : #'api - building' }
+GtGQLIntrospectionSchemaBuilder >> populateTypesExtraPropertiesFromJson: aJson [
+	aJson do: [ :aChild | self populateTypeExtraPropertiesFromJson: aChild ]
 ]
 
 { #category : #'private - building' }

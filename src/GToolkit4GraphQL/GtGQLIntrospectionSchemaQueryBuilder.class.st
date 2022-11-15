@@ -117,6 +117,11 @@ GtGQLIntrospectionSchemaQueryBuilder >> buildType: aType field: aField shift: an
 
 { #category : #'private - building' }
 GtGQLIntrospectionSchemaQueryBuilder >> buildTypeFieldsForType: aType shift: anInteger into: aStream [
+	self indentTimes: anInteger into: aStream.
+	aStream
+		nextPutAll: '__typename';
+		cr.
+
 	aType fields
 		do: [ :eachField | 
 			self
@@ -202,9 +207,6 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutFullTypeFragmentInto: aStream [
 	| aType |
 	aStream
 		nextPutAll: 'fragment FullType on __Type {';
-		cr;
-		tab;
-		nextPutAll: '__typename';
 		cr.
 	aType := self typeNamed: '__Type'.
 
@@ -222,9 +224,6 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutInputValueFragmentInto: aStream [
 	| aType |
 	aStream
 		nextPutAll: 'fragment InputValue on __InputValue {';
-		cr;
-		tab;
-		nextPutAll: '__typename';
 		cr.
 	aType := self typeNamed: '__InputValue'.
 
@@ -245,10 +244,6 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutSchemaQueryInto: aStream [
 		cr;
 		tab;
 		nextPutAll: '__schema {';
-		cr;
-		tab;
-		tab;
-		nextPutAll: '__typename';
 		cr.
 	aType := self typeNamed: '__Schema'.
 
@@ -273,6 +268,7 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutTypeRefFragmentInto: aStream [
 
 { #category : #accessing }
 GtGQLIntrospectionSchemaQueryBuilder >> query [
+	<return: #String>
 	^ query
 ]
 

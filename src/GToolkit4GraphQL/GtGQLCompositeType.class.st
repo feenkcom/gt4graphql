@@ -1,9 +1,6 @@
 Class {
 	#name : #GtGQLCompositeType,
 	#superclass : #GtGQLType,
-	#instVars : [
-		'fields'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -14,17 +11,22 @@ GtGQLCompositeType class >> isAbstract [
 
 { #category : #accessing }
 GtGQLCompositeType >> addField: aGQLField [
-	fields at: aGQLField name put: aGQLField
+	self
+		propertyAt: #fields
+		ifPresent: [ :aDict | aDict at: aGQLField name put: aGQLField ]
+		ifAbsentPut: [ Dictionary new
+				at: aGQLField name put: aGQLField;
+				yourself ]
 ]
 
 { #category : #accessing }
 GtGQLCompositeType >> fields [
-	^ fields
+	^ self propertyAt: #fields ifAbsent: [ Dictionary new ]
 ]
 
 { #category : #accessing }
 GtGQLCompositeType >> fields: aCollection [
-	fields := aCollection
+	self propertyAt: #fields put: aCollection
 ]
 
 { #category : #accessing }
@@ -32,15 +34,9 @@ GtGQLCompositeType >> gtFieldsFor: aView [
 	<gtView>
 	^ (GtGQLSchema
 		gtTypesFor: aView
-		items: [ fields
+		items: [ self fields
 				asSortedCollection: [ :a :b | (a name ifNil: [ '?' ]) < (b name ifNil: [ '?' ]) ] ])
 		title: 'Fields'
-]
-
-{ #category : #accessing }
-GtGQLCompositeType >> initialize [
-	super initialize.
-	fields := Dictionary new
 ]
 
 { #category : #testing }

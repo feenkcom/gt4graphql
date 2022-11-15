@@ -1,9 +1,6 @@
 Class {
 	#name : #GtGQLObjectType,
 	#superclass : #GtGQLCompositeType,
-	#instVars : [
-		'interfaces'
-	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -13,17 +10,11 @@ GtGQLObjectType class >> kindName [
 ]
 
 { #category : #accessing }
-GtGQLObjectType >> initialize [
-	super initialize.
-	interfaces := OrderedCollection new
-]
-
-{ #category : #accessing }
 GtGQLObjectType >> interfaces [
-	^ interfaces
+	^ self propertyAt: #interfaces ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLObjectType >> interfaces: aCollection [
-	interfaces := aCollection
+	self propertyAt: #interfaces put: aCollection
 ]
