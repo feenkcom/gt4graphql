@@ -33,6 +33,11 @@ GtGQLEnumeration >> gtEnumValuesFor: aView [
 			weight: 3
 ]
 
+{ #category : #testing }
+GtGQLEnumeration >> isPrimitive [
+	^ true
+]
+
 { #category : #accessing }
 GtGQLEnumeration >> values [
 	^ self propertyAt: #values ifAbsent: [ #() ]

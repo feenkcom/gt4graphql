@@ -3,12 +3,30 @@ Class {
 	#superclass : #GtStreamedCompletionStrategy,
 	#instVars : [
 		'schema',
-		'typeNames'
+		'typeNames',
+		'minLength'
 	],
 	#category : #'GToolkit4GraphQL-Completer'
 }
 
-{ #category : #accessing }
+{ #category : #completing }
+GtGQLCompletionStrategy >> completeArgument: aStream [
+	^ aStream collect: [ :each | each name , ':' ]
+]
+
+{ #category : #completing }
+GtGQLCompletionStrategy >> completeField: aStream [
+	^ aStream
+		collect: [ :each | 
+			| name |
+			name := each name.
+			(each arguments anySatisfy: [ :arg | arg isRequired ])
+				ifTrue: [ name := name , ' () {}' ]
+				ifFalse: [ each type isPrimitive ifFalse: [ name := name , ' {}' ] ].
+			name ]
+]
+
+{ #category : #completing }
 GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger [
 	| prefix ast node |
 	prefix := self completionPrefixAt: positionInteger in: aText.
@@ -18,15 +36,41 @@ GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger 
 		ifTrue: [ ^ #() asAsyncStream ].
 	ast := GraphQLParser parseWithErrors: aText asString.
 	node := ast nodeAt: positionInteger.
-	^ (self completionStreamForNode: node startingWith: prefix)
+	^ (self
+		completionStreamForNode: node
+		startingWith: prefix
+		at: positionInteger)
 		collect: [ :each | 
-			GtInsertTextCompletionAction
-				labeled: (self labelFor: each withSearch: prefix)
-				completion: (each allButFirst: prefix size)
-				position: positionInteger ]
+			| label completion |
+			completion := each allButFirst: prefix size.
+			label := self labelFor: each withSearch: prefix.
+			(each endsWith: '{}')
+				ifTrue: [ | fromPosition newPosition |
+					fromPosition := positionInteger - label size + completion size + 1.
+					newPosition := fromPosition + label size - 2.
+					(each endsWith: '() {}') ifTrue: [ newPosition := newPosition - 3 ].
+					GtInsertTextAndPositionCursorCompletionAction
+						labeled: label
+						completion: completion
+						position: positionInteger
+						from: fromPosition
+						newPosition: newPosition ]
+				ifFalse: [ GtInsertTextCompletionAction
+						labeled: label
+						completion: completion
+						position: positionInteger ] ]
 ]
 
-{ #category : #accessing }
+{ #category : #completing }
+GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger requested: aBoolean [
+	minLength := aBoolean ifTrue: [ 0 ] ifFalse: [ 1 ].
+	^ super
+		completionActionStreamFor: aText
+		at: positionInteger
+		requested: aBoolean
+]
+
+{ #category : #completing }
 GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: prefix [
 	(prefix = '$' and: [ aNode parent isKindOf: GraphQLArgumentNode ])
 		ifTrue: [ ^ self completionStreamForVariable: aNode startingWith: prefix ].
@@ -34,13 +78,13 @@ GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: pre
 		ifTrue: [ (aNode parent arguments identityIncludes: aNode)
 				ifTrue: [ (aNode parent fieldIn: self schema)
 						ifNotNil: [ :field | 
-							(field arguments asOrderedCollection asAsyncStream
-								select: [ :each | each name beginsWith: prefix ])
-								collect: [ :each | each name , ':' ] ] ] ]
+							self
+								completeArgument: (field arguments asOrderedCollection asAsyncStream
+										select: [ :each | each name beginsWith: prefix ]) ] ] ]
 ]
 
-{ #category : #accessing }
-GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix [
+{ #category : #completing }
+GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix at: positionInteger [
 	(aNode isKindOf: GraphQLNamedTypeNode)
 		ifTrue: [ ^ self typeNames asyncStreamStartingWith: prefix ].
 	aNode isErrorNode
@@ -49,6 +93,18 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix [
 	(aNode isKindOf: GraphQLVariableNode)
 		ifTrue: [ (self completionStreamForVariable: aNode startingWith: prefix)
 				ifNotNil: [ :stream | ^ stream ] ].
+	prefix isEmpty
+		ifTrue: [ (aNode isKindOf: GraphQLFieldNode)
+				ifTrue: [ (positionInteger
+						between: aNode leftBrace startPosition
+						and: aNode rightBrace stopPosition)
+						ifTrue: [ ^ (aNode typeIn: self schema)
+								ifNotNil: [ :type | self completeField: type fields asArray asAsyncStream ] ].
+					(positionInteger
+						between: aNode leftParen startPosition
+						and: aNode rightParen stopPosition)
+						ifTrue: [ ^ (aNode fieldIn: self schema)
+								ifNotNil: [ :type | self completeArgument: type arguments asArray asAsyncStream ] ] ] ].
 	^ ((aNode parentOfType: GraphQLFieldNode)
 		ifNil: [ aNode isPartOfQuery
 				ifTrue: [ self schema queryType ]
@@ -56,11 +112,12 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix [
 		ifNotNil: [ :node | node typeIn: self schema ])
 		ifNil: [ #() asAsyncStream ]
 		ifNotNil: [ :type | 
-			(type fields asArray asAsyncStream
-				select: [ :each | each name beginsWith: prefix ]) collect: #name ]
+			self
+				completeField: (type fields asArray asAsyncStream
+						select: [ :each | each name beginsWith: prefix ]) ]
 ]
 
-{ #category : #accessing }
+{ #category : #completing }
 GtGQLCompletionStrategy >> completionStreamForVariable: aNode startingWith: prefix [
 	(aNode parent isKindOf: GraphQLVariableDefinitionNode) ifTrue: [ ^ nil ].
 	^ (aNode parentOfType: GraphQLOperationDefinitionNode)
@@ -70,10 +127,21 @@ GtGQLCompletionStrategy >> completionStreamForVariable: aNode startingWith: pref
 				collect: [ :each | each variable source ] ]
 ]
 
+{ #category : #initialization }
+GtGQLCompletionStrategy >> initialize [
+	super initialize.
+	minLength := 1
+]
+
 { #category : #testing }
 GtGQLCompletionStrategy >> isSeparatorCharacter: aCharacter [
 	^ (aCharacter isLetter
 		or: [ aCharacter isDigit or: [ '_$' includes: aCharacter ] ]) not
+]
+
+{ #category : #accessing }
+GtGQLCompletionStrategy >> minimumPrefixLength [
+	^ minLength
 ]
 
 { #category : #accessing }
