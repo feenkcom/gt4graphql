@@ -59,18 +59,23 @@ GtGQLIntrospectionConstants class >> typeRefFragment [
 			kind
 			name
 			ofType {
+				__typename
 				kind
 				name
 				ofType {
+					__typename
 					kind
 					name
 					ofType {
+						__typename
 						kind
 						name
 						ofType {
+							__typename
 							kind
 							name
 							ofType {
+								__typename
 								kind
 								name
 							}
