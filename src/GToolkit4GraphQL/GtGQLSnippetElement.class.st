@@ -406,8 +406,11 @@ GtGQLSnippetElement >> showInlineError: aResult [
 			(message isNil or: [ line isNil or: [ column isNil ] ])
 				ifFalse: [ (text gtIndexOfLineNumber: line)
 						ifNotNil: [ :location | 
-							(editor text from: location key + column - 2 to: location key + column - 2)
-								attributes: {(GtSourceCoderErrorAttribute for: message) beOverwritableByStyler} ] ] ]
+							editor text
+								attributes: {(GtSourceCoderErrorAttribute for: message)
+											beOverwritableByStyler}
+								from: location key + column - 2
+								to: location key + column - 2 ] ] ]
 ]
 
 { #category : #'api - view' }
