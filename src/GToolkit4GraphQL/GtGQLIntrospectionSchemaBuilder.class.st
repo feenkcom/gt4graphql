@@ -84,8 +84,16 @@ GtGQLIntrospectionSchemaBuilder >> build [
 		at: #types
 		notNilDo: [ :aChild | self populateTypesExtraPropertiesFromJson: aChild ].
 
+	self buildImplicitFields.
 
-	^ schema
+	^ self schema
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> buildImplicitFields [
+	GtGQLIntrospectionImplicitFieldsBuilder new
+		schema: self schema;
+		build
 ]
 
 { #category : #'api - building' }
