@@ -27,6 +27,16 @@ GtGQLSnippetElement >> browseSchema [
 			obj ifNotNil: [ gqlElement phlow spawnObject: obj ] ]
 ]
 
+{ #category : #private }
+GtGQLSnippetElement >> clearPreviousErrors [
+	| text |
+	text := self operationEditor editor text.
+	text
+		clearAttributes: 0
+		to: text size
+		if: [ :each | each class == GtSourceCoderErrorAttribute ]
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> context [
 	^ self snippet contextUsing: self snippetContext
@@ -140,7 +150,7 @@ GtGQLSnippetElement >> executeQuery: aButton [
 	| aContext aFuture |
 	aContext := self context.
 	aContext ifNil: [ ^ self ].
-
+	self clearPreviousErrors.
 	aButton disable.
 
 	aFuture := [ | operation input |
@@ -267,14 +277,15 @@ GtGQLSnippetElement >> inputSource [
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 	self snippetViewModel resultValue: anError.
-	theButton phlow spawnObject: anError.
 	theButton enable
 ]
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
-	self snippetViewModel resultValue: aResult.
-	theButton phlow spawnObject: aResult.
+	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
+		ifTrue: [ self showInlineError: aResult ]
+		ifFalse: [ self snippetViewModel resultValue: aResult.
+			theButton phlow spawnObject: aResult ].
 	theButton enable
 ]
 
@@ -388,6 +399,24 @@ GtGQLSnippetElement >> setDefaultContextVariable [
 	self contextVariable trim notEmpty ifTrue: [ ^ self ].
 	(self snippet defaultContextUsing: self snippetContext)
 		ifNotNil: [ :each | self snippet context: each ]
+]
+
+{ #category : #'private - event handling' }
+GtGQLSnippetElement >> showInlineError: aResult [
+	| editor text |
+	editor := self operationEditor editor.
+	text := editor text asString.
+	text = aResult query ifFalse: [ ^ self ].
+	aResult
+		errorMessagesAndLocationsDo: [ :message :line :column | 
+			(message isNil or: [ line isNil or: [ column isNil ] ])
+				ifFalse: [ (text gtIndexOfLineNumber: line)
+						ifNotNil: [ :location | 
+							editor text
+								attributes: {(GtSourceCoderErrorAttribute for: message)
+											beOverwritableByStyler}
+								from: location key + column - 2
+								to: location key + column - 2 ] ] ]
 ]
 
 { #category : #'api - view' }
