@@ -1,11 +1,14 @@
+"
+I exemplify {{gtClass:GtGQLIntrospectionTypeBuilder}}. 
+"
 Class {
-	#name : #GtGQLIntrospectionTypeNameBuilderExamples,
+	#name : #GtGQLIntrospectionTypeBuilderExamples,
 	#superclass : #Object,
 	#category : #'GToolkit4GraphQL-Introspection-Examples'
 }
 
 { #category : #'examples - builder\t' }
-GtGQLIntrospectionTypeNameBuilderExamples >> basicBuilder [
+GtGQLIntrospectionTypeBuilderExamples >> basicBuilder [
 	<gtExample>
 	| aBuilder |
 	aBuilder := GtGQLIntrospectionTypeBuilder new.
@@ -18,7 +21,7 @@ GtGQLIntrospectionTypeNameBuilderExamples >> basicBuilder [
 ]
 
 { #category : #'examples - builder\t' }
-GtGQLIntrospectionTypeNameBuilderExamples >> basicSchema [
+GtGQLIntrospectionTypeBuilderExamples >> basicSchema [
 	<gtExample>
 	| aSchema |
 	aSchema := GtGQLSchema new.
@@ -30,7 +33,7 @@ GtGQLIntrospectionTypeNameBuilderExamples >> basicSchema [
 ]
 
 { #category : #'examples - builder\t' }
-GtGQLIntrospectionTypeNameBuilderExamples >> nonNullListType [
+GtGQLIntrospectionTypeBuilderExamples >> nonNullListType [
 	<gtExample>
 	| aBuilder aJson aType aSchema aTypesCount |
 	aBuilder := self basicBuilder.
@@ -54,7 +57,13 @@ GtGQLIntrospectionTypeNameBuilderExamples >> nonNullListType [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionTypeNameBuilderExamples >> nonNullListTypeJsonString [
+GtGQLIntrospectionTypeBuilderExamples >> nonNullListTypeJson [
+	<gtExample>
+	^ GtJson forJsonString: self nonNullListTypeJsonString
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionTypeBuilderExamples >> nonNullListTypeJsonString [
 	<gtExample>
 	^ '{
 	"kind" : "NON_NULL",
@@ -76,7 +85,7 @@ GtGQLIntrospectionTypeNameBuilderExamples >> nonNullListTypeJsonString [
 ]
 
 { #category : #'examples - builder\t' }
-GtGQLIntrospectionTypeNameBuilderExamples >> scalarStringType [
+GtGQLIntrospectionTypeBuilderExamples >> scalarStringType [
 	<gtExample>
 	| aBuilder aJson aType aSchema aTypesCount |
 	aBuilder := self basicBuilder.
@@ -100,7 +109,13 @@ GtGQLIntrospectionTypeNameBuilderExamples >> scalarStringType [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionTypeNameBuilderExamples >> scalarStringTypeJsonString [
+GtGQLIntrospectionTypeBuilderExamples >> scalarStringTypeJson [
+	<gtExample>
+	^ GtJson forJsonString: self scalarStringTypeJsonString
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionTypeBuilderExamples >> scalarStringTypeJsonString [
 	<gtExample>
 	^ '{
 	"kind" : "SCALAR",

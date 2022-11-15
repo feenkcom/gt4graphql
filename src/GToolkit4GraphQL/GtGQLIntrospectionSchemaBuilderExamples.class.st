@@ -1,3 +1,7 @@
+"
+I exemplify {{gtClass:GtGQLIntrospectionSchemaBuilder}}.
+
+"
 Class {
 	#name : #GtGQLIntrospectionSchemaBuilderExamples,
 	#superclass : #Object,

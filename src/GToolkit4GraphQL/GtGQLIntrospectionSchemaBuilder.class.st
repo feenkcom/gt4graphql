@@ -1,3 +1,11 @@
+"
+I build a {{gtClass:GtGQLSchema}} based on a GraphQL [introspection query](https://spec.graphql.org/July2015/#sec-Schema-Introspection). 
+I use {{gtClass:GtGQLContext}} to perform queries using {{gtClass:GtGQLClient}}. 
+I use {{gtMethod:GtGQLContext >> #introspectionSchemaQuery}} to obtain the schema as a JSON format response.
+#Example
+The following example shows a StarWars schema which is used in [Introduction to GraphQL](https://graphql.org/learn):
+{{gtExample:GtGQLIntrospectionSchemaBuilderExamples>>#starWarsIntrospectionSchema|noCode}}
+"
 Class {
 	#name : #GtGQLIntrospectionSchemaBuilder,
 	#superclass : #Object,
