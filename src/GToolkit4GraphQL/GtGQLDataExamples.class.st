@@ -4,7 +4,7 @@ Class {
 	#category : #'GToolkit4GraphQL-Examples'
 }
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> graphQLIntrospectionSchema [
 	<gtExample>
 	| aFile aSchema anAst |
@@ -16,10 +16,13 @@ GtGQLDataExamples >> graphQLIntrospectionSchema [
 			yourself.
 
 	self assert: aSchema isNotNil.
+	self assert: aSchema baseTypes size equals: 13.
+	self assert: aSchema types size equals: 30.
+
 	^ aSchema
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> graphQLIntrospectionSchemaFile [
 	<gtExample>
 	| aFile |
@@ -30,7 +33,7 @@ GtGQLDataExamples >> graphQLIntrospectionSchemaFile [
 	^ aFile
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> inputTypeAst [
 	<gtExample>
 	| anAst |
@@ -41,7 +44,7 @@ GtGQLDataExamples >> inputTypeAst [
 	^ anAst
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> inputTypeGraphQLSchemaString [
 	<gtExample>
 	^ '
@@ -52,20 +55,28 @@ input ReviewInput {
 '
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> inputTypeSchema [
 	<gtExample>
-	| anAst aSchema |
+	| anAst aSchema aType |
 	anAst := self inputTypeAst.
 	aSchema := GtGQLSchema new.
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
+		self assert: aSchema baseTypes size equals: 6.
+	self assert: aSchema types size equals: 7.
+	
+	aType := aSchema typeNamed: 'ReviewInput'.
+	self assert: aType isNotNil.
+	self assert: aType inputFields isDictionary.
+	self assert: aType inputFields size equals: 2.
+	self assert: aType inputFields == aType fields.
 
 	^ aSchema
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> interfaceAst [
 	<gtExample>
 	| anAst |
@@ -76,7 +87,7 @@ GtGQLDataExamples >> interfaceAst [
 	^ anAst
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> interfaceGraphQLSchemaString [
 	<gtExample>
 	^ '
@@ -102,7 +113,7 @@ type Droid implements Character {
 '
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - schema' }
 GtGQLDataExamples >> interfaceSchema [
 	<gtExample>
 	| anAst aSchema |
@@ -115,7 +126,7 @@ GtGQLDataExamples >> interfaceSchema [
 	^ aSchema
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - star wars' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
 	<gtExample>
 	| aFile |
@@ -126,7 +137,7 @@ GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
 	^ aFile
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - star wars' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonObject [
 	<gtExample>
 	| aJson |
@@ -139,7 +150,7 @@ GtGQLDataExamples >> starWarsGraphQLSchemaJsonObject [
 	^ aJson
 ]
 
-{ #category : #'examples - data' }
+{ #category : #'examples - star wars' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonString [
 	<gtExample>
 	| aFile aContents |

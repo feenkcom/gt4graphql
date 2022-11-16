@@ -39,7 +39,7 @@ GtGQLField >> description: anObject [
 	self propertyAt: #description put: anObject
 ]
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLField >> gtArgumentsFor: aView [
 	<gtView>
 	self arguments ifNil: [ ^ aView empty ].
@@ -67,6 +67,16 @@ GtGQLField >> gtArgumentsFor: aView [
 		column: 'Description'
 			text: [ :each | each description ifNil: [ '' ] ]
 			weight: 3
+]
+
+{ #category : #'gt - extensions' }
+GtGQLField >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Description';
+		priority: 40;
+		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
 ]
 
 { #category : #accessing }
@@ -147,8 +157,15 @@ GtGQLField >> printOn: aStream [
 
 	aStream
 		nextPut: $(;
-		nextPutAll: self name;
-		nextPut: $)
+		nextPutAll: self name.
+
+	self type
+		ifNotNil: [ :aType | 
+			aStream
+				nextPutAll: ': ';
+				nextPutAll: aType name asString ].
+
+	aStream nextPut: $)
 ]
 
 { #category : #accessing }

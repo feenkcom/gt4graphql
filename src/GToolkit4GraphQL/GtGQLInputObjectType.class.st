@@ -29,9 +29,14 @@ GtGQLInputObjectType >> deprecationReason: anObject [
 	self propertyAt: #deprecationReason put: anObject
 ]
 
-{ #category : #accessing }
-GtGQLInputObjectType >> fields [
-	^ self inputFields
+{ #category : #'api - initialization' }
+GtGQLInputObjectType >> gtTypeFor: aView [
+	<gtView>
+	self type ifNil: [ ^ aView empty ].
+
+	^ (GtGQLSchema gtTypesFor: aView items: [ {self type baseType} ])
+		title: 'Type';
+		expandUpTo: 1
 ]
 
 { #category : #'gt - extensions' }
@@ -53,12 +58,12 @@ GtGQLInputObjectType >> gtTypesNameText [
 
 { #category : #accessing }
 GtGQLInputObjectType >> inputFields [
-	^ self propertyAt: #inputFields ifAbsent: [ #() ]
+	^ self fields
 ]
 
 { #category : #accessing }
 GtGQLInputObjectType >> inputFields: aCollection [
-	self propertyAt: #inputFields put: aCollection
+	self fields: aCollection
 ]
 
 { #category : #accessing }
@@ -74,6 +79,20 @@ GtGQLInputObjectType >> isDeprecated: anObject [
 { #category : #testing }
 GtGQLInputObjectType >> isRequired [
 	^ self type ifNotNil: #isRequired ifNil: [ false ]
+]
+
+{ #category : #printing }
+GtGQLInputObjectType >> printTypeOn: aStream [
+	self type
+		ifNotNil: [ :aType | 
+			aStream
+				nextPutAll: ': ';
+				nextPutAll: aType name asString ]
+]
+
+{ #category : #accessing }
+GtGQLInputObjectType >> propertyFieldName [
+	^ #inputFields
 ]
 
 { #category : #accessing }

@@ -125,8 +125,15 @@ GtGQLType >> printOn: aStream [
 
 	aStream
 		nextPut: $(;
-		nextPutAll: self name asString;
-		nextPut: $)
+		nextPutAll: self name asString.
+
+	self printTypeOn: aStream.
+
+	aStream nextPut: $)
+]
+
+{ #category : #printing }
+GtGQLType >> printTypeOn: aStream [ 
 ]
 
 { #category : #accessing }
