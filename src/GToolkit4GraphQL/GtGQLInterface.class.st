@@ -24,6 +24,11 @@ GtGQLInterface >> isInterface [
 	^ true
 ]
 
+{ #category : #'api - introspection' }
+GtGQLInterface >> isTypenameIntrospection [
+	^ true
+]
+
 { #category : #accessing }
 GtGQLInterface >> possibleTypes [
 	^ self propertyAt: #possibleTypes ifAbsent: [ #() ]

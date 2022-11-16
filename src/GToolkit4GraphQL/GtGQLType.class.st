@@ -97,6 +97,11 @@ GtGQLType >> isScalar [
 	^ false
 ]
 
+{ #category : #'api - introspection' }
+GtGQLType >> isTypenameIntrospection [
+	^ false
+]
+
 { #category : #accessing }
 GtGQLType >> kindName [
 	^ self class kindName

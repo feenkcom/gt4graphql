@@ -12,7 +12,16 @@ GtGQLUnion class >> kindName [
 { #category : #accessing }
 GtGQLUnion >> gtTypesFor: aView [
 	<gtView>
-	^ GtGQLSchema gtTypesFor: aView items: [ self types ]
+	^ GtGQLSchema
+		gtTypesFor: aView
+		items: [ self types asSortedCollection: [ :a :b | a name < b name ] ]
+]
+
+{ #category : #'api - introspection' }
+GtGQLUnion >> isTypenameIntrospection [
+	"It should be possible to add __typename on unions too, but union does not have fields."
+
+	^ false
 ]
 
 { #category : #accessing }
