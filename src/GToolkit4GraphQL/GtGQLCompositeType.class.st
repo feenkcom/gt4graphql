@@ -12,7 +12,7 @@ GtGQLCompositeType class >> isAbstract [
 { #category : #'api - initialization' }
 GtGQLCompositeType >> addField: aGQLField [
 	self
-		propertyAt: #fields
+		propertyAt: self propertyFieldName
 		ifPresent: [ :aDict | aDict at: aGQLField name put: aGQLField ]
 		ifAbsentPut: [ Dictionary new
 				at: aGQLField name put: aGQLField;
@@ -26,7 +26,7 @@ GtGQLCompositeType >> fieldNamed: aName [
 
 { #category : #accessing }
 GtGQLCompositeType >> fields [
-	^ self propertyAt: #fields ifAbsentPut: [ Dictionary new ]
+	^ self propertyAt: self propertyFieldName ifAbsentPut: [ Dictionary new ]
 ]
 
 { #category : #'api - initialization' }
@@ -53,4 +53,9 @@ GtGQLCompositeType >> initialize [
 { #category : #testing }
 GtGQLCompositeType >> isComposite [
 	^ true
+]
+
+{ #category : #'api - initialization' }
+GtGQLCompositeType >> propertyFieldName [
+	^ #fields
 ]

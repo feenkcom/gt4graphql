@@ -81,7 +81,6 @@ GtGQLResult >> gtTypeFor: aView [
 	<gtView>
 	self hasType ifFalse: [ ^ aView empty ].
 
-
 	^ (GtGQLSchema gtTypesFor: aView items: [ {self type} ])
 		expandUpTo: 1;
 		actionButtonIcon: BrGlamorousVectorIcons inspect
