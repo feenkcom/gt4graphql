@@ -110,6 +110,11 @@ GtGQLResult >> isSuccess [
 ]
 
 { #category : #accessing }
+GtGQLResult >> paginator [
+	^ GtGQLPaginatorStream new result: self
+]
+
+{ #category : #accessing }
 GtGQLResult >> result [
 	^ result
 ]

@@ -4,6 +4,67 @@ Class {
 	#category : #'GToolkit4GraphQL-Examples'
 }
 
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubMiniSchema [
+	<gtExample>
+	| anAst aSchema |
+	anAst := self gitHubMiniSchemaAst.
+	aSchema := GtGQLSchema new.
+	aSchema import: anAst.
+
+	self assert: aSchema isNotNil.
+	self assert: aSchema baseTypes size equals: 13.
+	self assert: aSchema types size equals:22.
+
+	^ aSchema
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubMiniSchemaAst [
+	<gtExample>
+	| anAst |
+	anAst := GraphQLParser parseFile: self gitHubMiniSchemaGraphQLFile.
+
+	self assert: anAst isNotNil.
+
+	^ anAst
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubMiniSchemaGraphQLFile [
+	<gtExample>
+	| aFile |
+	aFile := FileLocator gtResource
+			/ 'feenkcom/gt4graphql/data/examples/github-mini-schema.graphql'.
+
+	self assert: aFile exists.
+	^ aFile
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubRepositoriesJsonFile [
+	<gtExample>
+	| aFile |
+	aFile := FileLocator gtResource
+			/ 'feenkcom/gt4graphql/data/examples/github-repositories.json'.
+
+	self assert: aFile exists.
+	^ aFile
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubRepositoriesJsonObject [
+	<gtExample>
+	| aJson |
+	aJson := STONJSON fromString: self gitHubRepositoriesJsonFile.
+
+	self assert: aJson isNotNil.
+	self assert: aJson isDictionary.
+	self assert: aJson isNotEmpty.
+
+	^ aJson
+]
+
 { #category : #'examples - schema' }
 GtGQLDataExamples >> graphQLIntrospectionSchema [
 	<gtExample>
@@ -64,9 +125,9 @@ GtGQLDataExamples >> inputTypeSchema [
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
-		self assert: aSchema baseTypes size equals: 6.
+	self assert: aSchema baseTypes size equals: 6.
 	self assert: aSchema types size equals: 7.
-	
+
 	aType := aSchema typeNamed: 'ReviewInput'.
 	self assert: aType isNotNil.
 	self assert: aType inputFields isDictionary.
