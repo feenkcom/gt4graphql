@@ -7,6 +7,15 @@ Class {
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
+{ #category : #asserting }
+GtGQLModel >> assertFields: aKey value: aValue [
+	aKey = #fields ifFalse: [ ^ self ].
+
+	self
+		assert: [ aValue isDictionary ]
+		description: [ 'Fields must be a dictionary: {1}' format: {aValue} ]
+]
+
 { #category : #'api - properties' }
 GtGQLModel >> fields [
 	^ #()
@@ -97,7 +106,10 @@ GtGQLModel >> propertyAt: aKey ifAbsentPut: anAbsentBlock [
 	^ self
 		propertyAt: aKey
 		ifPresent: [ :aValue | aValue ]
-		ifAbsentPut: anAbsentBlock
+		ifAbsentPut: [ | aValue |
+			aValue := anAbsentBlock value.
+			self assertFields: aKey value: aValue.
+			aValue ]
 ]
 
 { #category : #'api - properties' }
@@ -118,5 +130,7 @@ GtGQLModel >> propertyAt: aKey ifPresent: aPresentBlock ifAbsentPut: anAbsentBlo
 
 { #category : #'api - properties' }
 GtGQLModel >> propertyAt: aKey put: aValue [
+	self assertFields: aKey value: aValue.
+
 	^ properties at: aKey put: aValue
 ]

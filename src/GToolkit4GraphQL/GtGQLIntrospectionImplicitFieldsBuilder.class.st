@@ -75,7 +75,7 @@ GtGQLIntrospectionImplicitFieldsBuilder >> buildMetaTypeNameField [
 	aField := self createMetaTypeNameField.
 	self schema baseTypes
 		do: [ :eachType | 
-			(eachType isTypenameIntrospection
+			((eachType isObjectType or: [ eachType isInterface ])
 				and: [ (eachType fieldNamed: GtGQLIntrospectionConstants metaMetaTypeName) isNil ])
 				ifTrue: [ eachType addField: aField ] ]
 ]

@@ -17,13 +17,6 @@ GtGQLUnion >> gtTypesFor: aView [
 		items: [ self types asSortedCollection: [ :a :b | a name < b name ] ]
 ]
 
-{ #category : #'api - introspection' }
-GtGQLUnion >> isTypenameIntrospection [
-	"It should be possible to add __typename on unions too, but union does not have fields."
-
-	^ false
-]
-
 { #category : #accessing }
 GtGQLUnion >> possibleTypes: aCollection [
 	self types: aCollection

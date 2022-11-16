@@ -19,7 +19,7 @@ GtGQLObjectType >> interfaces: aCollection [
 	self propertyAt: #interfaces put: aCollection
 ]
 
-{ #category : #'api - introspection' }
-GtGQLObjectType >> isTypenameIntrospection [
+{ #category : #accessing }
+GtGQLObjectType >> isObjectType [
 	^ true
 ]

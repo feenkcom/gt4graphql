@@ -26,7 +26,7 @@ GtGQLCompositeType >> fieldNamed: aName [
 
 { #category : #accessing }
 GtGQLCompositeType >> fields [
-	^ self propertyAt: #fields ifAbsent: [ Dictionary new ]
+	^ self propertyAt: #fields ifAbsentPut: [ Dictionary new ]
 ]
 
 { #category : #'api - initialization' }
@@ -42,6 +42,12 @@ GtGQLCompositeType >> gtFieldsFor: aView [
 		items: [ self fields
 				asSortedCollection: [ :a :b | (a name ifNil: [ '?' ]) < (b name ifNil: [ '?' ]) ] ])
 		title: 'Fields'
+]
+
+{ #category : #accessing }
+GtGQLCompositeType >> initialize [
+	super initialize.
+	self fields
 ]
 
 { #category : #testing }

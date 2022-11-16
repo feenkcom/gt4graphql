@@ -9,6 +9,14 @@ GtGQLInterface class >> kindName [
 	^ 'INTERFACE'
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLInterface >> gtPossibleTypesFor: aView [
+	<gtView>
+	^ (GtGQLSchema gtTypesFor: aView items: [ self possibleTypes ])
+		title: 'Possible Types';
+		priority: 11
+]
+
 { #category : #accessing }
 GtGQLInterface >> interfaces [
 	^ self propertyAt: #interfaces ifAbsent: [ #() ]
@@ -21,11 +29,6 @@ GtGQLInterface >> interfaces: aCollection [
 
 { #category : #testing }
 GtGQLInterface >> isInterface [
-	^ true
-]
-
-{ #category : #'api - introspection' }
-GtGQLInterface >> isTypenameIntrospection [
 	^ true
 ]
 

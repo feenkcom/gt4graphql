@@ -83,6 +83,11 @@ GtGQLType >> isNonNullable [
 ]
 
 { #category : #testing }
+GtGQLType >> isObjectType [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLType >> isPrimitive [
 	^ false
 ]
@@ -94,11 +99,6 @@ GtGQLType >> isRequired [
 
 { #category : #testing }
 GtGQLType >> isScalar [
-	^ false
-]
-
-{ #category : #'api - introspection' }
-GtGQLType >> isTypenameIntrospection [
 	^ false
 ]
 
