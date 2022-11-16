@@ -423,6 +423,7 @@ GtGQLSnippetElement >> showInlineError: aResult [
 							editor text
 								attributes: {(GtSourceCoderErrorAttribute for: message)
 											openOnFirstShow: first;
+											clickAction: [ :element | element phlow spawnObject: aResult ];
 											beOverwritableByStyler}
 								from: location key + column - 2
 								to: location key + column - 2.
