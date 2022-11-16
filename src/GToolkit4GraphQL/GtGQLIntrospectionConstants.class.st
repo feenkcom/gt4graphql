@@ -50,6 +50,16 @@ GtGQLIntrospectionConstants class >> metaMetaTypeName [
 ]
 
 { #category : #'api - constants' }
+GtGQLIntrospectionConstants class >> schemaFieldName [
+	^ #__schema
+]
+
+{ #category : #'api - constants' }
+GtGQLIntrospectionConstants class >> typeFieldName [
+	^ #__type
+]
+
+{ #category : #'api - constants' }
 GtGQLIntrospectionConstants class >> typeRefFragment [
 	^ 'fragment TypeRef on __Type {
 	__typename

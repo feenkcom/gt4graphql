@@ -9,6 +9,14 @@ GtGQLInterface class >> kindName [
 	^ 'INTERFACE'
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLInterface >> gtPossibleTypesFor: aView [
+	<gtView>
+	^ (GtGQLSchema gtTypesFor: aView items: [ self possibleTypes ])
+		title: 'Possible Types';
+		priority: 11
+]
+
 { #category : #accessing }
 GtGQLInterface >> interfaces [
 	^ self propertyAt: #interfaces ifAbsent: [ #() ]

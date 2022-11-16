@@ -24,11 +24,25 @@ GtGQLIntrospectionSchemaBuilder >> assertSchema: aSchema [
 
 { #category : #'api - building' }
 GtGQLIntrospectionSchemaBuilder >> build [
-	| aResultJson aSchemaJson |
+	<return: #GtGQLSchema>
 	self
 		assert: [ self configuration isNotNil ]
 		description: [ 'Configuration must be non-nil' ].
+	self buildSchema.
+	self buildImplicitFields.
+	^ self schema
+]
 
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> buildImplicitFields [
+	GtGQLIntrospectionImplicitFieldsBuilder new
+		schema: self schema;
+		build
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> buildSchema [
+	| aResultJson aSchemaJson |
 	aResultJson := self ensureJson.
 	aSchemaJson := aResultJson atPath: #(data __schema).
 
@@ -82,10 +96,7 @@ GtGQLIntrospectionSchemaBuilder >> build [
 	self
 		ifJson: aSchemaJson
 		at: #types
-		notNilDo: [ :aChild | self populateTypesExtraPropertiesFromJson: aChild ].
-
-
-	^ schema
+		notNilDo: [ :aChild | self populateTypesExtraPropertiesFromJson: aChild ]
 ]
 
 { #category : #'api - building' }

@@ -12,7 +12,9 @@ GtGQLUnion class >> kindName [
 { #category : #accessing }
 GtGQLUnion >> gtTypesFor: aView [
 	<gtView>
-	^ GtGQLSchema gtTypesFor: aView items: [ self types ]
+	^ GtGQLSchema
+		gtTypesFor: aView
+		items: [ self types asSortedCollection: [ :a :b | a name < b name ] ]
 ]
 
 { #category : #accessing }

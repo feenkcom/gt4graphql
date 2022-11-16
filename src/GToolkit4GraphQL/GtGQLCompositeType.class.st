@@ -9,7 +9,7 @@ GtGQLCompositeType class >> isAbstract [
 	^ self name = #GtGQLCompositeType
 ]
 
-{ #category : #accessing }
+{ #category : #'api - initialization' }
 GtGQLCompositeType >> addField: aGQLField [
 	self
 		propertyAt: #fields
@@ -20,13 +20,18 @@ GtGQLCompositeType >> addField: aGQLField [
 ]
 
 { #category : #accessing }
-GtGQLCompositeType >> fields [
-	^ self propertyAt: #fields ifAbsent: [ Dictionary new ]
+GtGQLCompositeType >> fieldNamed: aName [
+	^ self fields at: aName ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
+GtGQLCompositeType >> fields [
+	^ self propertyAt: #fields ifAbsentPut: [ Dictionary new ]
+]
+
+{ #category : #'api - initialization' }
 GtGQLCompositeType >> fields: aCollection [
-	self propertyAt: #fields put: aCollection
+	aCollection do: [ :eachField | self addField: eachField ]
 ]
 
 { #category : #accessing }
@@ -37,6 +42,12 @@ GtGQLCompositeType >> gtFieldsFor: aView [
 		items: [ self fields
 				asSortedCollection: [ :a :b | (a name ifNil: [ '?' ]) < (b name ifNil: [ '?' ]) ] ])
 		title: 'Fields'
+]
+
+{ #category : #accessing }
+GtGQLCompositeType >> initialize [
+	super initialize.
+	self fields
 ]
 
 { #category : #testing }

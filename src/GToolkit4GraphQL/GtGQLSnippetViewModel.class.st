@@ -42,6 +42,13 @@ GtGQLSnippetViewModel >> onResultVariableNameChanged: anAnnouncement [
 	self announce: anAnnouncement
 ]
 
+{ #category : #'api - snippet model' }
+GtGQLSnippetViewModel >> onSnippetModelChanged [
+	super onSnippetModelChanged.
+
+	self updateResultVariableBindings
+]
+
 { #category : #'api - result variable' }
 GtGQLSnippetViewModel >> resultValue [
 	^ resultValue
@@ -60,6 +67,13 @@ GtGQLSnippetViewModel >> resultValue: aResult [
 { #category : #'api - result variable' }
 GtGQLSnippetViewModel >> resultVariableName [
 	^ self snippetModel resultVariableName
+]
+
+{ #category : #'api - shared context' }
+GtGQLSnippetViewModel >> sharedSnippetContext: aLeSharedSnippetContext [
+	super sharedSnippetContext: aLeSharedSnippetContext.
+	
+	self updateResultVariableBindings
 ]
 
 { #category : #'api - accessing' }

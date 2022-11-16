@@ -22,7 +22,9 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 		items: aBlock;
 		children: [ :each | 
 			(self typeForObject: each)
-				ifNotNil: [ :aType | aType baseType fields ifNil: [ #() ] ]
+				ifNotNil: [ :aType | 
+					(aType baseType fields ifNil: [ #() ])
+						asSortedCollection: [ :a :b | a name < b name ] ]
 				ifNil: [ #() ] ]
 ]
 
