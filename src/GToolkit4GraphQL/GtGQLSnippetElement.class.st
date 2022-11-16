@@ -410,10 +410,11 @@ GtGQLSnippetElement >> setDefaultContextVariable [
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> showInlineError: aResult [
-	| editor text |
+	| editor text first |
+	first := true.
 	editor := self operationEditor editor.
 	text := editor text asString.
-	text = aResult query ifFalse: [ ^ self ].
+	text = aResult query operation ifFalse: [ ^ self ].
 	aResult
 		errorMessagesAndLocationsDo: [ :message :line :column | 
 			(message isNil or: [ line isNil or: [ column isNil ] ])
@@ -421,9 +422,11 @@ GtGQLSnippetElement >> showInlineError: aResult [
 						ifNotNil: [ :location | 
 							editor text
 								attributes: {(GtSourceCoderErrorAttribute for: message)
+											openOnFirstShow: first;
 											beOverwritableByStyler}
 								from: location key + column - 2
-								to: location key + column - 2 ] ] ]
+								to: location key + column - 2.
+							first := false ] ] ]
 ]
 
 { #category : #'api - view' }
