@@ -37,7 +37,7 @@ GtGQLConnectionFinder >> find [
 	self pageInfoType ifNil: [ ^ self ].
 	self connectionTypes ifEmpty: [ ^ self ].
 
-	self ast acceptVisitor: self
+	self acceptNode: self ast
 ]
 
 { #category : #'gt - extensions' }
