@@ -5,27 +5,10 @@ Class {
 	#classTraits : 'TGtGQLClient classTrait',
 	#instVars : [
 		'configuration',
-		'variables',
-		'graphql'
+		'query'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
-
-{ #category : #asserting }
-GtGQLClient >> assertGraphQL: aGraphQL [
-	self
-		assert: [ aGraphQL isString ]
-		description: [ 'GraphQL must be a string: {1}' format: {aGraphQL} ]
-]
-
-{ #category : #asserting }
-GtGQLClient >> assertVariables: aDictionary [
-	aDictionary ifNil: [ ^ self ].
-
-	self
-		assert: [ aDictionary isDictionary ]
-		description: [ 'Variables must be a JSON object (a dictionary): {1}' format: {aDictionary} ]
-]
 
 { #category : #accessing }
 GtGQLClient >> configuration [
@@ -39,18 +22,7 @@ GtGQLClient >> configuration: anObject [
 	configuration := anObject
 ]
 
-{ #category : #accessing }
-GtGQLClient >> graphql [
-	^ graphql
-]
-
-{ #category : #accessing }
-GtGQLClient >> graphql: aString [
-	self assertGraphQL: aString.
-	graphql := aString
-]
-
-{ #category : #'api - communication' }
+{ #category : #'private - communication' }
 GtGQLClient >> introspectionSchema [
 	<return: #GtJson>
 	| aResponse |
@@ -64,7 +36,7 @@ GtGQLClient >> introspectionSchema [
 		signal
 ]
 
-{ #category : #'api - communication' }
+{ #category : #'private - communication' }
 GtGQLClient >> introspectionSchemaQuery [
 	<return: #String>
 	^ self configuration introspectionSchemaQuery
@@ -89,25 +61,32 @@ GtGQLClient >> newClient [
 GtGQLClient >> newEntity [
 	| aRequest |
 	aRequest := Dictionary new.
-	aRequest at: 'query' put: self graphql.
-	self variables ifNotNil: [ :aValue | aRequest at: 'variables' put: aValue ].
+	aRequest at: 'query' put: self query operation.
+	self query input
+		ifNotNil: [ :aValue | aValue ifNotEmpty: [ aRequest at: 'variables' put: aValue ] ].
 
 	^ ZnEntity json: (STONJSON toString: aRequest)
 ]
 
 { #category : #'api - communication' }
+GtGQLClient >> operation: anOperation input: anInput [
+	<return: #GtGQLBasicResult>
+	^ self
+		query: (GtGQLQuery new
+				operation: anOperation;
+				input: anInput)
+]
+
+{ #category : #'private - communication' }
 GtGQLClient >> post [
 	<return: #GtGQLBasicResult>
 	| aClient aJson |
-	self assertGraphQL: self graphql.
-	self assertVariables: self variables.
-
 	[ aClient := self newClient ]
 		on: Error
 		do: [ :anError | 
 			^ GtGQLPreparationProblem new
 				configuration: self configuration;
-				operation: self graphql input: self variables;
+				query: self query;
 				exception: anError;
 				messageText: ('Cannot prepare client: {1}' format: anError) ].
 
@@ -116,7 +95,7 @@ GtGQLClient >> post [
 		do: [ :anError | 
 			^ GtGQLPreparationProblem new
 				configuration: self configuration;
-				operation: self graphql input: self variables;
+				query: self query;
 				exception: anError;
 				messageText: ('Cannot prepare client entity: {1}' format: anError) ].
 
@@ -125,7 +104,7 @@ GtGQLClient >> post [
 	aClient response isSuccess
 		ifFalse: [ ^ GtGQLRequestProblem new
 				configuration: self configuration;
-				operation: self graphql input: self variables;
+				query: self query;
 				response: aClient response;
 				request: aClient request ].
 
@@ -135,7 +114,7 @@ GtGQLClient >> post [
 		at: #data
 		ifPresent: [ ^ GtGQLResult new
 				configuration: self configuration;
-				operation: self graphql input: self variables;
+				query: self query;
 				result: aJson ]
 		ifAbsent: [  ].
 
@@ -144,7 +123,7 @@ GtGQLClient >> post [
 		ifPresent: [ :anErrorJson | 
 			^ GtGQLQueryProblem new
 				configuration: self configuration;
-				operation: self graphql input: self variables;
+				query: self query;
 				response: aClient response;
 				request: aClient request;
 				result: aJson ]
@@ -152,34 +131,18 @@ GtGQLClient >> post [
 
 	^ GtGQLResult new
 		configuration: self configuration;
-		operation: self graphql input: self variables;
+		query: self query;
 		result: aJson
 ]
 
-{ #category : #'private - communication' }
+{ #category : #accessing }
+GtGQLClient >> query [
+	^ query
+]
+
+{ #category : #'api - communication' }
 GtGQLClient >> query: aQuery [
 	<return: #GtGQLBasicResult>
-	self graphql: aQuery.
+	query := aQuery.
 	^ self post
-]
-
-{ #category : #'private - communication' }
-GtGQLClient >> query: aQuery variables: aVariables [
-	<return: #GtGQLBasicResult>
-	self graphql: aQuery.
-	self variables: aVariables.
-	^ self post
-]
-
-{ #category : #accessing }
-GtGQLClient >> variables [
-	^ variables
-]
-
-{ #category : #accessing }
-GtGQLClient >> variables: aJson [
-	aJson isDictionary ifTrue: [ variables := aJson ].
-	aJson isString ifTrue: [ variables := STONJSON fromString: aJson ].
-
-	self assertVariables: variables
 ]

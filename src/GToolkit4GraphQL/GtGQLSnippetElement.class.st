@@ -154,12 +154,7 @@ GtGQLSnippetElement >> executeQuery: aButton [
 	self clearPreviousErrors.
 	aButton disable.
 
-	aFuture := [ | operation input |
-		operation := (gqlElement childNamed: #operationEditor) text asString.
-		input := (gqlElement childNamed: #inputEditor) text asString trim.
-		input isEmpty
-			ifTrue: [ aContext client query: operation ]
-			ifFalse: [ aContext client query: operation variables: input ] ].
+	aFuture := [ aContext client query: self snippetViewModel query ].
 
 	aButton
 		withAsyncFutureDo: [ :anElementFuture | anElementFuture future: aFuture asAsyncFuture ]

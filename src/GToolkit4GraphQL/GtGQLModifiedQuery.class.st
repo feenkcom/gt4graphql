@@ -1,12 +1,10 @@
 Class {
 	#name : #GtGQLModifiedQuery,
-	#superclass : #Object,
+	#superclass : #GtGQLQuery,
 	#instVars : [
-		'operation',
-		'input',
 		'previousQuery'
 	],
-	#category : #'GToolkit4GraphQL-Async Streams'
+	#category : #'GToolkit4GraphQL-Client'
 }
 
 { #category : #'gt - extensions' }
@@ -16,10 +14,22 @@ GtGQLModifiedQuery >> gtNewQueryFor: aView [
 
 	^ aView textEditor
 		title: 'New Query';
-		priority: 30;
+		priority: 10;
 		aptitude: [ BrGlamorousCodeEditorAptitude ];
 		styler: [ GraphQLParser gtStyler ];
 		text: [ self operation ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLModifiedQuery >> gtPreviousQueryFor: aView [
+	<gtView>
+	self previousQuery ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Previous Query';
+		priority: 11;
+		object: [ self previousQuery ];
+		view: #gtViewFor:
 ]
 
 { #category : #'gt - extensions' }
@@ -32,43 +42,6 @@ GtGQLModifiedQuery >> gtQueryFor: aView [
 				fromLabelText: 'Previous Query:';
 				toLabelText: 'New Query:';
 				diffBuilder: (TextDiffBuilder from: self previousQuery operation to: self operation) ]
-]
-
-{ #category : #'gt - extensions' }
-GtGQLModifiedQuery >> gtVariablesFor: aView [
-	<gtView>
-	| aSelector |
-	input ifNil: [ ^ aView empty ].
-
-	aSelector := input isString
-			ifTrue: [ #gtStringFor: ]
-			ifFalse: [ #gtTreeFor:context: ].
-
-	^ aView forward
-		title: 'Variables';
-		priority: 31;
-		object: [ input ];
-		view: aSelector
-]
-
-{ #category : #accessing }
-GtGQLModifiedQuery >> input [
-	^ input
-]
-
-{ #category : #accessing }
-GtGQLModifiedQuery >> input: anObject [
-	input := anObject
-]
-
-{ #category : #accessing }
-GtGQLModifiedQuery >> operation [
-	^ operation
-]
-
-{ #category : #accessing }
-GtGQLModifiedQuery >> operation: anObject [
-	operation := anObject
 ]
 
 { #category : #accessing }

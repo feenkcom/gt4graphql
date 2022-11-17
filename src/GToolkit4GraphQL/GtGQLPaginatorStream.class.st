@@ -197,15 +197,18 @@ GtGQLPaginatorStream >> loadNewValues [
 		ifTrue: [ done := true.
 			^ #() ].
 
-	lastResult := self configuration client
-			query: self nextOperation
-			variables: self nextInputs.
+	lastResult := self configuration client query: self newQuery.
 
 	self lastResultExists
 		ifFalse: [ done := true.
 			^ #() ].
 
 	^ self extractItems
+]
+
+{ #category : #'private - loading' }
+GtGQLPaginatorStream >> newQuery [
+	^ self lastResult query copyWithNewInputs: self nextInputs
 ]
 
 { #category : #'private - loading' }
@@ -225,12 +228,6 @@ GtGQLPaginatorStream >> nextInputs [
 	^ anInput
 		at: self cursorInputName put: aValue;
 		yourself
-]
-
-{ #category : #'private - loading' }
-GtGQLPaginatorStream >> nextOperation [
-	<return: #String>
-	^ self lastResult query operation
 ]
 
 { #category : #accessing }

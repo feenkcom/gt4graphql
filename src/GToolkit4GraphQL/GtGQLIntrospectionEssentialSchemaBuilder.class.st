@@ -26,8 +26,8 @@ GtGQLIntrospectionEssentialSchemaBuilder >> buildEssentialType: aTypeName [
 		description: [ 'Type name must be non-nil' ].
 
 	aResponse := self client
-			query: self essentialTypeGraphQL
-			variables: {'name' -> aTypeName asString} asDictionary.
+			operation: self essentialTypeGraphQL
+			input: {'name' -> aTypeName asString} asDictionary.
 	log add: aResponse.
 
 	self

@@ -8,6 +8,11 @@ Class {
 	#category : #'GToolkit4GraphQL-Client'
 }
 
+{ #category : #accessing }
+GtGQLQuery >> copyWithNewInputs: anInput [
+	^ self copy input: anInput
+]
+
 { #category : #private }
 GtGQLQuery >> ensureDictionary [
 	input isDictionary ifTrue: [ ^ self ].
@@ -21,7 +26,7 @@ GtGQLQuery >> gtQueryFor: aView [
 
 	^ aView textEditor
 		title: 'Query';
-		priority: 30;
+		priority: 1;
 		aptitude: [ BrGlamorousCodeEditorAptitude ];
 		styler: [ GraphQLParser gtStyler ];
 		text: [ self operation ]
@@ -39,7 +44,7 @@ GtGQLQuery >> gtVariablesFor: aView [
 
 	^ aView forward
 		title: 'Variables';
-		priority: 31;
+		priority: 2;
 		object: [ input ];
 		view: aSelector
 ]
