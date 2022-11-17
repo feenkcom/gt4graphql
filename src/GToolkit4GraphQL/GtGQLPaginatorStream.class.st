@@ -18,12 +18,6 @@ Class {
 	#category : #'GToolkit4GraphQL-Async Streams'
 }
 
-{ #category : #accessing }
-GtGQLPaginatorStream >> configuration [
-	<return: #GtGQLContext>
-	^ self lastResult ifNotNil: #configuration
-]
-
 { #category : #'private - loading' }
 GtGQLPaginatorStream >> connectorObject [
 	<return: #GtJson>
@@ -40,6 +34,12 @@ GtGQLPaginatorStream >> connectorPath [
 GtGQLPaginatorStream >> connectorPath: anObject [
 
 	connectorPath := anObject
+]
+
+{ #category : #accessing }
+GtGQLPaginatorStream >> context [
+	<return: #GtGQLContext>
+	^ self lastResult ifNotNil: #context
 ]
 
 { #category : #accessing }
@@ -73,7 +73,7 @@ GtGQLPaginatorStream >> ensurePageInfoType [
 	<return: #Boolean>
 	| anInserter |
 	anInserter := GtGQLPageInfoInserter new
-			schema: lastResult configuration schema;
+			schema: lastResult context schema;
 			query: lastResult query;
 			connectorPath: self connectorPath;
 			insert.
@@ -81,7 +81,7 @@ GtGQLPaginatorStream >> ensurePageInfoType [
 	anInserter hasModifications ifFalse: [ ^ false ].
 
 	lastResult := GtGQLPreparation new
-			configuration: lastResult configuration;
+			context: lastResult context;
 			query: anInserter modifiedQuery.
 
 	^ true
@@ -185,7 +185,7 @@ GtGQLPaginatorStream >> lastResultExists [
 { #category : #'private - loading' }
 GtGQLPaginatorStream >> loadNewValues [
 	<return: #Collection>
-	self configuration
+	self context
 		ifNil: [ done := true.
 			^ #() ].
 
@@ -197,7 +197,7 @@ GtGQLPaginatorStream >> loadNewValues [
 		ifTrue: [ done := true.
 			^ #() ].
 
-	lastResult := self configuration client query: self newQuery.
+	lastResult := self context client query: self newQuery.
 
 	self lastResultExists
 		ifFalse: [ done := true.

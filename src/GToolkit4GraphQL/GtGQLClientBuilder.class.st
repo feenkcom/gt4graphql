@@ -2,7 +2,7 @@ Class {
 	#name : #GtGQLClientBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'configuration'
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -10,19 +10,18 @@ Class {
 { #category : #building }
 GtGQLClientBuilder >> build [
 	self
-		assert: [ self configuration isNotNil ]
-		description: [ 'Configuration must be non-nil' ].
-	^ GtGQLClient new configuration: self configuration
+		assert: [ self context isNotNil ]
+		description: [ 'Context must be non-nil' ].
+
+	^ GtGQLClient new context: self context
 ]
 
 { #category : #accessing }
-GtGQLClientBuilder >> configuration [
-
-	^ configuration
+GtGQLClientBuilder >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLClientBuilder >> configuration: anObject [
-
-	configuration := anObject
+GtGQLClientBuilder >> context: anObject [
+	context := anObject
 ]

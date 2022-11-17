@@ -132,7 +132,7 @@ GtGQLResult >> schema [
 	^ self
 		optionAt: #schema
 		ifAbsentPut: [ GtGQLIntrospectionSchemaBuilder new
-				configuration: self configuration;
+				context: self context;
 				json: self result;
 				build ]
 ]
@@ -145,7 +145,7 @@ GtGQLResult >> type [
 	^ self
 		optionAt: #type
 		ifAbsentPut: [ GtGQLIntrospectionSchemaBuilder new
-				configuration: self configuration;
+				context: self context;
 				json: self result;
 				buildType ]
 ]

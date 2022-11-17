@@ -10,9 +10,9 @@ Class {
 	#name : #GtGQLIntrospectionSchemaBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'configuration',
 		'schema',
-		'json'
+		'json',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
@@ -26,8 +26,8 @@ GtGQLIntrospectionSchemaBuilder >> assertSchema: aSchema [
 GtGQLIntrospectionSchemaBuilder >> build [
 	<return: #GtGQLSchema>
 	self
-		assert: [ self configuration isNotNil ]
-		description: [ 'Configuration must be non-nil' ].
+		assert: [ self context isNotNil ]
+		description: [ 'Context must be non-nil' ].
 	self buildSchema.
 	self buildImplicitFields.
 	^ self schema
@@ -104,8 +104,8 @@ GtGQLIntrospectionSchemaBuilder >> buildType [
 	<return: #GtGQLType>
 	| aResultJson aTypeJson |
 	self
-		assert: [ self configuration isNotNil ]
-		description: [ 'Configuration must be non-nil' ].
+		assert: [ self context isNotNil ]
+		description: [ 'Context must be non-nil' ].
 	self assert: [ self json isNotNil ] description: [ 'JSON must be non-nil' ].
 
 	aResultJson := self json.
@@ -116,15 +116,13 @@ GtGQLIntrospectionSchemaBuilder >> buildType [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionSchemaBuilder >> configuration [
-
-	^ configuration
+GtGQLIntrospectionSchemaBuilder >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionSchemaBuilder >> configuration: anObject [
-
-	configuration := anObject
+GtGQLIntrospectionSchemaBuilder >> context: anObject [
+	context := anObject
 ]
 
 { #category : #'api - building' }
@@ -415,7 +413,7 @@ GtGQLIntrospectionSchemaBuilder >> populateTypesExtraPropertiesFromJson: aJson [
 { #category : #'private - building' }
 GtGQLIntrospectionSchemaBuilder >> retreiveJson [
 	<return: #GtJson>
-	^ self configuration client introspectionSchema
+	^ self context client introspectionSchema
 ]
 
 { #category : #accessing }

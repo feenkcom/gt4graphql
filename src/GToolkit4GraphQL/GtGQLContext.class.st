@@ -48,7 +48,7 @@ GtGQLContext >> buildSchema [
 { #category : #accessing }
 GtGQLContext >> client [
 	^ self clientBuilder
-		configuration: self;
+		context: self;
 		build
 ]
 
@@ -146,7 +146,7 @@ GtGQLContext >> introspectionEssentialSchema [
 	^ self
 		optionAt: #introspectionEssentialSchema
 		ifAbsentPut: [ GtGQLIntrospectionEssentialSchemaBuilder new
-				configuration: self;
+				context: self;
 				build;
 				schema ]
 ]
@@ -157,7 +157,7 @@ GtGQLContext >> introspectionSchemaQuery [
 	^ self
 		optionAt: #introspectionSchemaQuery
 		ifAbsentPut: [ GtGQLIntrospectionSchemaQueryBuilder new
-				configuration: self;
+				context: self;
 				essentialSchema: self introspectionEssentialSchema;
 				build;
 				query ]
@@ -185,10 +185,7 @@ GtGQLContext >> schema: anObject [
 
 { #category : #accessing }
 GtGQLContext >> schemaBuilder [
-	| aBuilder |
-	aBuilder := GtGQLIntrospectionSchemaBuilder new.
-	aBuilder configuration: self.
-	^ aBuilder
+	^ GtGQLIntrospectionSchemaBuilder new context: self
 ]
 
 { #category : #accessing }

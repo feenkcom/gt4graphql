@@ -274,10 +274,10 @@ GtGQLSnippetElement >> inputSource [
 GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 	| aResult |
 	aResult := GtGQLPreparationProblem new
-			configuration: self context;
+			context: self context;
 			operation: self snippet operation input: self snippet input;
 			exception: anError;
-			messageText: ('Problem during execution: {1}' format: anError).
+			messageText: ('Problem during execution: {1}' format: { anError }).
 	self snippetViewModel resultValue: aResult.
 	theButton phlow spawnObject: aResult.
 	theButton enable

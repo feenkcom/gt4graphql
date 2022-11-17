@@ -16,7 +16,7 @@ GtGQLSnippetViewModel >> context [
 { #category : #private }
 GtGQLSnippetViewModel >> newResultValue [
 	^ GtGQLPreparation new
-		configuration: self context;
+		context: self context;
 		operation: self snippetModel operation input: self snippetModel input
 ]
 
@@ -61,6 +61,12 @@ GtGQLSnippetViewModel >> onSnippetModelChanged [
 	super onSnippetModelChanged.
 
 	self updateResultVariableBindings
+]
+
+{ #category : #'api - accessing' }
+GtGQLSnippetViewModel >> query [
+	<return: #GtGQLQuery>
+	^ self resultValue query
 ]
 
 { #category : #'api - result variable' }

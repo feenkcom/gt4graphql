@@ -3,7 +3,7 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'valuable',
-		'configuration'
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -11,25 +11,23 @@ Class {
 { #category : #building }
 GtGQLValuableClientBuilder >> build [
 	self
-		assert: [ self configuration isNotNil ]
-		description: [ 'Configuration must be non-nil' ].
+		assert: [ self context isNotNil ]
+		description: [ 'Context must be non-nil' ].
 	self
 		assert: [ self valuable isNotNil ]
 		description: [ 'Valuable must be non-nil' ].
 
-	^ self valuable cull: self configuration
+	^ self valuable cull: self context
 ]
 
 { #category : #accessing }
-GtGQLValuableClientBuilder >> configuration [
-
-	^ configuration
+GtGQLValuableClientBuilder >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLValuableClientBuilder >> configuration: anObject [
-
-	configuration := anObject
+GtGQLValuableClientBuilder >> context: anObject [
+	context := anObject
 ]
 
 { #category : #'api - initialization' }

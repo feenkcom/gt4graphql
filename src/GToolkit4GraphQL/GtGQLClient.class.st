@@ -4,29 +4,27 @@ Class {
 	#traits : 'TGtGQLClient',
 	#classTraits : 'TGtGQLClient classTrait',
 	#instVars : [
-		'configuration',
-		'query'
+		'query',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
 
 { #category : #accessing }
-GtGQLClient >> configuration [
-
-	^ configuration
+GtGQLClient >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLClient >> configuration: anObject [
-
-	configuration := anObject
+GtGQLClient >> context: anObject [
+	context := anObject
 ]
 
 { #category : #'private - communication' }
 GtGQLClient >> introspectionSchema [
 	<return: #GtJson>
 	| aResponse |
-	aResponse := self query: self introspectionSchemaQuery.
+	aResponse := self operation: self introspectionSchemaQuery.
 
 	aResponse isSuccess ifTrue: [ ^ aResponse result ].
 
@@ -39,13 +37,13 @@ GtGQLClient >> introspectionSchema [
 { #category : #'private - communication' }
 GtGQLClient >> introspectionSchemaQuery [
 	<return: #String>
-	^ self configuration introspectionSchemaQuery
+	^ self context introspectionSchemaQuery
 ]
 
 { #category : #'private - communication' }
 GtGQLClient >> newClient [
 	| anUrl |
-	anUrl := self configuration url.
+	anUrl := self context url.
 
 	self
 		assert: [ anUrl isNotNil ]
@@ -53,7 +51,7 @@ GtGQLClient >> newClient [
 
 	^ ZnClient new
 		url: anUrl asZnUrl;
-		in: [ :theClient | self configuration authentication configureZnClient: theClient ];
+		in: [ :theClient | self context authentication configureZnClient: theClient ];
 		yourself
 ]
 
@@ -66,6 +64,12 @@ GtGQLClient >> newEntity [
 		ifNotNil: [ :aValue | aValue ifNotEmpty: [ aRequest at: 'variables' put: aValue ] ].
 
 	^ ZnEntity json: (STONJSON toString: aRequest)
+]
+
+{ #category : #'api - communication' }
+GtGQLClient >> operation: anOperation [
+	<return: #GtGQLBasicResult>
+	^ self query: (GtGQLQuery new operation: anOperation)
 ]
 
 { #category : #'api - communication' }
@@ -85,25 +89,25 @@ GtGQLClient >> post [
 		on: Error
 		do: [ :anError | 
 			^ GtGQLPreparationProblem new
-				configuration: self configuration;
+				context: self context;
 				query: self query;
 				exception: anError;
-				messageText: ('Cannot prepare client: {1}' format: anError) ].
+				messageText: ('Cannot prepare client: {1}' format: {anError}) ].
 
 	[ aClient entity: self newEntity ]
 		on: STONWriterError
 		do: [ :anError | 
 			^ GtGQLPreparationProblem new
-				configuration: self configuration;
+				context: self context;
 				query: self query;
 				exception: anError;
-				messageText: ('Cannot prepare client entity: {1}' format: anError) ].
+				messageText: ('Cannot prepare client entity: {1}' format: {anError }) ].
 
 	aClient post.
 
 	aClient response isSuccess
 		ifFalse: [ ^ GtGQLRequestProblem new
-				configuration: self configuration;
+				context: self context;
 				query: self query;
 				response: aClient response;
 				request: aClient request ].
@@ -113,7 +117,7 @@ GtGQLClient >> post [
 	aJson
 		at: #data
 		ifPresent: [ ^ GtGQLResult new
-				configuration: self configuration;
+				context: self context;
 				query: self query;
 				result: aJson ]
 		ifAbsent: [  ].
@@ -122,7 +126,7 @@ GtGQLClient >> post [
 		at: #errors
 		ifPresent: [ :anErrorJson | 
 			^ GtGQLQueryProblem new
-				configuration: self configuration;
+				context: self context;
 				query: self query;
 				response: aClient response;
 				request: aClient request;
@@ -130,7 +134,7 @@ GtGQLClient >> post [
 		ifAbsent: [  "ignore" ].
 
 	^ GtGQLResult new
-		configuration: self configuration;
+		context: self context;
 		query: self query;
 		result: aJson
 ]
