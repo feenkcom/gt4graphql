@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'schema',
 		'ast',
-		'nodes'
+		'fields'
 	],
 	#category : #'GToolkit4GraphQL-Async Streams'
 }
@@ -24,6 +24,12 @@ GtGQLConnectionFinder >> connectionTypes [
 	^ self schema connectionTypes
 ]
 
+{ #category : #accessing }
+GtGQLConnectionFinder >> fields [
+	<return: #Collection of: #GtGQLConnectionField>
+	^ fields
+]
+
 { #category : #'api - finding' }
 GtGQLConnectionFinder >> find [
 	self ast ifNil: [ ^ self ].
@@ -37,12 +43,12 @@ GtGQLConnectionFinder >> find [
 { #category : #'gt - extensions' }
 GtGQLConnectionFinder >> gtFieldsFor: aView [
 	<gtView>
-	nodes ifNil: [ ^ aView empty ].
+	fields ifNil: [ ^ aView empty ].
 
 	^ aView columnedList
 		title: 'Fields';
 		priority: 1;
-		items: [ nodes ];
+		items: [ fields ];
 		column: 'Path'
 			text: [ :aField | 
 				| aText aPath |
@@ -58,17 +64,31 @@ GtGQLConnectionFinder >> gtFieldsFor: aView [
 							ifTrue: [ aText append: aName asRopedText bold ] ].
 
 				aText ]
-			weight: 2;
+			weight: 1.5;
 		column: 'Type' text: #fieldTypeName;
-		column: 'Includes PageInfo' text: #hasPageInfoAst;
-		column: 'Includes PageInfo Fields'
-			text: [ :aField | aField hasPageInfoAst ifTrue: [ aField hasAllPageInfoFields ] ifFalse: [ '' ] ]
+		column: 'PageInfo Status'
+			text: [ :aField | 
+				aField hasPageInfoAst
+					ifFalse: [ ('missing {1} field' format: {aField pageInfoFieldName}) asRopedText
+							foreground: BrGlamorousColors errorBackgroundColor ]
+					ifTrue: [ aField hasAllPageInfoFields
+							ifFalse: [ | aCount |
+								('"{1}" misses {2} {3}'
+									format: {aField pageInfoAstAliasAndName.
+											aCount := aField missingPageInfoFields size.
+											'field' asPluralBasedOn: aCount}) asRopedText
+									foreground: BrGlamorousColors errorBackgroundColor ]
+							ifTrue: [ 'ok' asRopedText
+									foreground: BrGlamorousColors successBackgroundColor ] ] ];
+		column: 'Insert Position'
+			text: [ :aField | aField hasAllPageInfoFields ifTrue: [ '' ] ifFalse: [ aField insertPosition ] ]
+			width: 100
 ]
 
 { #category : #accessing }
 GtGQLConnectionFinder >> initialize [
 	super initialize.
-	nodes := OrderedCollection new
+	fields := OrderedCollection new
 ]
 
 { #category : #accessing }
@@ -93,12 +113,19 @@ GtGQLConnectionFinder >> schema: anObject [
 	schema := anObject
 ]
 
+{ #category : #accessing }
+GtGQLConnectionFinder >> unfulfilledFields [
+	<return: #Collection of: #GtGQLConnectionField>
+	^ (self fields select: #isUnfulfilled)
+		sort: [ :a :b | a insertPosition > b insertPosition ]
+]
+
 { #category : #visiting }
 GtGQLConnectionFinder >> visitField: aNode [
 	| aField |
 	aField := aNode fieldIn: self schema.
 	(self connectionTypes includes: aField type baseType)
-		ifTrue: [ nodes
+		ifTrue: [ fields
 				add: (GtGQLConnectionField new
 						ast: aNode;
 						field: aField;

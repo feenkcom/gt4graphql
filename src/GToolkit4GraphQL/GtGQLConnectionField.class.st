@@ -29,17 +29,17 @@ GtGQLConnectionField >> field: anObject [
 	field := anObject
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - field' }
 GtGQLConnectionField >> fieldName [
 	^ self field ifNotNil: #name
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - field' }
 GtGQLConnectionField >> fieldType [
 	^ self field ifNotNil: #type
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - field' }
 GtGQLConnectionField >> fieldTypeName [
 	^ self fieldType ifNotNil: #name
 ]
@@ -69,6 +69,18 @@ GtGQLConnectionField >> gtFieldTypeFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLConnectionField >> gtIndentFor: aView [
+	<gtView>
+	self ast ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Indent String';
+		priority: 20;
+		object: [ self pageInfoIndent ];
+		view: #gtLiveFor:
+]
+
+{ #category : #'gt - extensions' }
 GtGQLConnectionField >> gtMissingPageInfoFieldsFor: aView [
 	<gtView>
 	self hasPageInfoAst ifFalse: [ ^ aView empty ].
@@ -81,25 +93,51 @@ GtGQLConnectionField >> gtMissingPageInfoFieldsFor: aView [
 		column: 'Name' text: #name
 ]
 
-{ #category : #testing }
+{ #category : #'testing - ast' }
 GtGQLConnectionField >> hasAllPageInfoFields [
-	^ self missingPageInfoFields isEmpty
+	^ self hasPageInfoAst and: [ self missingPageInfoFields isEmpty ]
 ]
 
-{ #category : #testing }
+{ #category : #'testing - ast' }
 GtGQLConnectionField >> hasPageInfoAst [
 	^ self pageInfoAst isNotNil
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> insertPosition [
+	<return: #Integer or: nil>
+	self hasPageInfoAst ifFalse: [ ^ self insertPositionForAst: self ast ].
+
+	self hasAllPageInfoFields
+		ifFalse: [ ^ self insertPositionForAst: self pageInfoAst ].
+
+	^ nil
+]
+
+{ #category : #'private - ast' }
+GtGQLConnectionField >> insertPositionForAst: anAst [
+	^ (anAst selections
+		ifNotEmpty: [ :anArray | anArray last ]
+		ifEmpty: [ anAst leftBrace ifNil: [ anAst rightParen ifNil: [ anAst name ] ] ])
+		ifNotNil: [ :aNode | aNode stopPosition + 1 ]
+]
+
+{ #category : #'testing - ast' }
+GtGQLConnectionField >> isUnfulfilled [
+	^ self hasPageInfoAst not or: [ self hasAllPageInfoFields not ]
+]
+
+{ #category : #'accessing - field' }
 GtGQLConnectionField >> missingPageInfoFields [
 	| anAstFields |
+	self hasPageInfoAst ifFalse: [ ^ self pageInfoType fields ].
+
 	anAstFields := self pageInfoAst selections collect: [ :e | e name source ].
 	^ (self pageInfoType fields
 		reject: [ :e | e isMetaField or: [ anAstFields includes: e name ] ]) asArray
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - ast' }
 GtGQLConnectionField >> pageInfoAst [
 	^ self ast selections
 		detect: [ :eachNode | 
@@ -112,12 +150,39 @@ GtGQLConnectionField >> pageInfoAst [
 		ifNone: [ nil ]
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> pageInfoAstAliasAndName [
+	^ self pageInfoAst
+		ifNotNil: [ :anAst | 
+			(anAst alias ifNotNil: [ :aToken | aToken source , ': ' ] ifNil: [ '' ])
+				, (anAst name ifNotNil: #source ifNil: [ '' ]) ]
+		ifNil: [ '' ]
+]
+
+{ #category : #'accessing - field' }
+GtGQLConnectionField >> pageInfoField [
+	^ self field type baseType fields
+		detect: [ :eachField | eachField type baseType = self pageInfoType ]
+		ifNone: [ nil ]
+]
+
+{ #category : #'accessing - field' }
+GtGQLConnectionField >> pageInfoFieldName [
+	^ self pageInfoField ifNotNil: #name ifNil: [ '' ]
+]
+
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> pageInfoIndent [
+	<return: #String>
+	^ self subFieldIndentFor: self ast
+]
+
+{ #category : #'accessing - field' }
 GtGQLConnectionField >> pageInfoType [
 	^ self schema pageInfoType
 ]
 
-{ #category : #accessing }
+{ #category : #'accessing - ast' }
 GtGQLConnectionField >> path [
 	| anAst anArray |
 	anAst := self ast.
@@ -131,6 +196,43 @@ GtGQLConnectionField >> path [
 	^ anArray reversed
 ]
 
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> pathString [
+	^ String
+		streamContents: [ :aStream | 
+			self path
+				do: [ :aName | aStream nextPutAll: aName ]
+				separatedBy: [ aStream nextPut: $. ] ]
+]
+
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> pathText [
+	| aText aPath |
+	aText := '' asRopedText.
+	aPath := self path.
+
+	aPath
+		withIndexDo: [ :aName :anIndex | 
+			anIndex = aPath size
+				ifFalse: [ aText
+						append: aName asRopedText;
+						append: '.' asRopedText ]
+				ifTrue: [ aText append: aName asRopedText bold ] ].
+
+	^ aText
+]
+
+{ #category : #printing }
+GtGQLConnectionField >> printOn: aStream [
+	super printOn: aStream.
+
+	self ast ifNil: [ ^ self ].
+	aStream
+		nextPut: $(;
+		nextPutAll: self pathString asString;
+		nextPut: $)
+]
+
 { #category : #accessing }
 GtGQLConnectionField >> schema [
 	^ schema
@@ -139,4 +241,26 @@ GtGQLConnectionField >> schema [
 { #category : #accessing }
 GtGQLConnectionField >> schema: anObject [
 	schema := anObject
+]
+
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> subFieldIndentFor: anAst [
+	"Return an indent (spaces and tabs) string that is used as a field prefix.
+	For example, in case of 
+```
+repositories {
+	totalCount
+}
+```
+It returns the substring between `{` and `t` (of `totalCount`)."
+
+	<return: #String>
+	^ anAst selections
+		ifNotEmpty: [ :anArray | 
+			| anOffset aStart aStop |
+			anOffset := anAst startPosition.
+			aStart := anAst leftBrace stopPosition + 2.
+			aStop := anArray first startPosition.
+			anAst source copyFrom: aStart - anOffset to: aStop - anOffset ]
+		ifEmpty: [ (self subFieldIndentFor: anAst parent), String tab ]
 ]
