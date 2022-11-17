@@ -40,9 +40,22 @@ GtGQLPageInfoInserter >> connectorPaths: aCollectionOfCollections [
 
 { #category : #'private - insertion' }
 GtGQLPageInfoInserter >> createNewQuery [
-	newQuery := GtGQLQuery new
+	newQuery := GtGQLModifiedQuery new
 			operation: self query operation copy;
-			input: self query input copy
+			input: self query input copy;
+			previousQuery: self query
+]
+
+{ #category : #'gt - extensions' }
+GtGQLPageInfoInserter >> gtActuallAndPreviousQueryDiffFor: aView [
+	<gtView>
+	self query ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'New Query (two panes)';
+		priority: 1;
+		object: [ self newQuery ];
+		view: #gtActuallAndPreviousQueryDiffFor:
 ]
 
 { #category : #'gt - extensions' }
@@ -52,7 +65,7 @@ GtGQLPageInfoInserter >> gtNewQueryFor: aView [
 
 	^ aView forward
 		title: 'New Query';
-		priority: 1;
+		priority: 2;
 		object: [ self newQuery ];
 		view: #gtQueryFor:
 ]
