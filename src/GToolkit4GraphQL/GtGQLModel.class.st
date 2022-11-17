@@ -1,6 +1,14 @@
+"
+I am an abstract model class.
+I implement {{gtMethod:GtGQLModel >> #propertyAt:}} which should be used to store the GraphQL schema information.
+I implement {{gtMethod: GtGQLModel >> #optionAt:}} which can be used to store an extra information.
+
+"
 Class {
 	#name : #GtGQLModel,
 	#superclass : #Object,
+	#traits : 'TGtOptions',
+	#classTraits : 'TGtOptions classTrait',
 	#instVars : [
 		'properties'
 	],
