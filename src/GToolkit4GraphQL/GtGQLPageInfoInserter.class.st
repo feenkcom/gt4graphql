@@ -6,7 +6,7 @@ Class {
 		'query',
 		'connectorPaths',
 		'unfulfilledFields',
-		'newQuery'
+		'modifiedQuery'
 	],
 	#category : #'GToolkit4GraphQL-Async Streams'
 }
@@ -40,7 +40,7 @@ GtGQLPageInfoInserter >> connectorPaths: aCollectionOfCollections [
 
 { #category : #'private - insertion' }
 GtGQLPageInfoInserter >> createNewQuery [
-	newQuery := GtGQLModifiedQuery new
+	modifiedQuery := GtGQLModifiedQuery new
 			operation: self query operation copy;
 			input: self query input copy;
 			previousQuery: self query
@@ -49,25 +49,42 @@ GtGQLPageInfoInserter >> createNewQuery [
 { #category : #'gt - extensions' }
 GtGQLPageInfoInserter >> gtActuallAndPreviousQueryDiffFor: aView [
 	<gtView>
-	self query ifNil: [ ^ aView empty ].
+	self modifiedQuery ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'New Query (two panes)';
 		priority: 1;
-		object: [ self newQuery ];
-		view: #gtActuallAndPreviousQueryDiffFor:
+		object: [ self modifiedQuery ];
+		view: #gtQueryFor:
 ]
 
 { #category : #'gt - extensions' }
 GtGQLPageInfoInserter >> gtNewQueryFor: aView [
 	<gtView>
-	self query ifNil: [ ^ aView empty ].
+	self modifiedQuery ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'New Query';
 		priority: 2;
-		object: [ self newQuery ];
+		object: [ self modifiedQuery ];
+		view: #gtNewQueryFor:
+]
+
+{ #category : #'gt - extensions' }
+GtGQLPageInfoInserter >> gtPreviousQueryFor: aView [
+	<gtView>
+	self query ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Previous Query';
+		priority: 3;
+		object: [ self query ];
 		view: #gtQueryFor:
+]
+
+{ #category : #testing }
+GtGQLPageInfoInserter >> hasModifications [
+	^ self modifiedQuery isNotNil
 ]
 
 { #category : #accessing }
@@ -93,7 +110,7 @@ GtGQLPageInfoInserter >> insertAll [
 { #category : #'private - insertion' }
 GtGQLPageInfoInserter >> insertField: aField [
 	| anOpertion anInsertion aPosition aBeforePart anAfterPart aNewOperation |
-	anOpertion := newQuery operation.
+	anOpertion := modifiedQuery operation.
 	anInsertion := self insertionStringForField: aField.
 	aPosition := aField insertPosition.
 
@@ -101,7 +118,7 @@ GtGQLPageInfoInserter >> insertField: aField [
 	anAfterPart := anOpertion copyFrom: aPosition to: anOpertion size.
 
 	aNewOperation := aBeforePart , anInsertion , anAfterPart.
-	newQuery operation: aNewOperation
+	modifiedQuery operation: aNewOperation
 ]
 
 { #category : #'private - insertion' }
@@ -167,9 +184,9 @@ GtGQLPageInfoInserter >> insertionStringOfPageInfoMissingFieldsFor: aField [
 						nextPutAll: '}' ] ]
 ]
 
-{ #category : #'gt - extensions' }
-GtGQLPageInfoInserter >> newQuery [
-	^ newQuery
+{ #category : #accessing }
+GtGQLPageInfoInserter >> modifiedQuery [
+	^ modifiedQuery
 ]
 
 { #category : #accessing }

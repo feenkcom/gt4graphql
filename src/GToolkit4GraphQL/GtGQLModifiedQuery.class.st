@@ -10,28 +10,28 @@ Class {
 }
 
 { #category : #'gt - extensions' }
-GtGQLModifiedQuery >> gtActuallAndPreviousQueryDiffFor: aView [
+GtGQLModifiedQuery >> gtNewQueryFor: aView [
 	<gtView>
-	^ aView explicit
-		title: 'Query (two panes)';
-		priority: 1;
-		stencil: [ GtDiffElementWithLabelStencil new
-				fromLabelText: 'Previous Query:';
-				toLabelText: 'New Query:';
-				diffBuilder: (TextDiffBuilder from: self previousQuery operation to: self operation) ]
+	self operation ifNil: [ ^ aView empty ].
+
+	^ aView textEditor
+		title: 'New Query';
+		priority: 30;
+		aptitude: [ BrGlamorousCodeEditorAptitude ];
+		styler: [ GraphQLParser gtStyler ];
+		text: [ self operation ]
 ]
 
 { #category : #'gt - extensions' }
 GtGQLModifiedQuery >> gtQueryFor: aView [
 	<gtView>
-	self operation ifNil: [ ^ aView empty ].
-
-	^ aView textEditor
+	^ aView explicit
 		title: 'Query';
-		priority: 30;
-		aptitude: [ BrGlamorousCodeEditorAptitude ];
-		styler: [ GraphQLParser gtStyler ];
-		text: [ self operation ]
+		priority: 1;
+		stencil: [ GtDiffElementWithLabelStencil new
+				fromLabelText: 'Previous Query:';
+				toLabelText: 'New Query:';
+				diffBuilder: (TextDiffBuilder from: self previousQuery operation to: self operation) ]
 ]
 
 { #category : #'gt - extensions' }

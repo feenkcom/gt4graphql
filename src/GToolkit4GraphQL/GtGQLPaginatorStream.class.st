@@ -12,7 +12,8 @@ Class {
 		'pageInfoName',
 		'hasNextPageName',
 		'endCursorName',
-		'cursorInputName'
+		'cursorInputName',
+		'initialResult'
 	],
 	#category : #'GToolkit4GraphQL-Async Streams'
 }
@@ -66,6 +67,33 @@ GtGQLPaginatorStream >> endCursorName: anObject [
 ]
 
 { #category : #'private - loading' }
+GtGQLPaginatorStream >> ensurePageInfoType [
+	"Return true if the `lastResult` was modified, false otherwise"
+
+	<return: #Boolean>
+	| anInserter |
+	anInserter := GtGQLPageInfoInserter new
+			schema: lastResult configuration schema;
+			query: lastResult query;
+			connectorPath: self connectorPath;
+			insert.
+
+	anInserter hasModifications ifFalse: [ ^ false ].
+
+	lastResult := GtGQLPreparation new
+			configuration: lastResult configuration;
+			query: anInserter modifiedQuery.
+
+	^ true
+]
+
+{ #category : #'private - loading' }
+GtGQLPaginatorStream >> extractFirstItemsIfWithPageInfoType [
+	<return: #Collection>
+	^ self ensurePageInfoType ifTrue: [ #() ] ifFalse: [ self extractItems ]
+]
+
+{ #category : #'private - loading' }
 GtGQLPaginatorStream >> extractItems [
 	<return: #Collection>
 	self lastResultExists
@@ -73,6 +101,17 @@ GtGQLPaginatorStream >> extractItems [
 			^ #() ].
 
 	^ (self connectorObject at: self itemsName) jsonObject ifNil: [ #() ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLPaginatorStream >> gtQueryFor: aView [
+	<gtView>
+	^ aView forward
+		title: 'Query';
+		priority: 30;
+		object: [ lastResult ifNil: [ GtGQLPreparation new ] ];
+		view: #gtQueryFor:;
+		actionUpdateButton
 ]
 
 { #category : #'private - loading' }
@@ -115,7 +154,7 @@ GtGQLPaginatorStream >> initialize [
 	hasNextPageName := #hasNextPage.
 	endCursorName := #endCursor.
 	connectorPath := #().
-	itemsName := #edges.
+	itemsName := #edges
 ]
 
 { #category : #accessing }
@@ -154,10 +193,9 @@ GtGQLPaginatorStream >> loadNewValues [
 		ifFalse: [ done := true.
 			^ #() ].
 
-	lastResult isSuccess
-		ifTrue: [ self hasNextPage
-				ifFalse: [ done := true.
-					^ #() ] ].
+	(lastResult isSuccess and: [ self hasNextPage not ])
+		ifTrue: [ done := true.
+			^ #() ].
 
 	lastResult := self configuration client
 			query: self nextOperation
@@ -236,17 +274,32 @@ GtGQLPaginatorStream >> pollNext: anAsynchronousContext [
 		ifPending: [ :aPendingPoll | aPendingPoll ]
 ]
 
+{ #category : #'api - stream copy' }
+GtGQLPaginatorStream >> postSimilarCopy [
+	"Is called by similarCopy. self is a shallow copy, implementors should set the fields as necessary to complete the similar copy"
+
+	initialResult
+		ifNotNil: [ :aResult | 
+			aResult isPreparation
+				ifTrue: [ self preparation: aResult ]
+				ifFalse: [ aResult isSuccess ifTrue: [ self result: aResult ] ] ]
+]
+
 { #category : #'api - initialization' }
 GtGQLPaginatorStream >> preparation: aGtGQLPreparation [
+	initialResult := aGtGQLPreparation.
 	lastResult := aGtGQLPreparation.
 	done := false.
-	stream := AsyncSequenceStream forCollection: [ #() ] asAsyncFuture
+	stream := AsyncSequenceStream
+			forCollection: [ self ensurePageInfoType.
+				#() ] asAsyncFuture
 ]
 
 { #category : #'api - initialization' }
 GtGQLPaginatorStream >> result: aGtGQLResult [
+	initialResult := aGtGQLResult.
 	lastResult := aGtGQLResult.
 	done := false.
 	stream := AsyncSequenceStream
-			forCollection: [ self extractItems ] asAsyncFuture
+			forCollection: [ self extractFirstItemsIfWithPageInfoType ] asAsyncFuture
 ]
