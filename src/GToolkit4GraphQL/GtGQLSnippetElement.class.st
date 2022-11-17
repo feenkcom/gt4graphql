@@ -39,7 +39,8 @@ GtGQLSnippetElement >> clearPreviousErrors [
 
 { #category : #accessing }
 GtGQLSnippetElement >> context [
-	^ self snippet contextUsing: self snippetContext
+	<return: #GtGQLContext>
+	^ self snippetViewModel context
 ]
 
 { #category : #accessing }

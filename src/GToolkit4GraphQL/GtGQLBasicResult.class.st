@@ -55,11 +55,16 @@ GtGQLBasicResult >> gtVariablesFor: aView [
 ]
 
 { #category : #testing }
+GtGQLBasicResult >> isPreparation [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLBasicResult >> isQueryProblem [
 	^ false
 ]
 
-{ #category : #accessing }
+{ #category : #testing }
 GtGQLBasicResult >> isSuccess [
 	^ false
 ]

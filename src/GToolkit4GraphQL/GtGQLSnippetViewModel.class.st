@@ -7,10 +7,17 @@ Class {
 	#category : #'GToolkit4GraphQL-Snippet-View-Model'
 }
 
+{ #category : #'api - accessing' }
+GtGQLSnippetViewModel >> context [
+	<return: #GtGQLContext>
+	^ self snippetModel contextUsing: sharedContext
+]
+
 { #category : #'private - announcement handling' }
 GtGQLSnippetViewModel >> onInputChanged: anAnnouncement [
 	self
 		resultValue: (GtGQLPreparation new
+				configuration: self context;
 				operation: self snippetModel operation
 				input: anAnnouncement input).
 
@@ -21,8 +28,8 @@ GtGQLSnippetViewModel >> onInputChanged: anAnnouncement [
 GtGQLSnippetViewModel >> onOperationChanged: anAnnouncement [
 	self
 		resultValue: (GtGQLPreparation new
-				operation: anAnnouncement operation
-				input: self snippetModel input).
+				configuration: self context;
+				operation: anAnnouncement operation input: self snippetModel input).
 
 	self announce: anAnnouncement
 ]

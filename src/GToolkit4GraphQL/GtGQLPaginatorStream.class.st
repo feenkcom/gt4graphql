@@ -79,7 +79,6 @@ GtGQLPaginatorStream >> extractItems [
 GtGQLPaginatorStream >> hasNextPage [
 	<return: #Boolean>
 	| hasNextPage |
-	self lastResultExists ifFalse: [ ^ false ].
 	self connectorObject exists ifFalse: [ ^ false ].
 
 	hasNextPage := self hasNextPageObject.
@@ -140,19 +139,25 @@ GtGQLPaginatorStream >> lastResult [
 { #category : #'private - loading' }
 GtGQLPaginatorStream >> lastResultExists [
 	<return: #Boolean>
-	^ lastResult isNotNil and: [ lastResult isSuccess ]
+	^ lastResult isNotNil
+		and: [ lastResult isSuccess or: [ lastResult isPreparation ] ]
 ]
 
 { #category : #'private - loading' }
 GtGQLPaginatorStream >> loadNewValues [
 	<return: #Collection>
+	self configuration
+		ifNil: [ done := true.
+			^ #() ].
+
 	self lastResultExists
 		ifFalse: [ done := true.
 			^ #() ].
 
-	self hasNextPage
-		ifFalse: [ done := true.
-			^ #() ].
+	lastResult isSuccess
+		ifTrue: [ self hasNextPage
+				ifFalse: [ done := true.
+					^ #() ] ].
 
 	lastResult := self configuration client
 			query: self nextOperation
@@ -174,8 +179,13 @@ GtGQLPaginatorStream >> nextCursorValue [
 { #category : #'private - loading' }
 GtGQLPaginatorStream >> nextInputs [
 	<return: #Dictionary>
-	^ self lastResult query input copy
-		at: self cursorInputName put: self nextCursorValue;
+	| anInput aValue |
+	anInput := self lastResult query input copy.
+	aValue := lastResult isPreparation
+			ifTrue: [ nil ]
+			ifFalse: [ self nextCursorValue ].
+	^ anInput
+		at: self cursorInputName put: aValue;
 		yourself
 ]
 
@@ -224,6 +234,13 @@ GtGQLPaginatorStream >> pollNext: anAsynchronousContext [
 									forCollection: [ self loadNewValues ] asAsyncFuture.
 							stream pollNext: anAsynchronousContext ] ] ]
 		ifPending: [ :aPendingPoll | aPendingPoll ]
+]
+
+{ #category : #'api - initialization' }
+GtGQLPaginatorStream >> preparation: aGtGQLPreparation [
+	lastResult := aGtGQLPreparation.
+	done := false.
+	stream := AsyncSequenceStream forCollection: [ #() ] asAsyncFuture
 ]
 
 { #category : #'api - initialization' }
