@@ -111,6 +111,7 @@ GtGQLResult >> isSuccess [
 
 { #category : #accessing }
 GtGQLResult >> paginator [
+	self assertContext.
 	^ GtGQLPaginatorStream new result: self
 ]
 
