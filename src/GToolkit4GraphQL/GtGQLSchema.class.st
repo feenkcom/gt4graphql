@@ -48,6 +48,20 @@ GtGQLSchema >> baseTypesCount [
 		ifAbsent: [ 0 ]
 ]
 
+{ #category : #accessing }
+GtGQLSchema >> connectionTypes [
+	^ self
+		optionAt: #connectionTypes
+		ifAbsentPut: [ self pageInfoType
+				ifNil: [ #() ]
+				ifNotNil: [ :anInfoType | 
+					self baseTypes
+						select: [ :eachType | 
+							eachType isComposite
+								and: [ eachType fields
+										anySatisfy: [ :eachField | eachField type baseType = anInfoType ] ] ] ] ]
+]
+
 { #category : #importing }
 GtGQLSchema >> createTypesFrom: aNode [
 	aNode
@@ -251,6 +265,11 @@ GtGQLSchema >> mutationType [
 { #category : #accessing }
 GtGQLSchema >> mutationType: anObject [
 	self propertyAt: #mutationType put: anObject
+]
+
+{ #category : #accessing }
+GtGQLSchema >> pageInfoType [
+	^ self optionAt: #pageInfoType ifAbsentPut: [ self typeNamed: 'PageInfo' ]
 ]
 
 { #category : #'gt - extensions' }

@@ -39,15 +39,15 @@ GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchema [
 { #category : #'examples - builder' }
 GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchemaBuilder [
 	<gtExample>
-	| aBuilder aJson aConfiguration |
+	| aBuilder aJson aContext |
 	aBuilder := self basicIntrospectionSchemaBuilder.
 	aJson := GtGQLDataExamples new starWarsGraphQLSchemaJsonString.
-	aConfiguration := GtGQLContext new
+	aContext := GtGQLContext new
 			authentication: GtGQLNoAuthentication new;
 			clientBuilder: (GtGQLValuableClientBuilder new string: aJson).
-	aBuilder configuration: aConfiguration.
+	aBuilder context: aContext.
 
-	self assert: aBuilder configuration equals: aConfiguration.
+	self assert: aBuilder context equals: aContext.
 
 	^ aBuilder
 ]

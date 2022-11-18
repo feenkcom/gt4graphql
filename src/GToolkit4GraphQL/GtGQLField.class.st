@@ -135,6 +135,11 @@ GtGQLField >> isDeprecated: anObject [
 ]
 
 { #category : #testing }
+GtGQLField >> isMetaField [
+	^ self name = GtGQLIntrospectionConstants metaMetaTypeName
+]
+
+{ #category : #testing }
 GtGQLField >> isRequired [
 	^ self type ifNotNil: #isRequired ifNil: [ false ]
 ]

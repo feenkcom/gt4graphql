@@ -2,11 +2,11 @@ Class {
 	#name : #GtGQLIntrospectionEssentialSchemaBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'configuration',
 		'log',
 		'essentialTypes',
 		'schema',
-		'pendingTypeNames'
+		'pendingTypeNames',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
@@ -26,8 +26,8 @@ GtGQLIntrospectionEssentialSchemaBuilder >> buildEssentialType: aTypeName [
 		description: [ 'Type name must be non-nil' ].
 
 	aResponse := self client
-			query: self essentialTypeGraphQL
-			variables: {'name' -> aTypeName asString} asDictionary.
+			operation: self essentialTypeGraphQL
+			input: {'name' -> aTypeName asString} asDictionary.
 	log add: aResponse.
 
 	self
@@ -36,7 +36,7 @@ GtGQLIntrospectionEssentialSchemaBuilder >> buildEssentialType: aTypeName [
 				format: {aTypeName.
 						aResponse} ].
 
-	^ self configuration schemaBuilder
+	^ self context schemaBuilder
 		schema: self schema;
 		json: aResponse result;
 		buildType
@@ -81,17 +81,17 @@ GtGQLIntrospectionEssentialSchemaBuilder >> buildPendingEssentialTypes [
 
 { #category : #'private - building' }
 GtGQLIntrospectionEssentialSchemaBuilder >> client [
-	^ self configuration client
+	^ self context client
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionEssentialSchemaBuilder >> configuration [
-	^ configuration
+GtGQLIntrospectionEssentialSchemaBuilder >> context [
+	^ context
 ]
 
-{ #category : #'api - initialization' }
-GtGQLIntrospectionEssentialSchemaBuilder >> configuration: anObject [
-	configuration := anObject
+{ #category : #accessing }
+GtGQLIntrospectionEssentialSchemaBuilder >> context: anObject [
+	context := anObject
 ]
 
 { #category : #accessing }

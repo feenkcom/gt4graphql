@@ -7,22 +7,29 @@ Class {
 	#category : #'GToolkit4GraphQL-Snippet-View-Model'
 }
 
+{ #category : #'api - accessing' }
+GtGQLSnippetViewModel >> context [
+	<return: #GtGQLContext>
+	^ self snippetModel contextUsing: sharedContext
+]
+
+{ #category : #private }
+GtGQLSnippetViewModel >> newResultValue [
+	^ GtGQLPreparation new
+		context: self context;
+		operation: self snippetModel operation input: self snippetModel input
+]
+
 { #category : #'private - announcement handling' }
 GtGQLSnippetViewModel >> onInputChanged: anAnnouncement [
-	self
-		resultValue: (GtGQLPreparation new
-				operation: self snippetModel operation
-				input: anAnnouncement input).
+	self resultValue: self newResultValue.
 
 	self announce: anAnnouncement
 ]
 
 { #category : #'private - announcement handling' }
 GtGQLSnippetViewModel >> onOperationChanged: anAnnouncement [
-	self
-		resultValue: (GtGQLPreparation new
-				operation: anAnnouncement operation
-				input: self snippetModel input).
+	self resultValue: self newResultValue.
 
 	self announce: anAnnouncement
 ]
@@ -42,6 +49,13 @@ GtGQLSnippetViewModel >> onResultVariableNameChanged: anAnnouncement [
 	self announce: anAnnouncement
 ]
 
+{ #category : #'private - announcement handling' }
+GtGQLSnippetViewModel >> onSnippetContextChanged: anAnnouncement [
+	self resultValue: self newResultValue.
+
+	self announce: anAnnouncement
+]
+
 { #category : #'api - snippet model' }
 GtGQLSnippetViewModel >> onSnippetModelChanged [
 	super onSnippetModelChanged.
@@ -49,12 +63,15 @@ GtGQLSnippetViewModel >> onSnippetModelChanged [
 	self updateResultVariableBindings
 ]
 
+{ #category : #'api - accessing' }
+GtGQLSnippetViewModel >> query [
+	<return: #GtGQLQuery>
+	^ self resultValue query
+]
+
 { #category : #'api - result variable' }
 GtGQLSnippetViewModel >> resultValue [
-	^ resultValue
-		ifNil: [ resultValue := GtGQLPreparation new
-					operation: self snippetModel operation
-					input: self snippetModel input ]
+	^ resultValue ifNil: [ resultValue := self newResultValue ]
 ]
 
 { #category : #'api - result variable' }
@@ -92,7 +109,7 @@ GtGQLSnippetViewModel >> subscribeToSnippetModel [
 	super subscribeToSnippetModel.
 	self snippetModel weak
 		when: GtGQLSnippetContextChanged
-		send: #announce:
+		send: #onSnippetContextChanged:
 		to: self.
 	self snippetModel weak
 		when: GtGQLSnippetOperationChanged

@@ -8,6 +8,17 @@ Class {
 	#category : #'GToolkit4GraphQL-Client'
 }
 
+{ #category : #accessing }
+GtGQLQuery >> copyWithNewInputs: anInput [
+	^ self copy input: anInput
+]
+
+{ #category : #private }
+GtGQLQuery >> ensureDictionary [
+	input isDictionary ifTrue: [ ^ self ].
+	input isString ifTrue: [ input := STONJSON fromString: input ]
+]
+
 { #category : #'gt - extensions' }
 GtGQLQuery >> gtQueryFor: aView [
 	<gtView>
@@ -15,7 +26,7 @@ GtGQLQuery >> gtQueryFor: aView [
 
 	^ aView textEditor
 		title: 'Query';
-		priority: 30;
+		priority: 1;
 		aptitude: [ BrGlamorousCodeEditorAptitude ];
 		styler: [ GraphQLParser gtStyler ];
 		text: [ self operation ]
@@ -25,21 +36,23 @@ GtGQLQuery >> gtQueryFor: aView [
 GtGQLQuery >> gtVariablesFor: aView [
 	<gtView>
 	| aSelector |
-	self input ifNil: [ ^ aView empty ].
+	input ifNil: [ ^ aView empty ].
 
-	aSelector := self input isString
+	aSelector := input isString
 			ifTrue: [ #gtStringFor: ]
 			ifFalse: [ #gtTreeFor:context: ].
 
 	^ aView forward
 		title: 'Variables';
-		priority: 31;
-		object: [ self input ];
+		priority: 2;
+		object: [ input ];
 		view: aSelector
 ]
 
 { #category : #accessing }
 GtGQLQuery >> input [
+	<return: #Dictionary>
+	self ensureDictionary.
 	^ input
 ]
 

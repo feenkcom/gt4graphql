@@ -39,7 +39,8 @@ GtGQLSnippetElement >> clearPreviousErrors [
 
 { #category : #accessing }
 GtGQLSnippetElement >> context [
-	^ self snippet contextUsing: self snippetContext
+	<return: #GtGQLContext>
+	^ self snippetViewModel context
 ]
 
 { #category : #accessing }
@@ -153,12 +154,7 @@ GtGQLSnippetElement >> executeQuery: aButton [
 	self clearPreviousErrors.
 	aButton disable.
 
-	aFuture := [ | operation input |
-		operation := (gqlElement childNamed: #operationEditor) text asString.
-		input := (gqlElement childNamed: #inputEditor) text asString trim.
-		input isEmpty
-			ifTrue: [ aContext client query: operation ]
-			ifFalse: [ aContext client query: operation variables: input ] ].
+	aFuture := [ aContext client query: self snippetViewModel query ].
 
 	aButton
 		withAsyncFutureDo: [ :anElementFuture | anElementFuture future: aFuture asAsyncFuture ]
@@ -278,10 +274,10 @@ GtGQLSnippetElement >> inputSource [
 GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 	| aResult |
 	aResult := GtGQLPreparationProblem new
-			configuration: self context;
+			context: self context;
 			operation: self snippet operation input: self snippet input;
 			exception: anError;
-			messageText: ('Problem during execution: {1}' format: anError).
+			messageText: ('Problem during execution: {1}' format: { anError }).
 	self snippetViewModel resultValue: aResult.
 	theButton phlow spawnObject: aResult.
 	theButton enable

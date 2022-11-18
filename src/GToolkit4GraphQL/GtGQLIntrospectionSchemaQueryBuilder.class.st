@@ -2,12 +2,12 @@ Class {
 	#name : #GtGQLIntrospectionSchemaQueryBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'configuration',
 		'essentialSchema',
 		'query',
 		'fullTypeFragment',
 		'inputValueFragment',
-		'schemaQuery'
+		'schemaQuery',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
@@ -132,13 +132,13 @@ GtGQLIntrospectionSchemaQueryBuilder >> buildTypeFieldsForType: aType shift: anI
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionSchemaQueryBuilder >> configuration [
-	^ configuration
+GtGQLIntrospectionSchemaQueryBuilder >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionSchemaQueryBuilder >> configuration: anObject [
-	configuration := anObject
+GtGQLIntrospectionSchemaQueryBuilder >> context: anObject [
+	context := anObject
 ]
 
 { #category : #accessing }

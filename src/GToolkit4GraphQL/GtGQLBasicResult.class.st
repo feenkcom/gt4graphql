@@ -2,20 +2,20 @@ Class {
 	#name : #GtGQLBasicResult,
 	#superclass : #Object,
 	#instVars : [
-		'configuration',
-		'query'
+		'query',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
 
 { #category : #accessing }
-GtGQLBasicResult >> configuration [
-	^ configuration
+GtGQLBasicResult >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLBasicResult >> configuration: anObject [
-	configuration := anObject
+GtGQLBasicResult >> context: anObject [
+	context := anObject
 ]
 
 { #category : #accessing }
@@ -55,11 +55,16 @@ GtGQLBasicResult >> gtVariablesFor: aView [
 ]
 
 { #category : #testing }
+GtGQLBasicResult >> isPreparation [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLBasicResult >> isQueryProblem [
 	^ false
 ]
 
-{ #category : #accessing }
+{ #category : #testing }
 GtGQLBasicResult >> isSuccess [
 	^ false
 ]
