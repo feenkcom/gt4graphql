@@ -8,6 +8,13 @@ Class {
 	#category : #'GToolkit4GraphQL-Client'
 }
 
+{ #category : #asserting }
+GtGQLBasicResult >> assertContext [
+	self
+		assert: [ self context isNotNil ]
+		description: [ 'Context must be non-nil' ]
+]
+
 { #category : #accessing }
 GtGQLBasicResult >> context [
 	^ context

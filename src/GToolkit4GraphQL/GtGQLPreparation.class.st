@@ -11,5 +11,6 @@ GtGQLPreparation >> isPreparation [
 
 { #category : #accessing }
 GtGQLPreparation >> paginator [
+	self assertContext.
 	^ GtGQLPaginatorStream new preparation: self
 ]
