@@ -114,6 +114,35 @@ GtGQLPaginatorStream >> gtQueryFor: aView [
 		actionUpdateButton
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLPaginatorStream >> gtResultJsonStringFor: aView [
+	<gtView>
+	self lastResult ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'JSON String';
+		priority: 20;
+		object: [ self lastResult ];
+		view: #gtResultJsonStringFor:;
+		actionUpdateButton;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Response'
+			tooltip: 'Inspect last response'
+			action: [ :aButton | aButton phlow spawnObject: self lastResult ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLPaginatorStream >> gtVariablesFor: aView [
+	<gtView>
+	self lastResult ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Variables';
+		priority: 31;
+		object: [ self lastResult ];
+		view: #gtVariablesFor:
+]
+
 { #category : #'private - loading' }
 GtGQLPaginatorStream >> hasNextPage [
 	<return: #Boolean>
