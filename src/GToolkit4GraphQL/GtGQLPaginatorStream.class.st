@@ -71,20 +71,33 @@ GtGQLPaginatorStream >> ensurePageInfoType [
 	"Return true if the `lastResult` was modified, false otherwise"
 
 	<return: #Boolean>
-	| anInserter |
-	anInserter := GtGQLPageInfoInserter new
-			schema: lastResult context schema;
-			query: lastResult query;
-			connectorPath: self connectorPath;
-			insert.
+	| aModifiedQuery |
+	aModifiedQuery := self ensurePageInfoTypeInQuery: lastResult query.
 
-	anInserter hasModifications ifFalse: [ ^ false ].
+	aModifiedQuery ifNil: [ ^ false ].
 
 	lastResult := GtGQLPreparation new
 			context: lastResult context;
-			query: anInserter modifiedQuery.
+			query: aModifiedQuery.
 
 	^ true
+]
+
+{ #category : #'private - loading' }
+GtGQLPaginatorStream >> ensurePageInfoTypeInQuery: aQuery [
+	"Return a `GtGQLModifiedQuery` if the `aQuery` was modified, nil otherwise"
+
+	<return: #GtGQLModifiedQuery or: nil>
+	| anInserter |
+	anInserter := GtGQLPageInfoInserter new
+			schema: lastResult context schema;
+			query: aQuery;
+			connectorPath: self connectorPath;
+			insert.
+
+	anInserter hasModifications ifFalse: [ ^ nil ].
+
+	^ anInserter modifiedQuery
 ]
 
 { #category : #'private - loading' }
@@ -107,11 +120,17 @@ GtGQLPaginatorStream >> extractItems [
 GtGQLPaginatorStream >> gtQueryFor: aView [
 	<gtView>
 	^ aView forward
-		title: 'Query';
+		title: 'Future Query';
 		priority: 30;
-		object: [ lastResult ifNil: [ GtGQLPreparation new ] ];
+		tooltip: 'I display a GraphQL operation that will be (or already is) used by the paginator to get all items';
+		object: [ initialResult
+				ifNil: [ GtGQLQuery new ]
+				ifNotNil: [ :aResult | (self ensurePageInfoTypeInQuery: aResult query) ifNil: [ GtGQLQuery new ] ] ];
 		view: #gtQueryFor:;
-		actionUpdateButton
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Last Result'
+			tooltip: 'Inspect last result'
+			action: [ :aButton | aButton phlow spawnObject: self lastResult ]
 ]
 
 { #category : #'gt - extensions' }
@@ -129,18 +148,6 @@ GtGQLPaginatorStream >> gtResultJsonStringFor: aView [
 			label: 'Response'
 			tooltip: 'Inspect last response'
 			action: [ :aButton | aButton phlow spawnObject: self lastResult ]
-]
-
-{ #category : #'gt - extensions' }
-GtGQLPaginatorStream >> gtVariablesFor: aView [
-	<gtView>
-	self lastResult ifNil: [ ^ aView empty ].
-
-	^ aView forward
-		title: 'Variables';
-		priority: 31;
-		object: [ self lastResult ];
-		view: #gtVariablesFor:
 ]
 
 { #category : #'private - loading' }
