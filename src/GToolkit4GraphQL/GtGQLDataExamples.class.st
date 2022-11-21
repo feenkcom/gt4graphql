@@ -13,8 +13,8 @@ GtGQLDataExamples >> gitHubMiniSchema [
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
-	self assert: aSchema baseTypes size equals: 13.
-	self assert: aSchema types size equals:22.
+	self assert: aSchema baseTypes size equals: 14.
+	self assert: aSchema types size equals:23.
 
 	^ aSchema
 ]
@@ -39,6 +39,50 @@ GtGQLDataExamples >> gitHubMiniSchemaGraphQLFile [
 
 	self assert: aFile exists.
 	^ aFile
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
+	<gtExample>
+	^ 'query Repositories($count: Int!, $login: String!, $after: String, $privacy: RepositoryPrivacy) {
+	organization (login: $login) {
+		name
+		url
+		repos: repositories(first: $count, after: $after, privacy: $privacy) {
+			totalCount
+			totalDiskUsage
+			edges {
+				node {
+					name
+					sshUrl
+					url
+					forks {
+						totalCount
+					}
+				}
+			}
+			info: pageInfo {
+				hasNextPage
+				startCursor
+				endCursor
+			}
+		}
+	}
+}'
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryWithMissingPageInfoField [
+	<gtExample>
+	| aQuery anOperation |
+	aQuery := GtGQLQuery new.
+	anOperation := self gitHubQueryStringWithMissingPageInfoField.
+
+	aQuery operation: anOperation.
+
+	self assert: aQuery operation equals: anOperation.
+
+	^ aQuery
 ]
 
 { #category : #'examples - github' }
