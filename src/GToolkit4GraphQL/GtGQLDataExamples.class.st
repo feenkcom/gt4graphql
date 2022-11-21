@@ -7,14 +7,25 @@ Class {
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubMiniSchema [
 	<gtExample>
-	| anAst aSchema |
+	| anAst aSchema anArgument anOrganizationField |
 	anAst := self gitHubMiniSchemaAst.
 	aSchema := GtGQLSchema new.
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
 	self assert: aSchema baseTypes size equals: 14.
-	self assert: aSchema types size equals:23.
+	self assert: aSchema types size equals: 23.
+
+	anOrganizationField := aSchema queryType fieldNamed: 'organization'.
+
+	self assert: anOrganizationField arguments size equals: 1.
+
+	anArgument := anOrganizationField arguments anyOne.
+
+	self assert: anArgument name equals: 'login'.
+	self assert: anArgument type name equals: 'String!'.
+	self assert: anArgument description equals: nil.
+	self assert: anArgument defaultValue isNil.
 
 	^ aSchema
 ]
