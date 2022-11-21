@@ -16,7 +16,12 @@ GtGQLQuery >> copyWithNewInputs: anInput [
 { #category : #private }
 GtGQLQuery >> ensureDictionary [
 	input isDictionary ifTrue: [ ^ self ].
-	input isString ifTrue: [ input := STONJSON fromString: input ]
+	input isString
+		ifTrue: [ input := input trimBoth
+					ifEmpty: [ Dictionary new ]
+					ifNotEmpty: [ [ STONJSON fromString: input ]
+							on: STONReaderError
+							do: [ :anError | anError return: Dictionary new ] ] ]
 ]
 
 { #category : #'gt - extensions' }
