@@ -287,7 +287,8 @@ GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
 	self snippetViewModel resultValue: aResult.
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
-		ifTrue: [ self showInlineError: aResult ]
+		ifTrue: [ (self showInlineError: aResult)
+				ifFalse: [ theButton phlow spawnObject: aResult ] ]
 		ifFalse: [ theButton phlow spawnObject: aResult ].
 	theButton enable
 ]
@@ -406,11 +407,15 @@ GtGQLSnippetElement >> setDefaultContextVariable [
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> showInlineError: aResult [
-	| editor text first |
+	"Return false if it is not possible to display errors."
+
+	<return: #Boolean>
+	| editor text first errorShownInline |
 	first := true.
+	errorShownInline := false.
 	editor := self operationEditor editor.
 	text := editor text asString.
-	text = aResult query operation ifFalse: [ ^ self ].
+	text = aResult query operation ifFalse: [ ^ false ].
 	aResult
 		errorMessagesAndLocationsDo: [ :message :line :column | 
 			(message isNil or: [ line isNil or: [ column isNil ] ])
@@ -423,7 +428,10 @@ GtGQLSnippetElement >> showInlineError: aResult [
 											beOverwritableByStyler}
 								from: location key + column - 2
 								to: location key + column - 2.
-							first := false ] ] ]
+							errorShownInline := true.
+							first := false ] ] ].
+
+	^ errorShownInline
 ]
 
 { #category : #'api - view' }
