@@ -378,7 +378,7 @@ GtGQLSnippetElement >> onSnippetViewModelFocused: aBoolean [
 	super onSnippetViewModelFocused: aBoolean.
 	aBoolean
 		ifTrue: [ self contextVariable trim isEmpty
-				ifTrue: [ dropDownLook show ]
+				ifTrue: [ dropDownLook canShow ifTrue: [ dropDownLook show ] ]
 				ifFalse: [ gqlElement
 						childNamed: #operationEditor
 						ifFound: [ :editor | editor inUIProcessDo: [ editor requestFocus ] ]
