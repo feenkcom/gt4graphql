@@ -270,7 +270,8 @@ GtGQLSnippetElement >> initialize [
 	inputEditor editor styler: JSONParser gtStyler.
 	gqlElement addChild: inputEditor as: #inputEditor.
 	toolbar := BrHorizontalPane new
-			fitContent;
+			vFitContent;
+			hFitContentLimited;
 			margin: (BlInsets top: 5).
 	gqlElement addChild: toolbar as: #toolbar.
 	toolbar
