@@ -58,6 +58,7 @@ GtGQLSnippetElement >> contextDropDown [
 					aStyle border: BlBorder empty ];
 				hovered: [ :aStyle | aStyle background: self theme status neutralBackgroundColor darker ]).
 	button := self createDropDownButton.
+
 	dropDownLook := BrGlamorousWithDropdownAptitude
 			handle: [ self createDropDownButton ]
 			content: [ BrSimpleList new
@@ -84,6 +85,7 @@ GtGQLSnippetElement >> contextDropDown [
 							yourself ];
 					items: self contextVariables;
 					yourself ].
+	dropDownLook doNotHideWidget.
 	button addAptitude: dropDownLook.
 	button
 		addAptitude: (BrStyleCommonAptitude new
@@ -379,7 +381,7 @@ GtGQLSnippetElement >> onSnippetViewModelFocused: aBoolean [
 	super onSnippetViewModelFocused: aBoolean.
 	aBoolean
 		ifTrue: [ self contextVariable trim isEmpty
-				ifTrue: [ dropDownLook show ]
+				ifTrue: [ dropDownLook canShow ifTrue: [ dropDownLook show ] ]
 				ifFalse: [ gqlElement
 						childNamed: #operationEditor
 						ifFound: [ :editor | editor inUIProcessDo: [ editor requestFocus ] ]
