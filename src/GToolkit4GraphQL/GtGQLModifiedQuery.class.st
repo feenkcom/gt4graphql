@@ -38,10 +38,15 @@ GtGQLModifiedQuery >> gtQueryFor: aView [
 	^ aView explicit
 		title: 'Query';
 		priority: 1;
-		stencil: [ GtDiffElementWithLabelStencil new
+		stencil: [ | aFromOperation aToOperation |
+			aFromOperation := (self previousQuery ifNotNil: #operation) ifNil: [ '' ].
+			aToOperation := self operation ifNil: [ '' ].
+			GtDiffElementWithLabelStencil new
 				fromLabelText: 'Previous Query:';
 				toLabelText: 'New Query:';
-				diffBuilder: (TextDiffBuilder from: self previousQuery operation to: self operation) ]
+				diffBuilder: (GtTextDiff new
+						from: aFromOperation to: aToOperation;
+						styler: [ GraphQLParser gtStyler ]) ]
 ]
 
 { #category : #accessing }

@@ -117,7 +117,8 @@ GtGQLQueryExamples >> queryWithOperation [
 	<gtExample>
 	| aQuery anOperation |
 	aQuery := self basicQuery.
-	anOperation := 'query MyQuery { fieldName }'.
+	anOperation := 'query MyQuery { 
+	fieldName }'.
 
 	aQuery operation: anOperation.
 
