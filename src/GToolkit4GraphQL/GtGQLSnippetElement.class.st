@@ -3,7 +3,8 @@ Class {
 	#superclass : #LeSnippetElement,
 	#instVars : [
 		'gqlElement',
-		'completionStrategy'
+		'completionStrategy',
+		'dropDownLook'
 	],
 	#category : #'GToolkit4GraphQL-Snippet-Element'
 }
@@ -45,7 +46,7 @@ GtGQLSnippetElement >> context [
 
 { #category : #accessing }
 GtGQLSnippetElement >> contextDropDown [
-	| element button dropDownLook |
+	| element button |
 	element := BrHorizontalGrid new.
 	element fitContent.
 	element margin: (BlInsets all: 3).
@@ -56,7 +57,6 @@ GtGQLSnippetElement >> contextDropDown [
 					aStyle background: self theme status neutralBackgroundColor.
 					aStyle border: BlBorder empty ];
 				hovered: [ :aStyle | aStyle background: self theme status neutralBackgroundColor darker ]).
-
 	button := self createDropDownButton.
 	dropDownLook := BrGlamorousWithDropdownAptitude
 			handle: [ self createDropDownButton ]
@@ -90,7 +90,6 @@ GtGQLSnippetElement >> contextDropDown [
 				default: [ :s | s background: Color transparent ];
 				hovered: [ :s | s background: self theme status neutralBackgroundColor darker ]).
 	element addChild: button as: #contextButton.
-
 	^ element
 ]
 
@@ -130,6 +129,15 @@ GtGQLSnippetElement >> createLabel: aString [
 ]
 
 { #category : #accessing }
+GtGQLSnippetElement >> createNewSnippet [
+	| snippet |
+	snippet := self snippet class empty.
+	snippet context: self snippet context.
+	self snippet addSnippetAfterSelf: snippet.
+	self snippetViewModel focusNextSnippet
+]
+
+{ #category : #accessing }
 GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 	| element |
 	element := BrEditor new.
@@ -143,6 +151,21 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 		when: BrTextEditorDeletedEvent do: [ :event | self perform: anUpdateSymbol ];
 		when: BlInfiniteDataSourceChanged
 			do: [ :event | self perform: anUpdateSymbol ].
+	element
+		addShortcut: (BrEditorShortcut loseFocus
+				combination: (self class keyboardShortcut: #LoseFocus));
+		addShortcut: (LeSnippetIndentSnippetShortcut new
+				combination: (self class keyboardShortcut: #IndentSnippet));
+		addShortcut: (LeSnippetUnindentSnippetShortcut new
+				combination: (self class keyboardShortcut: #UnindentSnippet));
+		addShortcut: (LeSnippetMoveSnippetUpShortcut new
+				combination: (self class keyboardShortcut: #MoveSnippetUp));
+		addShortcut: (LeSnippetMoveSnippetDownShortcut new
+				combination: (self class keyboardShortcut: #MoveSnippetDown));
+		addShortcut: (BlShortcutWithAction new
+				combination: BlKeyCombination builder primary return build;
+				action: [ :anEvent :aShortcut | self createNewSnippet ]).
+
 	^ element
 ]
 
@@ -160,9 +183,46 @@ GtGQLSnippetElement >> executeQuery: aButton [
 		withAsyncFutureDo: [ :anElementFuture | anElementFuture future: aFuture asAsyncFuture ]
 ]
 
+{ #category : #'focus accessing' }
+GtGQLSnippetElement >> exitInputEditorWith: event [
+	self
+		inUIProcessDo: [ event isTop
+				ifTrue: [ gqlElement
+						childNamed: #operationEditor
+						ifFound: [ :editor | editor requestFocus ] ]
+				ifFalse: [ gqlElement
+						childNamed: #variableEditor
+						ifFound: [ :editor | editor requestFocus ] ] ].
+	event consumed: true
+]
+
+{ #category : #'focus accessing' }
+GtGQLSnippetElement >> exitOperationEditorWith: event [
+	event isTop
+		ifTrue: [ self contextVariable trim isEmpty
+				ifTrue: [ dropDownLook show ]
+				ifFalse: [ self snippetViewModel focusPreviousSnippet ] ]
+		ifFalse: [ self
+				inUIProcessDo: [ gqlElement
+						childNamed: #inputEditor
+						ifFound: [ :editor | editor requestFocus ] ] ].
+	event consumed: true
+]
+
+{ #category : #'focus accessing' }
+GtGQLSnippetElement >> exitVariableEditorWith: event [
+	event isTop
+		ifTrue: [ self
+				inUIProcessDo: [ gqlElement
+						childNamed: #inputEditor
+						ifFound: [ :editor | editor requestFocus ] ] ]
+		ifFalse: [ self snippetViewModel focusNextSnippet ].
+	event consumed: true
+]
+
 { #category : #accessing }
 GtGQLSnippetElement >> initialize [
-	| contextElement operationEditor completionController inputEditor toolbar |
+	| contextElement operationEditor completionController inputEditor toolbar variableEditor |
 	super initialize.
 	gqlElement := BrVerticalPane new.
 	gqlElement padding: (BlInsets all: 5).
@@ -187,6 +247,9 @@ GtGQLSnippetElement >> initialize [
 				combination: BlKeyCombination primaryB;
 				repeatable: false;
 				action: [ :element | self browseSchema ]).
+	operationEditor editor
+		when: BrTextEditorCursorReachedBoundaryEvent
+		do: [ :event | self exitOperationEditorWith: event ].
 	operationEditor editor styler: GraphQLParser gtStyler.
 	completionStrategy := GtGQLCompletionStrategy new.
 	completionController := GtCompletionController
@@ -201,6 +264,9 @@ GtGQLSnippetElement >> initialize [
 				combination: BlKeyCombination primaryR;
 				repeatable: false;
 				action: [ :element | self renameInInput ]).
+	inputEditor editor
+		when: BrTextEditorCursorReachedBoundaryEvent
+		do: [ :event | self exitInputEditorWith: event ].
 	inputEditor editor styler: JSONParser gtStyler.
 	gqlElement addChild: inputEditor as: #inputEditor.
 	toolbar := BrHorizontalPane new
@@ -221,6 +287,10 @@ GtGQLSnippetElement >> initialize [
 						whenError: [ :theButton :anError | self onExecutionError: anError from: theButton ];
 						whenSuccess: [ :theButton :aResult | self onExecutionSuccess: aResult from: theButton ] ])
 		as: #executeButton.
+	variableEditor := self createSourceEditor: #updateVariable.
+	variableEditor editor
+		when: BrTextEditorCursorReachedBoundaryEvent
+		do: [ :event | self exitVariableEditorWith: event ].
 	toolbar
 		addChild: ((self createLabel: 'Result:')
 				constraintsDo: [ :c | c linear vertical alignCenter ];
@@ -229,7 +299,7 @@ GtGQLSnippetElement >> initialize [
 						left: 10
 						bottom: 0
 						right: 3));
-		addChild: ((self createSourceEditor: #updateVariable)
+		addChild: (variableEditor
 					hFitContentLimited;
 					styler: GtSelectorStyler new forUnary;
 					inputFilter: GtSelectorInputFilter forUnaryMessage;
@@ -287,7 +357,8 @@ GtGQLSnippetElement >> onExecutionError: anError from: theButton [
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
 	self snippetViewModel resultValue: aResult.
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
-		ifTrue: [ self showInlineError: aResult ]
+		ifTrue: [ (self showInlineError: aResult)
+				ifFalse: [ theButton phlow spawnObject: aResult ] ]
 		ifFalse: [ theButton phlow spawnObject: aResult ].
 	theButton enable
 ]
@@ -300,6 +371,18 @@ GtGQLSnippetElement >> onSnippetViewModelChanged [
 	self updateOperationEditor.
 	self updateContext.
 	self updateVariableEditor
+]
+
+{ #category : #accessing }
+GtGQLSnippetElement >> onSnippetViewModelFocused: aBoolean [
+	super onSnippetViewModelFocused: aBoolean.
+	aBoolean
+		ifTrue: [ self contextVariable trim isEmpty
+				ifTrue: [ dropDownLook show ]
+				ifFalse: [ gqlElement
+						childNamed: #operationEditor
+						ifFound: [ :editor | editor inUIProcessDo: [ editor requestFocus ] ]
+						ifNone: [ nil ] ] ]
 ]
 
 { #category : #refactoring }
@@ -406,11 +489,15 @@ GtGQLSnippetElement >> setDefaultContextVariable [
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> showInlineError: aResult [
-	| editor text first |
+	"Return false if it is not possible to display errors."
+
+	<return: #Boolean>
+	| editor text first errorShownInline |
 	first := true.
+	errorShownInline := false.
 	editor := self operationEditor editor.
 	text := editor text asString.
-	text = aResult query operation ifFalse: [ ^ self ].
+	text = aResult query operation ifFalse: [ ^ false ].
 	aResult
 		errorMessagesAndLocationsDo: [ :message :line :column | 
 			(message isNil or: [ line isNil or: [ column isNil ] ])
@@ -423,7 +510,10 @@ GtGQLSnippetElement >> showInlineError: aResult [
 											beOverwritableByStyler}
 								from: location key + column - 2
 								to: location key + column - 2.
-							first := false ] ] ]
+							errorShownInline := true.
+							first := false ] ] ].
+
+	^ errorShownInline
 ]
 
 { #category : #'api - view' }

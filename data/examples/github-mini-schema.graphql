@@ -2,41 +2,16 @@
 The query root of GitHub's GraphQL interface.
 """
 type Query {
+
   """
-  A list of repositories that the user owns.
+  Lookup a organization by login.
   """
-  repositories(
+  organization(
     """
-    Returns the elements in the list that come after the specified cursor.
+    The organization's login.
     """
-    after: String
-
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: String
-
-    """
-    Returns the first _n_ elements from the list.
-    """
-    first: Int
-
-    """
-    If non-null, filters repositories according to whether they are forks of another repository
-    """
-    isFork: Boolean
-
-    """
-    If non-null, filters repositories according to whether they have been locked
-    """
-    isLocked: Boolean
-
-    """
-    Returns the last _n_ elements from the list.
-    """
-    last: Int
-
-  ): RepositoryConnection!
+    login: String!
+  ): Organization
 
 }
 
@@ -196,3 +171,56 @@ scalar GitSSHRemote
 An RFC 3986, RFC 3987, and RFC 6570 (level 4) compliant URI string.
 """
 scalar URI
+
+"""
+An account on GitHub, with one or more owners, that has repositories, members and teams.
+"""
+type Organization {
+
+  """
+  The organization's public profile name.
+  """
+  name: String
+
+ """
+  The HTTP URL for this organization.
+  """
+  url: URI!
+
+  """
+  A list of repositories that the user owns.
+  """
+  repositories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    If non-null, filters repositories according to whether they are forks of another repository
+    """
+    isFork: Boolean
+
+    """
+    If non-null, filters repositories according to whether they have been locked
+    """
+    isLocked: Boolean
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+  ): RepositoryConnection!
+
+}

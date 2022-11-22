@@ -207,7 +207,7 @@ GtGQLSchema >> importComposites: aNode [
 							def definitions
 								do: [ :arg | 
 									field
-										addArgument: (GtGQLField new
+										addArgument: (GtGQLInputObjectType new
 												name: arg name source;
 												type: (self typeFor: arg type);
 												yourself) ].

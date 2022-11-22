@@ -137,6 +137,7 @@ GtGQLPaginatorStream >> gtQueryFor: aView [
 GtGQLPaginatorStream >> gtResultJsonStringFor: aView [
 	<gtView>
 	self lastResult ifNil: [ ^ aView empty ].
+	self lastResult isSuccess ifFalse: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'JSON String';
