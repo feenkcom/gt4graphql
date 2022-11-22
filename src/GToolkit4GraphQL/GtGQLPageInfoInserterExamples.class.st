@@ -46,7 +46,6 @@ GtGQLPageInfoInserterExamples >> gitHubQueryWithMissingPageInfoField [
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField [
 	<gtExample>
-	<noTest>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithMissingPageInfoField.
@@ -81,7 +80,6 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField [
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField_DefinedConnectoPath [
 	<gtExample>
-	<noTest>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithMissingPageInfoField.
