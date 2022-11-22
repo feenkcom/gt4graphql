@@ -175,8 +175,7 @@ GtGQLPageInfoInserter >> insertionStringOfPageInfoMissingFieldsFor: aField [
 					aStream
 						nextPutAll: aField pageInfoIndent;
 						tab;
-						nextPutAll: eachField name;
-						cr ].
+						nextPutAll: eachField name ].
 
 			aField pageInfoAst rightBrace
 				ifNil: [ aStream
