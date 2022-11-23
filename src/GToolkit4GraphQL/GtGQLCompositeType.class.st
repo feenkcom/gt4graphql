@@ -44,6 +44,31 @@ GtGQLCompositeType >> gtFieldsFor: aView [
 		title: 'Fields'
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLCompositeType >> gtSearchFieldTypesFor: aSearch [
+	<gtSearch>
+	^ aSearch list
+		priority: 20;
+		title: 'Field Types';
+		items: [ self fields asArray asAsyncStream
+				collect: [ :eachField | eachField type ifNotNil: #baseType ] ];
+		itemName: #name;
+		filter: (GtSpotterSubstringFilter new itemString: #name);
+		wantsToDisplayOnEmptyQuery: false
+]
+
+{ #category : #'gt - extensions' }
+GtGQLCompositeType >> gtSearchFieldsFor: aSearch [
+	<gtSearch>
+	^ aSearch list
+		priority: 10;
+		title: 'Fields';
+		items: [ self fields asArray asAsyncStream ];
+		itemName: #name;
+		filter: (GtSpotterSubstringFilter new itemString: #name);
+		wantsToDisplayOnEmptyQuery: false
+]
+
 { #category : #accessing }
 GtGQLCompositeType >> initialize [
 	super initialize.

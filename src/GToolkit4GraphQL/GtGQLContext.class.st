@@ -98,6 +98,38 @@ GtGQLContext >> gtQueryFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLContext >> gtSearchFieldsFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchFieldsFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtSearchMutationFieldsFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchMutationFieldsFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtSearchQueryFieldsFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchQueryFieldsFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtSearchTypesFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchTypesFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLContext >> gtTypesFor: aView [
 	<gtView>
 	self schema ifNil: [ ^ aView empty ].
