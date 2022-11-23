@@ -259,7 +259,7 @@ GtGQLSnippetElement >> initialize [
 			strategy: completionStrategy.
 	completionController install.
 	gqlElement addChild: operationEditor as: #operationEditor.
-	gqlElement addChild: (self createLabel: 'Input:').
+	gqlElement addChild: (self createLabel: 'Variables:').
 	inputEditor := self createSourceEditor: #updateInput.
 	inputEditor
 		addShortcut: (BlShortcutWithAction new
