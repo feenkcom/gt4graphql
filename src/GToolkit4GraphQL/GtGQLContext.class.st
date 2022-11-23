@@ -7,7 +7,8 @@ Class {
 		'authentication',
 		'clientBuilder',
 		'graphQLUrl',
-		'schema'
+		'schema',
+		'name'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -171,6 +172,31 @@ GtGQLContext >> jsonSchema [
 { #category : #accessing }
 GtGQLContext >> jsonSchema: aJson [
 	self optionAt: #jsonSchema put: aJson
+]
+
+{ #category : #accessing }
+GtGQLContext >> name [
+	^ name
+		ifNil: [ name := self url
+					ifNotNil: [ :anUrl | anUrl asZnUrl host asString ]
+					ifNil: [ 'Undefined name' ] ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> name: aName [
+	name := aName
+]
+
+{ #category : #printing }
+GtGQLContext >> printOn: aStream [
+	super printOn: aStream.
+
+	(name isNil or: [ graphQLUrl isNil ]) ifTrue: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self name asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }
