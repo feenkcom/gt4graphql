@@ -93,3 +93,9 @@ GtGQLBasicResult >> query [
 GtGQLBasicResult >> query: aGtGQLQuery [
 	query := aGtGQLQuery
 ]
+
+{ #category : #accessing }
+GtGQLBasicResult >> schema [
+	<return: #GtGQLSchema>
+	^ self context ifNotNil: #schema
+]
