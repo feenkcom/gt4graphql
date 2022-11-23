@@ -58,3 +58,8 @@ GtGQLScalar >> isPrimitive [
 GtGQLScalar >> isScalar [
 	^ true
 ]
+
+{ #category : #accessing }
+GtGQLScalar >> newResponseModelInstance [
+	^ GtGQLResponseScalar new type: self
+]

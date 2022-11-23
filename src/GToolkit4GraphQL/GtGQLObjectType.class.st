@@ -23,3 +23,8 @@ GtGQLObjectType >> interfaces: aCollection [
 GtGQLObjectType >> isObjectType [
 	^ true
 ]
+
+{ #category : #'api - response' }
+GtGQLObjectType >> newResponseModelInstance [
+	^ GtGQLResponseObject new type: self
+]

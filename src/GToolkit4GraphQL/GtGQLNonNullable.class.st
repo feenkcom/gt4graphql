@@ -34,6 +34,16 @@ GtGQLNonNullable >> name [
 	^ (self type ifNotNil: #name ifNil: [ '?' ]) , '!'
 ]
 
+{ #category : #'api - response' }
+GtGQLNonNullable >> newResponseModelInstance [
+	^ self type newResponseModelInstance type: self
+]
+
+{ #category : #'api - response' }
+GtGQLNonNullable >> responseItemType [
+	^ self type responseItemType
+]
+
 { #category : #accessing }
 GtGQLNonNullable >> type [
 	^ self propertyAt: #type

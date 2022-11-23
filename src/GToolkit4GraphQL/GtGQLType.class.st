@@ -117,6 +117,11 @@ GtGQLType >> name: aString [
 	self propertyAt: #name put: aString
 ]
 
+{ #category : #'api - response' }
+GtGQLType >> newResponseModelInstance [
+	^ self subclassResponsibility
+]
+
 { #category : #printing }
 GtGQLType >> printOn: aStream [
 	super printOn: aStream.
