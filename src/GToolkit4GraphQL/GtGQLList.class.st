@@ -29,6 +29,16 @@ GtGQLList >> name [
 	^ '[' , (self type ifNotNil: #name ifNil: [ '?' ]) , ']'
 ]
 
+{ #category : #'api - response' }
+GtGQLList >> newResponseModelInstance [
+	^ GtGQLResponseList new type: self
+]
+
+{ #category : #'api - response' }
+GtGQLList >> responseItemType [
+	^ self type
+]
+
 { #category : #accessing }
 GtGQLList >> type [
 	^ self propertyAt: #type

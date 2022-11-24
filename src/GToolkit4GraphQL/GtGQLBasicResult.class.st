@@ -27,14 +27,14 @@ GtGQLBasicResult >> context: anObject [
 
 { #category : #accessing }
 GtGQLBasicResult >> errorMessagesAndLocationsDo: aBlock [
-	(self result atKey: 'errors')
+	(self result at: 'errors')
 		do: [ :each | 
 			| location |
-			location := (each atKey: 'locations') atIndex: 1.
+			location := (each at: 'locations') at: 1.
 			aBlock
-				value: (each atKey: 'message') jsonObject
-				value: (location atKey: 'line') jsonObject
-				value: (location atKey: 'column') jsonObject ]
+				value: (each at: 'message') jsonObject
+				value: (location at: 'line') jsonObject
+				value: (location at: 'column') jsonObject ]
 ]
 
 { #category : #'gt - extensions' }
@@ -92,4 +92,10 @@ GtGQLBasicResult >> query [
 { #category : #accessing }
 GtGQLBasicResult >> query: aGtGQLQuery [
 	query := aGtGQLQuery
+]
+
+{ #category : #accessing }
+GtGQLBasicResult >> schema [
+	<return: #GtGQLSchema>
+	^ self context ifNotNil: #schema
 ]

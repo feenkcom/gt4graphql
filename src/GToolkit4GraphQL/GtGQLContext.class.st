@@ -7,7 +7,8 @@ Class {
 		'authentication',
 		'clientBuilder',
 		'graphQLUrl',
-		'schema'
+		'schema',
+		'name'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
@@ -97,6 +98,38 @@ GtGQLContext >> gtQueryFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLContext >> gtSearchFieldsFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchFieldsFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtSearchMutationFieldsFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchMutationFieldsFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtSearchQueryFieldsFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchQueryFieldsFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLContext >> gtSearchTypesFor: aSearch [
+	<gtSearch>
+	^ self schema
+		ifNotNil: [ :aSchema | aSchema gtSearchTypesFor: aSearch ]
+		ifNil: [ aSearch empty ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLContext >> gtTypesFor: aView [
 	<gtView>
 	self schema ifNil: [ ^ aView empty ].
@@ -171,6 +204,31 @@ GtGQLContext >> jsonSchema [
 { #category : #accessing }
 GtGQLContext >> jsonSchema: aJson [
 	self optionAt: #jsonSchema put: aJson
+]
+
+{ #category : #accessing }
+GtGQLContext >> name [
+	^ name
+		ifNil: [ name := self url
+					ifNotNil: [ :anUrl | anUrl asZnUrl host asString ]
+					ifNil: [ 'Undefined name' ] ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> name: aName [
+	name := aName
+]
+
+{ #category : #printing }
+GtGQLContext >> printOn: aStream [
+	super printOn: aStream.
+
+	(name isNil or: [ graphQLUrl isNil ]) ifTrue: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self name asString;
+		nextPut: $)
 ]
 
 { #category : #accessing }

@@ -61,32 +61,34 @@ GtGQLResult >> gtResultJsonStringFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResult >> gtSchemaFor: aView [
+GtGQLResult >> gtResultSchemaFor: aView [
 	<gtView>
-	self hasSchema ifFalse: [ ^ aView empty ].
+	self hasResultSchema ifFalse: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Schema';
 		priority: 10;
-		object: [ self schema ];
+		object: [ self resultSchema ];
 		view: #gtTypesFor:;
 		actionButtonIcon: BrGlamorousVectorIcons inspect
 			label: 'Schema'
 			tooltip: 'Inspect schema'
-			action: [ :aButton | self schema ifNotNil: [ :theSchema | aButton phlow spawnObject: theSchema ] ]
+			action: [ :aButton | 
+				self resultSchema
+					ifNotNil: [ :theSchema | aButton phlow spawnObject: theSchema ] ]
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResult >> gtTypeFor: aView [
+GtGQLResult >> gtResultTypeFor: aView [
 	<gtView>
-	self hasType ifFalse: [ ^ aView empty ].
+	self hasResultType ifFalse: [ ^ aView empty ].
 
-	^ (GtGQLSchema gtTypesFor: aView items: [ {self type} ])
+	^ (GtGQLSchema gtTypesFor: aView items: [ {self resultType} ])
 		expandUpTo: 1;
 		actionButtonIcon: BrGlamorousVectorIcons inspect
 			label: 'Type'
 			tooltip: 'Inspect type'
-			action: [ :aButton | self type ifNotNil: [ :aType | aButton phlow spawnObject: aType ] ]
+			action: [ :aButton | self resultType ifNotNil: [ :aType | aButton phlow spawnObject: aType ] ]
 ]
 
 { #category : #testing }
@@ -95,12 +97,12 @@ GtGQLResult >> hasErrors [
 ]
 
 { #category : #'api - results' }
-GtGQLResult >> hasSchema [
+GtGQLResult >> hasResultSchema [
 	^ self result isNotNil and: [ (self data at: #__schema) exists ]
 ]
 
 { #category : #'api - results' }
-GtGQLResult >> hasType [
+GtGQLResult >> hasResultType [
 	^ self result isNotNil and: [ (self data at: #__type) exists ]
 ]
 
@@ -126,12 +128,12 @@ GtGQLResult >> result: anObject [
 ]
 
 { #category : #'api - results' }
-GtGQLResult >> schema [
+GtGQLResult >> resultSchema [
 	<return: #GtGQLSchema or: nil>
-	self hasSchema ifFalse: [ ^ nil ].
+	self hasResultSchema ifFalse: [ ^ nil ].
 
 	^ self
-		optionAt: #schema
+		optionAt: #resultSchema
 		ifAbsentPut: [ GtGQLIntrospectionSchemaBuilder new
 				context: self context;
 				json: self result;
@@ -139,12 +141,12 @@ GtGQLResult >> schema [
 ]
 
 { #category : #'api - results' }
-GtGQLResult >> type [
+GtGQLResult >> resultType [
 	<return: #GtGQLType or: nil>
-	self hasType ifFalse: [ ^ nil ].
+	self hasResultType ifFalse: [ ^ nil ].
 
 	^ self
-		optionAt: #type
+		optionAt: #resultType
 		ifAbsentPut: [ GtGQLIntrospectionSchemaBuilder new
 				context: self context;
 				json: self result;

@@ -149,10 +149,38 @@ GtGQLSchema >> gtQueryFor: aView [
 GtGQLSchema >> gtSearchFieldsFor: aSearch [
 	<gtSearch>
 	^ aSearch list
-		priority: 20;
+		priority: 50;
 		title: 'Fields';
 		items: [ (self types asArray asAsyncStream
 				collect: [ :each | each fields asArray asAsyncStream ]) flatten ];
+		itemName: #name;
+		filter: (GtSpotterSubstringFilter new itemString: #name);
+		wantsToDisplayOnEmptyQuery: false
+]
+
+{ #category : #accessing }
+GtGQLSchema >> gtSearchMutationFieldsFor: aSearch [
+	<gtSearch>
+	self mutationType ifNil: [ ^ aSearch empty ].
+
+	^ aSearch list
+		priority: 40;
+		title: 'Mutation Fields';
+		items: [ self mutationType fields asArray asAsyncStream ];
+		itemName: #name;
+		filter: (GtSpotterSubstringFilter new itemString: #name);
+		wantsToDisplayOnEmptyQuery: false
+]
+
+{ #category : #accessing }
+GtGQLSchema >> gtSearchQueryFieldsFor: aSearch [
+	<gtSearch>
+	self queryType ifNil: [ ^ aSearch empty ].
+
+	^ aSearch list
+		priority: 30;
+		title: 'Query Fields';
+		items: [ self queryType fields asArray asAsyncStream ];
 		itemName: #name;
 		filter: (GtSpotterSubstringFilter new itemString: #name);
 		wantsToDisplayOnEmptyQuery: false
