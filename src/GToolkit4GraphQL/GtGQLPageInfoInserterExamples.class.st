@@ -245,6 +245,43 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField
 ]
 
 { #category : #accessing }
+GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField_DefinedConnectorPath [
+	<gtExample>
+	| anInserter aQuery aSchema aModifiedQuery |
+	anInserter := self basicInserter.
+	aQuery := self gitHubQueryWithFragmentWithoutPageInfoField.
+	aSchema := self gitHubMiniSchema.
+
+	anInserter query: aQuery.
+	anInserter schema: aSchema.
+	anInserter connectorPath: #(#repository #defaultBranchRef #target #history).
+
+	self assert: anInserter query equals: aQuery.
+	self assert: anInserter schema equals: aSchema.
+	self
+		assert: anInserter hasModifications not
+		description: [ 'Inserter must not have modifications' ].
+	self
+		assert: anInserter unfulfilledFields isNil
+		description: [ 'Unfulfilled fields must be nil' ].
+
+	anInserter insert.
+
+	self assert: anInserter unfulfilledFields size equals: 1.
+	self
+		assert: anInserter modifiedQuery isNotNil
+		description: [ 'Modified query must exist' ].
+
+	aModifiedQuery := anInserter modifiedQuery.
+
+	self
+		assert: aModifiedQuery operation
+		equals: self gitHubExpectedQueryStringWithFragment.
+
+	^ anInserter
+]
+
+{ #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
 	| anInserter aQuery aSchema aModifiedQuery |
