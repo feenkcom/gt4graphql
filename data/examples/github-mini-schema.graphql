@@ -1,4 +1,39 @@
 """
+An ISO-8601 encoded date string.
+"""
+scalar Date
+
+"""
+An ISO-8601 encoded UTC date string.
+"""
+scalar DateTime
+
+"""
+Git SSH string
+"""
+scalar GitSSHRemote
+
+"""
+An RFC 3986, RFC 3987, and RFC 6570 (level 4) compliant URI string.
+"""
+scalar URI
+
+"""
+A string containing HTML code.
+"""
+scalar HTML
+
+"""
+An ISO-8601 encoded date string. Unlike the DateTime type, GitTimestamp is not converted in UTC.
+"""
+scalar GitTimestamp
+
+"""
+A Git object ID.
+"""
+scalar GitObjectID
+
+"""
 The query root of GitHub's GraphQL interface.
 """
 type Query {
@@ -12,6 +47,26 @@ type Query {
     """
     login: String!
   ): Organization
+
+  """
+  Lookup a given repository by the owner and repository name.
+  """
+  repository(
+    """
+    Follow repository renames. If disabled, a repository referenced by its old name will return an error.
+    """
+    followRenames: Boolean = true
+
+    """
+    The name of the repository
+    """
+    name: String!
+
+    """
+    The login field of a user or organization
+    """
+    owner: String!
+  ): Repository
 
 }
 
@@ -120,6 +175,11 @@ type Repository implements Node & PackageOwner & ProjectOwner & ProjectV2Recent 
   """
   url: URI!
 
+  """
+  The Ref associated with the repository's default branch.
+  """
+  defaultBranchRef: Ref
+
 }
 
 """
@@ -161,16 +221,6 @@ enum RepositoryPrivacy {
   """
   PUBLIC
 }
-
-"""
-Git SSH string
-"""
-scalar GitSSHRemote
-
-"""
-An RFC 3986, RFC 3987, and RFC 6570 (level 4) compliant URI string.
-"""
-scalar URI
 
 """
 An account on GitHub, with one or more owners, that has repositories, members and teams.
@@ -224,3 +274,343 @@ type Organization {
   ): RepositoryConnection!
 
 }
+
+"""
+Represents a Git reference.
+"""
+type Ref implements Node {
+  """
+  The ref name.
+  """
+  name: String!
+
+  """
+  The ref's prefix, such as `refs/heads/` or `refs/tags/`.
+  """
+  prefix: String!
+
+  """
+  The repository the ref belongs to.
+  """
+  repository: Repository!
+
+  """
+  The object the ref points to. Returns null when object does not exist.
+  """
+  target: GitObject
+}
+
+"""
+Represents a Git object.
+"""
+interface GitObject {
+  """
+  An abbreviated version of the Git object ID
+  """
+  abbreviatedOid: String!
+
+  """
+  The HTTP path for this Git object
+  """
+  commitResourcePath: URI!
+
+  """
+  The HTTP URL for this Git object
+  """
+  commitUrl: URI!
+  id: ID!
+
+  """
+  The Git object ID
+  """
+  oid: GitObjectID!
+
+  """
+  The Repository the Git object belongs to
+  """
+  repository: Repository!
+}
+
+"""
+Represents a Git commit.
+"""
+type Commit implements GitObject & Node & Subscribable & UniformResourceLocatable {
+  """
+  An abbreviated version of the Git object ID
+  """
+  abbreviatedOid: String!
+
+  """
+  The number of additions in this commit.
+  """
+  additions: Int!
+
+  """
+  Authorship details of the commit.
+  """
+  author: GitActor
+
+  """
+  Check if the committer and the author match.
+  """
+  authoredByCommitter: Boolean!
+
+  """
+  The datetime when this commit was authored.
+  """
+  authoredDate: DateTime!
+
+  """
+  The number of changed files in this commit. If GitHub is unable to calculate
+  the number of changed files (for example due to a timeout), this will return
+  `null`. We recommend using this field instead of `changedFiles`.
+  """
+  changedFilesIfAvailable: Int
+
+  """
+  The HTTP path for this Git object
+  """
+  commitResourcePath: URI!
+
+  """
+  The HTTP URL for this Git object
+  """
+  commitUrl: URI!
+
+  """
+  The datetime when this commit was committed.
+  """
+  committedDate: DateTime!
+
+  """
+  Check if committed via GitHub web UI.
+  """
+  committedViaWeb: Boolean!
+
+  """
+  Committer details of the commit.
+  """
+  committer: GitActor
+
+  """
+  The number of deletions in this commit.
+  """
+  deletions: Int!
+
+  """
+  The linear commit history starting from (and including) this commit, in the same order as `git log`.
+  """
+  history(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    If non-null, filters history to only show commits with matching authorship.
+    """
+    author: CommitAuthor
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    If non-null, filters history to only show commits touching files under this path.
+    """
+    path: String
+
+    """
+    Allows specifying a beginning time or date for fetching commits.
+    """
+    since: GitTimestamp
+
+    """
+    Allows specifying an ending time or date for fetching commits.
+    """
+    until: GitTimestamp
+  ): CommitHistoryConnection!
+
+  id: ID!
+
+  """
+  The Git commit message
+  """
+  message: String!
+
+  """
+  The Git commit message body
+  """
+  messageBody: String!
+
+  """
+  The commit message body rendered to HTML.
+  """
+  messageBodyHTML: HTML!
+
+  """
+  The Git commit message headline
+  """
+  messageHeadline: String!
+
+  """
+  The commit message headline rendered to HTML.
+  """
+  messageHeadlineHTML: HTML!
+
+  """
+  The Git object ID
+  """
+  oid: GitObjectID!
+
+  """
+  The organization this commit was made on behalf of.
+  """
+  onBehalfOf: Organization
+
+  """
+  The datetime when this commit was pushed.
+  """
+  pushedDate: DateTime
+
+  """
+  The Repository this commit belongs to
+  """
+  repository: Repository!
+
+  """
+  The HTTP path for this commit
+  """
+  resourcePath: URI!
+
+  """
+  Returns a URL to download a tarball archive for a repository.
+  Note: For private repositories, these links are temporary and expire after five minutes.
+  """
+  tarballUrl: URI!
+
+  """
+  The HTTP path for the tree of this commit
+  """
+  treeResourcePath: URI!
+
+  """
+  The HTTP URL for the tree of this commit
+  """
+  treeUrl: URI!
+
+  """
+  The HTTP URL for this commit
+  """
+  url: URI!
+
+  """
+  Check if the viewer is able to change their subscription status for the repository.
+  """
+  viewerCanSubscribe: Boolean!
+
+  """
+  Returns a URL to download a zipball archive for a repository.
+  Note: For private repositories, these links are temporary and expire after five minutes.
+  """
+  zipballUrl: URI!
+}
+
+"""
+Represents an actor in a Git commit (ie. an author or committer).
+"""
+type GitActor {
+  """
+  A URL pointing to the author's public avatar.
+  """
+  avatarUrl(
+    """
+    The size of the resulting square image.
+    """
+    size: Int
+  ): URI!
+
+  """
+  The timestamp of the Git action (authoring or committing).
+  """
+  date: GitTimestamp
+
+  """
+  The email in the Git commit.
+  """
+  email: String
+
+  """
+  The name in the Git commit.
+  """
+  name: String
+
+}
+
+"""
+The connection type for Commit.
+"""
+type CommitHistoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [CommitEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Commit]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type CommitEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Commit
+}
+
+"""
+Specifies an author for filtering Git commits.
+"""
+input CommitAuthor {
+  """
+  Email addresses to filter by. Commits authored by any of the specified email addresses will be returned.
+  """
+  emails: [String!]
+
+  """
+  ID of a User to filter by. If non-null, only commits authored by this user
+  will be returned. This field takes precedence over emails.
+  """
+  id: ID
+}
+
