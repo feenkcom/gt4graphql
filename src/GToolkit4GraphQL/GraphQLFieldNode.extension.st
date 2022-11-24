@@ -3,7 +3,9 @@ Extension { #name : #GraphQLFieldNode }
 { #category : #'*GToolkit4GraphQL' }
 GraphQLFieldNode >> fieldIn: schema [
 	| type |
-	type := (self parentOfType: self class)
+	type := (self
+			parentOfType: {self class.
+					GraphQLInlineFragmentNode})
 			ifNil: [ (self parentOfType: GraphQLOperationDefinitionNode)
 					ifNotNil: [ :node | 
 						node isPartOfQuery
@@ -28,6 +30,9 @@ GraphQLFieldNode >> typeIn: schema [
 	index := 3.
 	[ type notNil and: [ index <= stack size ] ]
 		whileTrue: [ nameNode := stack at: index.
+			(nameNode isKindOf: GraphQLInlineFragmentNode)
+				ifTrue: [ type := nameNode typeIn: schema ].
+
 			(nameNode isKindOf: self class)
 				ifTrue: [ type fields
 						detect: [ :each | each name = nameNode name source ]
