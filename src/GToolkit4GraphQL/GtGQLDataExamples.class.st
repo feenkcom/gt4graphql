@@ -13,8 +13,8 @@ GtGQLDataExamples >> gitHubMiniSchema [
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
-	self assert: aSchema baseTypes size equals: 14.
-	self assert: aSchema types size equals: 23.
+	self assert: aSchema baseTypes size equals: 26.
+	self assert: aSchema types size equals: 44.
 
 	anOrganizationField := aSchema queryType fieldNamed: 'organization'.
 
@@ -53,6 +53,68 @@ GtGQLDataExamples >> gitHubMiniSchemaGraphQLFile [
 ]
 
 { #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentPageInfoField [
+	<gtExample>
+	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
+	repository (owner: $owner, name: $name) {
+		defaultBranchRef {
+			target {
+				... on Commit {
+					history(first: $count, after: $after) {
+						edges {
+							node {
+								author {
+									name
+								}
+								additions
+								deletions
+								changedFilesIfAvailable
+								committedDate
+							}
+						}
+						pageInfo {
+							hasPreviousPage
+							hasNextPage
+							startCursor
+							endCursor
+						}
+					}
+				}
+			}
+		}
+	}
+}'
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentWithoutPageInfoField [
+	<gtExample>
+	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
+	repository (owner: $owner, name: $name) {
+		defaultBranchRef {
+			target {
+				... on Commit {
+					history(first: $count, after: $after) {
+						edges {
+							node {
+								author {
+									name
+								}
+								additions
+								deletions
+								changedFilesIfAvailable
+								committedDate
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}'
+]
+
+{ #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
 	<gtExample>
 	^ 'query Repositories($count: Int!, $login: String!, $after: String, $privacy: RepositoryPrivacy) {
@@ -80,6 +142,34 @@ GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
 		}
 	}
 }'
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryWithInlinedFragmentPageInfoField [
+	<gtExample>
+	| aQuery anOperation |
+	aQuery := GtGQLQuery new.
+	anOperation := self gitHubQueryStringWithInlinedFragmentPageInfoField.
+
+	aQuery operation: anOperation.
+
+	self assert: aQuery operation equals: anOperation.
+
+	^ aQuery
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryWithInlinedFragmentWithoutPageInfoField [
+	<gtExample>
+	| aQuery anOperation |
+	aQuery := GtGQLQuery new.
+	anOperation := self gitHubQueryStringWithInlinedFragmentWithoutPageInfoField.
+
+	aQuery operation: anOperation.
+
+	self assert: aQuery operation equals: anOperation.
+
+	^ aQuery
 ]
 
 { #category : #'examples - github' }
