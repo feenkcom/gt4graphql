@@ -17,17 +17,21 @@ GtGQLSnippetElement >> browseSchema [
 	self operationNodeAtCursor
 		ifNotNil: [ :node | 
 			| obj |
-			(node isKindOf: GraphQLOperationDefinitionNode) ifTrue: [
-				node isPartOfQuery ifTrue: [ obj := schema queryType ].
-				node isPartOfMutation ifTrue: [ obj := schema mutationType ] ].
+			(node isKindOf: GraphQLOperationDefinitionNode)
+				ifTrue: [ node isPartOfQuery ifTrue: [ obj := schema queryType ].
+					node isPartOfMutation ifTrue: [ obj := schema mutationType ] ].
+
 			(node isKindOf: GraphQLFieldNode) ifTrue: [ obj := node fieldIn: schema ].
+
 			(node isKindOf: GraphQLNamedTypeNode)
 				ifTrue: [ obj := (schema typeNamed: node source) ifNotNil: [ :t | t baseType ] ].
+
 			((node isKindOf: GraphQLArgumentNode)
 				and: [ (node name sourceInterval includes: self operationCursor)
 						and: [ node parent isKindOf: GraphQLFieldNode ] ])
 				ifTrue: [ obj := (node parent fieldIn: schema)
 							ifNotNil: [ :field | field arguments detect: [ :each | each name = node name source ] ifNone: [  ] ] ].
+
 			obj ifNotNil: [ gqlElement phlow spawnObject: obj ] ]
 ]
 
