@@ -15,7 +15,8 @@ GtGQLResponseModelBuilder >> build [
 
 { #category : #'private - building' }
 GtGQLResponseModelBuilder >> buildModelChildren: aModel [
-	aModel acceptVisitor: self
+
+	self visitNode: aModel.
 ]
 
 { #category : #'private - building' }
@@ -123,4 +124,10 @@ GtGQLResponseModelBuilder >> visitGtGQLResponseScalar: aModel [
 	"nothing to do"
 
 	
+]
+
+{ #category : #visiting }
+GtGQLResponseModelBuilder >> visitNode: aModel [
+
+	aModel acceptVisitor: self
 ]
