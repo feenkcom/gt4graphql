@@ -98,10 +98,74 @@ GtGQLConnectionFinderExamples >> finderOfQueryStringWithMissingPageInfoField [
 	^ aFinder
 ]
 
+{ #category : #'examples - finder' }
+GtGQLConnectionFinderExamples >> finderOfQueryWithFragmentPageInfoField [
+	<gtExample>
+	| aFinder aQuery aSchema |
+	aFinder := self basicFinder.
+	aQuery := self gitHubQueryWithFragmentPageInfoField.
+	aSchema := self gitHubMiniSchema.
+
+	aFinder query: aQuery.
+	aFinder schema: aSchema.
+
+	self assert: aFinder ast isNotNil description: [ 'AST must be non-nil' ].
+	self assert: aFinder schema equals: aSchema.
+	self assert: aFinder fields isEmpty description: [ 'Fields must be empty' ].
+	self
+		assert: aFinder unfulfilledFields isEmpty
+		description: [ 'Unfulfilled fields must be empty' ].
+
+	aFinder find.
+
+	self assert: aFinder fields size equals: 1.
+	self assert: aFinder unfulfilledFields size equals: 0.
+
+	^ aFinder
+]
+
+{ #category : #'examples - finder' }
+GtGQLConnectionFinderExamples >> finderOfQueryWithFragmentWithoutPageInfoField [
+	<gtExample>
+	| aFinder aQuery aSchema |
+	aFinder := self basicFinder.
+	aQuery := self gitHubQueryWithFragmentWithoutPageInfoField.
+	aSchema := self gitHubMiniSchema.
+
+	aFinder query: aQuery.
+	aFinder schema: aSchema.
+
+	self assert: aFinder ast isNotNil description: [ 'AST must be non-nil' ].
+	self assert: aFinder schema equals: aSchema.
+	self assert: aFinder fields isEmpty description: [ 'Fields must be empty' ].
+	self
+		assert: aFinder unfulfilledFields isEmpty
+		description: [ 'Unfulfilled fields must be empty' ].
+
+	aFinder find.
+
+	self assert: aFinder fields size equals: 1.
+	self assert: aFinder unfulfilledFields size equals: 1.
+
+	^ aFinder
+]
+
 { #category : #'examples - schema' }
 GtGQLConnectionFinderExamples >> gitHubMiniSchema [
 	<gtExample>
 	^ GtGQLDataExamples new gitHubMiniSchema
+]
+
+{ #category : #'examples - queries' }
+GtGQLConnectionFinderExamples >> gitHubQueryWithFragmentPageInfoField [
+	<gtExample>
+	^ GtGQLDataExamples new gitHubQueryWithFragmentPageInfoField
+]
+
+{ #category : #'examples - queries' }
+GtGQLConnectionFinderExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
+	<gtExample>
+	^ GtGQLDataExamples new gitHubQueryWithFragmentWithoutPageInfoField
 ]
 
 { #category : #'examples - queries' }

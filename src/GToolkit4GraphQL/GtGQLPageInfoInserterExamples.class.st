@@ -32,6 +32,42 @@ GtGQLPageInfoInserterExamples >> basicInserter [
 ]
 
 { #category : #accessing }
+GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithFragment [
+	<gtExample>
+	^ 'fragment CommitInfo on Commit {
+	history(first: $count, after: $after) {
+		edges {
+			node {
+				author {
+					name
+					}
+					additions
+					deletions
+					changedFilesIfAvailable
+					committedDate
+			}
+		}
+		pageInfo {
+			hasNextPage
+			hasPreviousPage
+			endCursor
+			startCursor
+		}
+	}
+}
+
+query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
+	repository (owner: $owner, name: $name) {
+		defaultBranchRef {
+			target {
+				...CommitInfo
+			}
+		}
+	}
+}'
+]
+
+{ #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithInlinedFragment [
 	<gtExample>
 	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
@@ -75,6 +111,12 @@ GtGQLPageInfoInserterExamples >> gitHubMiniSchema [
 GtGQLPageInfoInserterExamples >> gitHubQueryStringWithInlinedFragmentPageInfoField [
 	<gtExample>
 	^ GtGQLDataExamples new gitHubQueryStringWithInlinedFragmentPageInfoField
+]
+
+{ #category : #'examples - queries' }
+GtGQLPageInfoInserterExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
+	<gtExample>
+	^ GtGQLDataExamples new gitHubQueryWithFragmentWithoutPageInfoField
 ]
 
 { #category : #accessing }
@@ -162,6 +204,42 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField_D
 	self
 		assert: aModifiedQuery operation
 		equals: self modifiedQueryStringWithAddedPageInfoFields_DefinedConnectoPath.
+
+	^ anInserter
+]
+
+{ #category : #accessing }
+GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField [
+	<gtExample>
+	| anInserter aQuery aSchema aModifiedQuery |
+	anInserter := self basicInserter.
+	aQuery := self gitHubQueryWithFragmentWithoutPageInfoField.
+	aSchema := self gitHubMiniSchema.
+
+	anInserter query: aQuery.
+	anInserter schema: aSchema.
+
+	self assert: anInserter query equals: aQuery.
+	self assert: anInserter schema equals: aSchema.
+	self
+		assert: anInserter hasModifications not
+		description: [ 'Inserter must not have modifications' ].
+	self
+		assert: anInserter unfulfilledFields isNil
+		description: [ 'Unfulfilled fields must be nil' ].
+
+	anInserter insert.
+
+	self assert: anInserter unfulfilledFields size equals: 1.
+	self
+		assert: anInserter modifiedQuery isNotNil
+		description: [ 'Modified query must exist' ].
+
+	aModifiedQuery := anInserter modifiedQuery.
+
+	self
+		assert: aModifiedQuery operation
+		equals: self gitHubExpectedQueryStringWithFragment.
 
 	^ anInserter
 ]
