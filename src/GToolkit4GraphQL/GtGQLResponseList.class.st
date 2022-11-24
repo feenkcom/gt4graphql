@@ -14,6 +14,8 @@ GtGQLResponseList >> acceptVisitor: aVisitor [
 
 { #category : #accessing }
 GtGQLResponseList >> addItem: aModel [
+	aModel parent: self.
+
 	items add: aModel
 ]
 
@@ -42,7 +44,7 @@ GtGQLResponseList >> gtFieldsViewValueText [
 					aStream
 						print: aCollection size;
 						space;
-						nextPutAll: self baseType name asString;
+						nextPutAll: self itemType name asString;
 						space;
 						nextPutAll: ('item' asPluralBasedOn: aCollection size) ] ]
 ]
@@ -57,4 +59,11 @@ GtGQLResponseList >> initialize [
 { #category : #accessing }
 GtGQLResponseList >> itemType [
 	^ self type responseItemType
+]
+
+{ #category : #accessing }
+GtGQLResponseList >> userData [
+	"Return data that is meaningful to users"
+
+	^ self data
 ]

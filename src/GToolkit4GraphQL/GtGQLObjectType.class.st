@@ -25,6 +25,6 @@ GtGQLObjectType >> isObjectType [
 ]
 
 { #category : #'api - response' }
-GtGQLObjectType >> newResponseModelInstance [
-	^ GtGQLResponseObject new type: self
+GtGQLObjectType >> newResponseModelInstanceUsing: aBuilder [
+	^ aBuilder newResponseModelObjectInstanceWithType: self
 ]
