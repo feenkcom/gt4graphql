@@ -53,6 +53,72 @@ GtGQLDataExamples >> gitHubMiniSchemaGraphQLFile [
 ]
 
 { #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryStringWithFragmentPageInfoField [
+	<gtExample>
+	^ 'fragment CommitInfo on Commit {
+	history(first: $count, after: $after) {
+		edges {
+			node {
+				author {
+					name
+					}
+					additions
+					deletions
+					changedFilesIfAvailable
+					committedDate
+			}
+		}
+		pageInfo {
+			hasPreviousPage
+			hasNextPage
+			startCursor
+			endCursor
+		}
+	}
+}
+
+query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
+	repository (owner: $owner, name: $name) {
+		defaultBranchRef {
+			target {
+				...CommitInfo
+			}
+		}
+	}
+}'
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryStringWithFragmentWithoutPageInfoField [
+	<gtExample>
+	^ 'fragment CommitInfo on Commit {
+	history(first: $count, after: $after) {
+		edges {
+			node {
+				author {
+					name
+					}
+					additions
+					deletions
+					changedFilesIfAvailable
+					committedDate
+			}
+		}
+	}
+}
+
+query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
+	repository (owner: $owner, name: $name) {
+		defaultBranchRef {
+			target {
+				...CommitInfo
+			}
+		}
+	}
+}'
+]
+
+{ #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentPageInfoField [
 	<gtExample>
 	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
@@ -142,6 +208,34 @@ GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
 		}
 	}
 }'
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryWithFragmentPageInfoField [
+	<gtExample>
+	| aQuery anOperation |
+	aQuery := GtGQLQuery new.
+	anOperation := self gitHubQueryStringWithFragmentPageInfoField.
+
+	aQuery operation: anOperation.
+
+	self assert: aQuery operation equals: anOperation.
+
+	^ aQuery
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
+	<gtExample>
+	| aQuery anOperation |
+	aQuery := GtGQLQuery new.
+	anOperation := self gitHubQueryStringWithFragmentWithoutPageInfoField.
+
+	aQuery operation: anOperation.
+
+	self assert: aQuery operation equals: anOperation.
+
+	^ aQuery
 ]
 
 { #category : #'examples - github' }
