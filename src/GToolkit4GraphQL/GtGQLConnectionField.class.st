@@ -184,16 +184,7 @@ GtGQLConnectionField >> pageInfoType [
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> path [
-	| anAst anArray |
-	anAst := self ast.
-	anArray := Array
-			streamContents: [ :aStream | 
-				[ anAst isNil ]
-					whileFalse: [ | aName |
-						aName := anAst alias ifNotNil: #source ifNil: [ anAst name source ].
-						aStream nextPut: aName.
-						anAst := anAst parentOfType: anAst class ] ].
-	^ anArray reversed
+	^ self paths ifNotEmpty: #first ifEmpty: [ #() ]
 ]
 
 { #category : #'accessing - ast' }
@@ -220,6 +211,15 @@ GtGQLConnectionField >> pathText [
 				ifTrue: [ aText append: aName asRopedText bold ] ].
 
 	^ aText
+]
+
+{ #category : #'accessing - ast' }
+GtGQLConnectionField >> paths [
+	<return: #Collection of: #Collection>
+	^ GtGQLConnectionPathBuilder new
+		ast: self ast;
+		build;
+		paths
 ]
 
 { #category : #printing }

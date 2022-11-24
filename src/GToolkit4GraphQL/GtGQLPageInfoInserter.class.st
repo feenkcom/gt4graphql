@@ -98,12 +98,12 @@ GtGQLPageInfoInserter >> insert [
 	self computeUnfulfilledFields.
 	self unfulfilledFields ifEmpty: [ ^ self ].
 
-	self createNewQuery.
 	self connectorPaths ifEmpty: [ self insertAll ] ifNotEmpty: [ self insertSome ]
 ]
 
 { #category : #'private - insertion' }
 GtGQLPageInfoInserter >> insertAll [
+	self createNewQuery.
 	self unfulfilledFields do: [ :aField | self insertField: aField ]
 ]
 
@@ -124,7 +124,10 @@ GtGQLPageInfoInserter >> insertField: aField [
 { #category : #'private - insertion' }
 GtGQLPageInfoInserter >> insertSome [
 	self unfulfilledFields
-		do: [ :aField | (self connectorPaths includes: aField path) ifTrue: [ self insertField: aField ] ]
+		do: [ :aField | 
+			(self connectorPaths includes: aField path)
+				ifTrue: [ modifiedQuery ifNil: [ self createNewQuery ].
+					self insertField: aField ] ]
 ]
 
 { #category : #'private - insertion' }
