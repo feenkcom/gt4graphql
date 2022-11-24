@@ -24,7 +24,7 @@ GtGQLResponseModelBuilder >> buildType: aType data: aJson [
 	| aModel |
 	aType ifNil: [ self error: 'Type must be non-nil' ].
 
-	aModel := aType newResponseModelInstance.
+	aModel := aType newResponseModelInstanceUsing: self.
 	aModel context: self context.
 	aModel data: aJson.
 
@@ -57,14 +57,51 @@ GtGQLResponseModelBuilder >> gtRootModelFor: aView [
 		view: #gtFieldsFor:
 ]
 
+{ #category : #'private - model creation' }
+GtGQLResponseModelBuilder >> listTypeOfItemType: anItemType [
+	| aList |
+	aList := GtGQLList new type: anItemType.
+
+	^ self schema
+		typeNamed: aList name
+		ifPresent: [ :anExistingList | anExistingList ]
+		ifAbsentPut: [ aList ]
+]
+
 { #category : #accessing }
 GtGQLResponseModelBuilder >> model [
 	^ rootModel
 ]
 
-{ #category : #'private - model creation' }
-GtGQLResponseModelBuilder >> newRootModel [
-	^ GtGQLResponseToRemove new
+{ #category : #'double dispatch - types' }
+GtGQLResponseModelBuilder >> newResponseModelListInstanceWithType: aType [
+	^ GtGQLResponseList new type: aType
+]
+
+{ #category : #'double dispatch - types' }
+GtGQLResponseModelBuilder >> newResponseModelNonNullableInstanceWithType: aType [
+	| aModel |
+	aModel := aType type newResponseModelInstanceUsing: self.
+
+	self
+		assert: [ aModel type = aType type ]
+		description: [ 'Model has incorrect type' ].
+
+	aModel type: aType.
+
+	^ aModel
+]
+
+{ #category : #'double dispatch - types' }
+GtGQLResponseModelBuilder >> newResponseModelObjectInstanceWithType: aType [
+	^ (self schema connectionTypes includes: aType)
+		ifFalse: [ GtGQLResponseObject new type: aType ]
+		ifTrue: [ GtGQLResponseConnectionList new type: aType ]
+]
+
+{ #category : #'double dispatch - types' }
+GtGQLResponseModelBuilder >> newResponseScalarModelInstanceWithType: aType [
+	^ GtGQLResponseScalar new type: aType
 ]
 
 { #category : #accessing }
@@ -96,10 +133,29 @@ GtGQLResponseModelBuilder >> schema [
 ]
 
 { #category : #visiting }
+GtGQLResponseModelBuilder >> visitGtGQLResponseConnectionObject: aModel [
+	| aListData anItemType aListType anEdgesType |
+	aListData := GtJsonMap
+			forJson: aModel data
+			at: #edges
+			collect: #node.
+	anEdgesType := (aModel baseType fieldNamed: #edges) type.
+	anItemType := (anEdgesType baseType fieldNamed: #node) type.
+	aListType := self listTypeOfItemType: anItemType.
+
+	aModel
+		listData: aListData;
+		listType: aListType;
+		itemType: anItemType.
+
+	self visitGtGQLResponseList: aModel
+]
+
+{ #category : #visiting }
 GtGQLResponseModelBuilder >> visitGtGQLResponseList: aModel [
 	| aType |
 	aType := aModel itemType.
-	aModel data
+	aModel userData
 		do: [ :aChildJson | 
 			| aChildModel |
 			aChildModel := self buildType: aType data: aChildJson.
@@ -108,11 +164,11 @@ GtGQLResponseModelBuilder >> visitGtGQLResponseList: aModel [
 
 { #category : #visiting }
 GtGQLResponseModelBuilder >> visitGtGQLResponseObject: aModel [
-	aModel baseType fields
+	aModel userType fields
 		do: [ :eachField | 
 			| aType aJson |
 			aType := eachField type.
-			aJson := aModel data at: eachField name.
+			aJson := aModel userData at: eachField name.
 			self flag: 'FIXIT: we do not handle aliases'.
 
 			aJson exists

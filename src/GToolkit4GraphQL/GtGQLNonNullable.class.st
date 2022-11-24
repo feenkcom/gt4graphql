@@ -35,8 +35,8 @@ GtGQLNonNullable >> name [
 ]
 
 { #category : #'api - response' }
-GtGQLNonNullable >> newResponseModelInstance [
-	^ self type newResponseModelInstance type: self
+GtGQLNonNullable >> newResponseModelInstanceUsing: aBuilder [
+	^ aBuilder newResponseModelNonNullableInstanceWithType: self
 ]
 
 { #category : #'api - response' }

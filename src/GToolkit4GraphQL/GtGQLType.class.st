@@ -118,7 +118,7 @@ GtGQLType >> name: aString [
 ]
 
 { #category : #'api - response' }
-GtGQLType >> newResponseModelInstance [
+GtGQLType >> newResponseModelInstanceUsing: aType [
 	^ self subclassResponsibility
 ]
 

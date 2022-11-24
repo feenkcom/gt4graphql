@@ -33,12 +33,6 @@ GtGQLResponseObject >> gtFieldsFor: aView [
 
 { #category : #'gt - extensions' }
 GtGQLResponseObject >> gtFieldsViewChildren [
-	(fields includesKey: #node)
-		ifTrue: [ ^ (fields at: #node) gtFieldsViewChildren ].
-
-	((fields includesKey: #edges) and: [ (fields includesKey: #nodes) not ])
-		ifTrue: [ ^ (fields at: #edges) gtFieldsViewChildren ].
-
 	^ fields associations
 ]
 
@@ -51,4 +45,18 @@ GtGQLResponseObject >> gtFieldsViewValueText [
 GtGQLResponseObject >> initialize [
 	super initialize.
 	fields := Dictionary new
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> userData [
+	"Return data that is meaningful to users"
+
+	^ self data
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> userType [
+	"Return type that is meaningful to users"
+
+	^ self baseType
 ]

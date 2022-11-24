@@ -30,8 +30,8 @@ GtGQLList >> name [
 ]
 
 { #category : #'api - response' }
-GtGQLList >> newResponseModelInstance [
-	^ GtGQLResponseList new type: self
+GtGQLList >> newResponseModelInstanceUsing: aBuilder [
+	^ aBuilder newResponseModelListInstanceWithType: self
 ]
 
 { #category : #'api - response' }
