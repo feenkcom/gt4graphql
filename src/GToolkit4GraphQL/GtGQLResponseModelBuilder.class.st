@@ -134,13 +134,23 @@ GtGQLResponseModelBuilder >> schema [
 
 { #category : #visiting }
 GtGQLResponseModelBuilder >> visitGtGQLResponseConnectionObject: aModel [
-	| aListData anItemType aListType anEdgesType |
+	| aListData anItemType aListType |
 	aListData := GtJsonMap
 			forJson: aModel data
 			at: #edges
 			collect: #node.
-	anEdgesType := (aModel baseType fieldNamed: #edges) type.
-	anItemType := (anEdgesType baseType fieldNamed: #node) type.
+
+	aListData exists
+		ifTrue: [ | anEdgesType |
+			anEdgesType := (aModel baseType fieldNamed: #edges) type.
+			anItemType := (anEdgesType baseType fieldNamed: #node) type ]
+		ifFalse: [ aListData := aModel data at: #nodes.
+			aListData exists
+				ifTrue: [ | aNodesType |
+					aNodesType := (aModel baseType fieldNamed: #nodes) type.
+					anItemType := aNodesType baseType ]
+				ifFalse: [ self error: 'What should we do?' ] ].
+
 	aListType := self listTypeOfItemType: anItemType.
 
 	aModel
