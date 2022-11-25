@@ -46,12 +46,6 @@ GtGQLResponseObject >> fields [
 	^ fields
 ]
 
-{ #category : #accessing }
-GtGQLResponseObject >> graphqlBuilder [
-	<magritteBuilder>
-	^ GtGQLMagritteBuilder new
-]
-
 { #category : #'gt - extensions' }
 GtGQLResponseObject >> gtFieldsFor: aView [
 	<gtView>
