@@ -41,10 +41,13 @@ GtGQLResponseList >> gtFieldsViewValueText [
 		ifNotNil: [ :aCollection | 
 			String
 				streamContents: [ :aStream | 
+					aStream print: aCollection size.
+					self itemType
+						ifNotNil: [ :aType | 
+							aStream
+								space;
+								nextPutAll: aType name asString ].
 					aStream
-						print: aCollection size;
-						space;
-						nextPutAll: self itemType name asString;
 						space;
 						nextPutAll: ('item' asPluralBasedOn: aCollection size) ] ]
 ]
@@ -59,6 +62,23 @@ GtGQLResponseList >> initialize [
 { #category : #accessing }
 GtGQLResponseList >> itemType [
 	^ self type responseItemType
+]
+
+{ #category : #accessing }
+GtGQLResponseList >> listType [
+	^ self type
+]
+
+{ #category : #printing }
+GtGQLResponseList >> printOn: aStream [
+	super printOn: aStream.
+
+	self listType ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: (self listType ifNotNil: #name);
+		nextPut: $)
 ]
 
 { #category : #accessing }

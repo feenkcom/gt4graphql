@@ -3,14 +3,16 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'result',
-		'rootModel'
+		'rootModel',
+		'queryModel'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
 { #category : #'api - building' }
 GtGQLResponseModelBuilder >> build [
-	rootModel := self buildType: self queryType data: self data
+	queryModel := self buildType: self queryType data: self data.
+	self skipQueryTypeIfOnlyOneFieldRequested
 ]
 
 { #category : #'private - building' }
@@ -111,6 +113,11 @@ GtGQLResponseModelBuilder >> query [
 ]
 
 { #category : #accessing }
+GtGQLResponseModelBuilder >> queryModel [
+	^ queryModel
+]
+
+{ #category : #accessing }
 GtGQLResponseModelBuilder >> queryType [
 	<return: #GtGQLType>
 	^ self schema ifNotNil: #queryType
@@ -132,6 +139,13 @@ GtGQLResponseModelBuilder >> schema [
 	^ self result ifNotNil: #schema
 ]
 
+{ #category : #'private - building' }
+GtGQLResponseModelBuilder >> skipQueryTypeIfOnlyOneFieldRequested [
+	queryModel fields size = 1
+		ifTrue: [ rootModel := queryModel fields anyOne ]
+		ifFalse: [ rootModel := queryModel ]
+]
+
 { #category : #visiting }
 GtGQLResponseModelBuilder >> visitGtGQLResponseConnectionObject: aModel [
 	| aListData anItemType aListType |
@@ -149,7 +163,7 @@ GtGQLResponseModelBuilder >> visitGtGQLResponseConnectionObject: aModel [
 				ifTrue: [ | aNodesType |
 					aNodesType := (aModel baseType fieldNamed: #nodes) type.
 					anItemType := aNodesType baseType ]
-				ifFalse: [ self error: 'What should we do?' ] ].
+				ifFalse: [ ^ self ] ].
 
 	aListType := self listTypeOfItemType: anItemType.
 

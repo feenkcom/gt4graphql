@@ -34,6 +34,19 @@ GtGQLResult >> gtErrorsFor: aView [
 		view: #gtJsonObjectFor:context:
 ]
 
+{ #category : #accessing }
+GtGQLResult >> gtResponseModelFor: aView [
+	<gtView>
+	^ aView forward
+		title: 'Model';
+		priority: 50;
+		object: [ GtGQLResponseModelBuilder new
+				result: self;
+				build;
+				model ];
+		view: #gtFieldsFor:
+]
+
 { #category : #'gt - extensions' }
 GtGQLResult >> gtResultJsonObjectFor: aView context: aContext [
 	<gtView>
