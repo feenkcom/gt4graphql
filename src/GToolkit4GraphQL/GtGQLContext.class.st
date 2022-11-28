@@ -70,6 +70,7 @@ GtGQLContext >> gtActionBrowseReportFor: anAction [
 	<gtAction>
 	^ anAction button
 		icon: BrGlamorousVectorIcons inspect;
+		priority: 20;
 		label: 'Report';
 		tooltip: 'Inspect report';
 		action: [ :aButton | aButton phlow spawnObject: self report ]
