@@ -1,6 +1,6 @@
 Class {
 	#name : #GtGQLQueryProblem,
-	#superclass : #GtGQLBasicResult,
+	#superclass : #GtGQLResult,
 	#traits : 'TGtGQLWithZnRequestAndResponse',
 	#classTraits : 'TGtGQLWithZnRequestAndResponse classTrait',
 	#instVars : [

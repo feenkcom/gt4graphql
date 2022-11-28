@@ -1,167 +1,106 @@
 Class {
 	#name : #GtGQLResult,
-	#superclass : #GtGQLBasicResult,
-	#traits : 'TGtOptions',
-	#classTraits : 'TGtOptions classTrait',
+	#superclass : #Object,
 	#instVars : [
-		'result'
+		'query',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Client'
 }
 
-{ #category : #'gt - extensions' }
-GtGQLResult >> data [
-	^ self result at: #data
-]
-
-{ #category : #'api - results' }
-GtGQLResult >> errors [
-	<return: #GtJson or: nil>
-	self hasErrors ifFalse: [ ^ nil ].
-
-	^ self result at: #errors
-]
-
-{ #category : #'gt - extensions' }
-GtGQLResult >> gtErrorsFor: aView [
-	<gtView>
-	self hasErrors ifFalse: [ ^ aView empty ].
-
-	^ aView forward
-		title: 'Errors';
-		priority: 15;
-		object: [ self errors ];
-		view: #gtJsonObjectFor:context:
+{ #category : #asserting }
+GtGQLResult >> assertContext [
+	self
+		assert: [ self context isNotNil ]
+		description: [ 'Context must be non-nil' ]
 ]
 
 { #category : #accessing }
-GtGQLResult >> gtResponseModelFor: aView [
-	<gtView>
-	^ aView forward
-		title: 'Model';
-		priority: 50;
-		object: [ GtGQLResponseModelBuilder new
-				result: self;
-				build;
-				model ];
-		view: #gtFieldsFor:
+GtGQLResult >> context [
+	^ context
+]
+
+{ #category : #accessing }
+GtGQLResult >> context: anObject [
+	context := anObject
+]
+
+{ #category : #accessing }
+GtGQLResult >> errorMessagesAndLocationsDo: aBlock [
+	(self result at: 'errors')
+		do: [ :each | 
+			| location |
+			location := (each at: 'locations') at: 1.
+			aBlock
+				value: (each at: 'message') jsonObject
+				value: (location at: 'line') jsonObject
+				value: (location at: 'column') jsonObject ]
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResult >> gtResultJsonObjectFor: aView context: aContext [
+GtGQLResult >> gtQueryFor: aView [
 	<gtView>
-	self result ifNil: [ ^ aView empty ].
+	self query ifNil: [ ^ aView empty ].
 
-	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ 3 ].
-	
 	^ aView forward
-		title: 'JSON Object';
-		priority: 21;
-		object: [ self data ];
-		view: #gtJsonObjectFor:context:
+		title: 'Query';
+		priority: 30;
+		object: [ self query ];
+		view: #gtQueryFor:
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResult >> gtResultJsonStringFor: aView [
+GtGQLResult >> gtVariablesFor: aView [
 	<gtView>
-	self result ifNil: [ ^ aView empty ].
+	self query ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'JSON String';
-		priority: 20;
-		object: [ self data ];
-		view: #gtJsonStringFor:
-]
-
-{ #category : #'gt - extensions' }
-GtGQLResult >> gtResultSchemaFor: aView [
-	<gtView>
-	self hasResultSchema ifFalse: [ ^ aView empty ].
-
-	^ aView forward
-		title: 'Schema';
-		priority: 10;
-		object: [ self resultSchema ];
-		view: #gtTypesFor:;
-		actionButtonIcon: BrGlamorousVectorIcons inspect
-			label: 'Schema'
-			tooltip: 'Inspect schema'
-			action: [ :aButton | 
-				self resultSchema
-					ifNotNil: [ :theSchema | aButton phlow spawnObject: theSchema ] ]
-]
-
-{ #category : #'gt - extensions' }
-GtGQLResult >> gtResultTypeFor: aView [
-	<gtView>
-	self hasResultType ifFalse: [ ^ aView empty ].
-
-	^ (GtGQLSchema gtTypesFor: aView items: [ {self resultType} ])
-		expandUpTo: 1;
-		actionButtonIcon: BrGlamorousVectorIcons inspect
-			label: 'Type'
-			tooltip: 'Inspect type'
-			action: [ :aButton | self resultType ifNotNil: [ :aType | aButton phlow spawnObject: aType ] ]
+		title: 'Variables';
+		priority: 31;
+		object: [ self query ];
+		view: #gtVariablesFor:
 ]
 
 { #category : #testing }
-GtGQLResult >> hasErrors [
-	^ self result isNotNil and: [ (self result at: #errors) exists ]
+GtGQLResult >> isPreparation [
+	^ false
 ]
 
-{ #category : #'api - results' }
-GtGQLResult >> hasResultSchema [
-	^ self result isNotNil and: [ (self data at: #__schema) exists ]
-]
-
-{ #category : #'api - results' }
-GtGQLResult >> hasResultType [
-	^ self result isNotNil and: [ (self data at: #__type) exists ]
+{ #category : #testing }
+GtGQLResult >> isQueryProblem [
+	^ false
 ]
 
 { #category : #testing }
 GtGQLResult >> isSuccess [
-	^ true
+	^ false
 ]
 
 { #category : #accessing }
-GtGQLResult >> paginator [
-	self assertContext.
-	^ GtGQLPaginatorStream new result: self
+GtGQLResult >> operation: aQuery input: aVariables [
+	query := GtGQLQuery new
+			operation: aQuery;
+			input: aVariables
 ]
 
 { #category : #accessing }
-GtGQLResult >> result [
-	^ result
+GtGQLResult >> query [
+	<return: #GtGQLQuery>
+	^ query
 ]
 
 { #category : #accessing }
-GtGQLResult >> result: anObject [
-	result := anObject
+GtGQLResult >> query: aGtGQLQuery [
+	query := aGtGQLQuery
 ]
 
-{ #category : #'api - results' }
-GtGQLResult >> resultSchema [
-	<return: #GtGQLSchema or: nil>
-	self hasResultSchema ifFalse: [ ^ nil ].
-
+{ #category : #accessing }
+GtGQLResult >> report [
 	^ self
-		optionAt: #resultSchema
-		ifAbsentPut: [ GtGQLIntrospectionSchemaBuilder new
-				context: self context;
-				json: self result;
-				build ]
 ]
 
-{ #category : #'api - results' }
-GtGQLResult >> resultType [
-	<return: #GtGQLType or: nil>
-	self hasResultType ifFalse: [ ^ nil ].
-
-	^ self
-		optionAt: #resultType
-		ifAbsentPut: [ GtGQLIntrospectionSchemaBuilder new
-				context: self context;
-				json: self result;
-				buildType ]
+{ #category : #accessing }
+GtGQLResult >> schema [
+	<return: #GtGQLSchema>
+	^ self context ifNotNil: #schema
 ]

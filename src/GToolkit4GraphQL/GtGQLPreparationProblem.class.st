@@ -1,6 +1,6 @@
 Class {
 	#name : #GtGQLPreparationProblem,
-	#superclass : #GtGQLBasicResult,
+	#superclass : #GtGQLResult,
 	#instVars : [
 		'exception',
 		'messageText'

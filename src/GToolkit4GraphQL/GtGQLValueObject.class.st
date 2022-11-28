@@ -1,6 +1,6 @@
 Class {
-	#name : #GtGQLResponseObject,
-	#superclass : #GtGQLResponseData,
+	#name : #GtGQLValueObject,
+	#superclass : #GtGQLValue,
 	#instVars : [
 		'fields'
 	],
@@ -8,12 +8,12 @@ Class {
 }
 
 { #category : #visiting }
-GtGQLResponseObject >> acceptVisitor: aVisitor [
-	^ aVisitor visitGtGQLResponseObject: self
+GtGQLValueObject >> acceptVisitor: aVisitor [
+	^ aVisitor visitGtGQLValueObject: self
 ]
 
 { #category : #'api - initialization' }
-GtGQLResponseObject >> atFieldNamed: aName put: aModel [
+GtGQLValueObject >> atFieldNamed: aName put: aModel [
 	self
 		assert: [ (fields includesKey: aName) not ]
 		description: [ 'Cannot add twice a same field value' ].
@@ -23,18 +23,29 @@ GtGQLResponseObject >> atFieldNamed: aName put: aModel [
 	fields at: aName put: aModel
 ]
 
+{ #category : #'reflective operations' }
+GtGQLValueObject >> doesNotUnderstand: message [
+	"Overwritten so that 'self foo' becomes 'self at: #foo' except that self is returned"
+
+	| key |
+	key := message selector.
+	(key isUnary and: [ fields includesKey: key ])
+		ifTrue: [ ^ self fieldNamed: key ].
+	^ super doesNotUnderstand: message
+]
+
 { #category : #accessing }
-GtGQLResponseObject >> fieldNamed: aName [
+GtGQLValueObject >> fieldNamed: aName [
 	^ self fieldNamed: aName ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
-GtGQLResponseObject >> fieldNamed: aName ifAbsent: anAbsentBlock [
+GtGQLValueObject >> fieldNamed: aName ifAbsent: anAbsentBlock [
 	^ fields at: aName ifAbsent: anAbsentBlock
 ]
 
 { #category : #accessing }
-GtGQLResponseObject >> fieldNamed: aName ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
+GtGQLValueObject >> fieldNamed: aName ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
 	^ fields
 		at: aName
 		ifPresent: aPresentBlock
@@ -42,12 +53,12 @@ GtGQLResponseObject >> fieldNamed: aName ifPresent: aPresentBlock ifAbsent: anAb
 ]
 
 { #category : #accessing }
-GtGQLResponseObject >> fields [
+GtGQLValueObject >> fields [
 	^ fields
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseObject >> gtFieldsFor: aView [
+GtGQLValueObject >> gtFieldsFor: aView [
 	<gtView>
 	fields ifNil: [ ^ aView empty ].
 
@@ -55,23 +66,36 @@ GtGQLResponseObject >> gtFieldsFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseObject >> gtFieldsViewChildren [
+GtGQLValueObject >> gtFieldsViewChildren [
 	^ fields associations
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseObject >> gtFieldsViewValueText [
+GtGQLValueObject >> gtFieldsViewValueText [
 	^ self type name
 ]
 
+{ #category : #accessing }
+GtGQLValueObject >> id [
+	^ self
+		fieldNamed: #id
+		ifPresent: #value
+		ifAbsent: [ nil ]
+]
+
 { #category : #initialization }
-GtGQLResponseObject >> initialize [
+GtGQLValueObject >> initialize [
 	super initialize.
 	fields := OrderedDictionary new
 ]
 
+{ #category : #testing }
+GtGQLValueObject >> isValueObject [
+	^ true
+]
+
 { #category : #accessing }
-GtGQLResponseObject >> magritteDescription [
+GtGQLValueObject >> magritteDescription [
 	| basicDescription |
 	basicDescription := GtGQLMagritteBuilder for: self.
 
@@ -79,20 +103,20 @@ GtGQLResponseObject >> magritteDescription [
 ]
 
 { #category : #accessing }
-GtGQLResponseObject >> magritteNullDescription [
+GtGQLValueObject >> magritteNullDescription [
 	<magritteDescription>
 	^ nil
 ]
 
 { #category : #accessing }
-GtGQLResponseObject >> userData [
+GtGQLValueObject >> userData [
 	"Return data that is meaningful to users"
 
 	^ self data
 ]
 
 { #category : #accessing }
-GtGQLResponseObject >> userType [
+GtGQLValueObject >> userType [
 	"Return type that is meaningful to users"
 
 	^ self baseType

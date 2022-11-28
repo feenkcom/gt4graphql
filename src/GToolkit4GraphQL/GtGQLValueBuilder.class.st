@@ -1,32 +1,34 @@
 Class {
-	#name : #GtGQLResponseModelBuilder,
+	#name : #GtGQLValueBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'result',
-		'rootModel',
-		'queryModel'
+		'context',
+		'query',
+		'data',
+		'rootValue',
+		'queryValue'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
 { #category : #'api - building' }
-GtGQLResponseModelBuilder >> build [
-	queryModel := self buildType: self queryType data: self data.
+GtGQLValueBuilder >> build [
+	queryValue := self buildType: self queryType data: self data.
 	self skipQueryTypeIfOnlyOneFieldRequested
 ]
 
 { #category : #'private - building' }
-GtGQLResponseModelBuilder >> buildModelChildren: aModel [
+GtGQLValueBuilder >> buildModelChildren: aModel [
 
 	self visitNode: aModel.
 ]
 
 { #category : #'private - building' }
-GtGQLResponseModelBuilder >> buildType: aType data: aJson [
+GtGQLValueBuilder >> buildType: aType data: aJson [
 	| aModel |
 	aType ifNil: [ self error: 'Type must be non-nil' ].
 
-	aModel := aType newResponseModelInstanceUsing: self.
+	aModel := aType newValueUsing: self.
 	aModel context: self context.
 	aModel data: aJson.
 
@@ -36,21 +38,29 @@ GtGQLResponseModelBuilder >> buildType: aType data: aJson [
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> context [
-	<return: #GtGQLContext>
-	^ self result ifNotNil: #context
+GtGQLValueBuilder >> context [
+	^ context
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> data [
-	<return: #GtJson>
-	^ self result ifNotNil: #data
+GtGQLValueBuilder >> context: anObject [
+	context := anObject
+]
+
+{ #category : #accessing }
+GtGQLValueBuilder >> data [
+	^ data
+]
+
+{ #category : #accessing }
+GtGQLValueBuilder >> data: anObject [
+	data := anObject
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseModelBuilder >> gtRootModelFor: aView [
+GtGQLValueBuilder >> gtRootModelFor: aView [
 	<gtView>
-	rootModel ifNil: [ ^ aView empty ].
+	rootValue ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Model';
@@ -60,7 +70,7 @@ GtGQLResponseModelBuilder >> gtRootModelFor: aView [
 ]
 
 { #category : #'private - model creation' }
-GtGQLResponseModelBuilder >> listTypeOfItemType: anItemType [
+GtGQLValueBuilder >> listTypeOfItemType: anItemType [
 	| aList |
 	aList := GtGQLList new type: anItemType.
 
@@ -70,20 +80,15 @@ GtGQLResponseModelBuilder >> listTypeOfItemType: anItemType [
 		ifAbsentPut: [ aList ]
 ]
 
-{ #category : #accessing }
-GtGQLResponseModelBuilder >> model [
-	^ rootModel
+{ #category : #'double dispatch - types' }
+GtGQLValueBuilder >> newValueListWithType: aType [
+	^ GtGQLValueList new type: aType
 ]
 
 { #category : #'double dispatch - types' }
-GtGQLResponseModelBuilder >> newResponseModelListInstanceWithType: aType [
-	^ GtGQLResponseList new type: aType
-]
-
-{ #category : #'double dispatch - types' }
-GtGQLResponseModelBuilder >> newResponseModelNonNullableInstanceWithType: aType [
+GtGQLValueBuilder >> newValueNonNullableWithType: aType [
 	| aModel |
-	aModel := aType type newResponseModelInstanceUsing: self.
+	aModel := aType type newValueUsing: self.
 
 	self
 		assert: [ aModel type = aType type ]
@@ -95,59 +100,65 @@ GtGQLResponseModelBuilder >> newResponseModelNonNullableInstanceWithType: aType 
 ]
 
 { #category : #'double dispatch - types' }
-GtGQLResponseModelBuilder >> newResponseModelObjectInstanceWithType: aType [
+GtGQLValueBuilder >> newValueObjectWithType: aType [
 	^ (self schema connectionTypes includes: aType)
-		ifFalse: [ GtGQLResponseObject new type: aType ]
-		ifTrue: [ GtGQLResponseConnectionList new type: aType ]
+		ifFalse: [ GtGQLValueObject new type: aType ]
+		ifTrue: [ GtGQLValueConnectionList new type: aType ]
 ]
 
 { #category : #'double dispatch - types' }
-GtGQLResponseModelBuilder >> newResponseScalarModelInstanceWithType: aType [
-	^ GtGQLResponseScalar new type: aType
+GtGQLValueBuilder >> newValueScalarWithType: aType [
+	^ GtGQLValueScalar new type: aType
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> query [
-	<return: #GtGQLQuery>
-	^ self result ifNotNil: #query
+GtGQLValueBuilder >> query [
+	^ query
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> queryModel [
-	^ queryModel
+GtGQLValueBuilder >> query: anObject [
+	query := anObject
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> queryType [
+GtGQLValueBuilder >> queryType [
 	<return: #GtGQLType>
 	^ self schema ifNotNil: #queryType
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> result [
-	^ result
+GtGQLValueBuilder >> queryValue [
+	^ queryValue
+]
+
+{ #category : #'api - initialization' }
+GtGQLValueBuilder >> result: aResult [
+	self context: aResult context.
+	self data: aResult data.
+	self query: aResult query
 ]
 
 { #category : #accessing }
-GtGQLResponseModelBuilder >> result: anObject [
-	result := anObject
-]
-
-{ #category : #accessing }
-GtGQLResponseModelBuilder >> schema [
+GtGQLValueBuilder >> schema [
 	<return: #GtGQLSchema>
-	^ self result ifNotNil: #schema
+	^ self context ifNotNil: #schema
 ]
 
 { #category : #'private - building' }
-GtGQLResponseModelBuilder >> skipQueryTypeIfOnlyOneFieldRequested [
-	queryModel fields size = 1
-		ifTrue: [ rootModel := queryModel fields anyOne ]
-		ifFalse: [ rootModel := queryModel ]
+GtGQLValueBuilder >> skipQueryTypeIfOnlyOneFieldRequested [
+	queryValue fields size = 1
+		ifTrue: [ rootValue := queryValue fields anyOne ]
+		ifFalse: [ rootValue := queryValue ]
+]
+
+{ #category : #accessing }
+GtGQLValueBuilder >> value [
+	^ rootValue
 ]
 
 { #category : #visiting }
-GtGQLResponseModelBuilder >> visitGtGQLResponseConnectionObject: aModel [
+GtGQLValueBuilder >> visitGtGQLValueConnectionObject: aModel [
 	| aListData anItemType aListType |
 	aListData := GtJsonMap
 			forJson: aModel data
@@ -172,11 +183,11 @@ GtGQLResponseModelBuilder >> visitGtGQLResponseConnectionObject: aModel [
 		listType: aListType;
 		itemType: anItemType.
 
-	self visitGtGQLResponseList: aModel
+	self visitGtGQLValueList: aModel
 ]
 
 { #category : #visiting }
-GtGQLResponseModelBuilder >> visitGtGQLResponseList: aModel [
+GtGQLValueBuilder >> visitGtGQLValueList: aModel [
 	| aType |
 	aType := aModel itemType.
 	aModel userData
@@ -187,7 +198,7 @@ GtGQLResponseModelBuilder >> visitGtGQLResponseList: aModel [
 ]
 
 { #category : #visiting }
-GtGQLResponseModelBuilder >> visitGtGQLResponseObject: aModel [
+GtGQLValueBuilder >> visitGtGQLValueObject: aModel [
 	aModel userType fields
 		do: [ :eachField | 
 			| aType aJson |
@@ -200,14 +211,14 @@ GtGQLResponseModelBuilder >> visitGtGQLResponseObject: aModel [
 ]
 
 { #category : #visiting }
-GtGQLResponseModelBuilder >> visitGtGQLResponseScalar: aModel [
+GtGQLValueBuilder >> visitGtGQLValueScalar: aModel [
 	"nothing to do"
 
 	
 ]
 
 { #category : #visiting }
-GtGQLResponseModelBuilder >> visitNode: aModel [
+GtGQLValueBuilder >> visitNode: aModel [
 
 	aModel acceptVisitor: self
 ]

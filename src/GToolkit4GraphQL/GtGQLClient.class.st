@@ -24,7 +24,7 @@ GtGQLClient >> context: anObject [
 GtGQLClient >> introspectionSchema [
 	<return: #GtJson>
 	| aResponse |
-	aResponse := self operation: self introspectionSchemaQuery.
+	aResponse := self query: self introspectionSchemaQuery.
 
 	aResponse isSuccess ifTrue: [ ^ aResponse result ].
 
@@ -36,7 +36,7 @@ GtGQLClient >> introspectionSchema [
 
 { #category : #'private - communication' }
 GtGQLClient >> introspectionSchemaQuery [
-	<return: #String>
+	<return: #GtGQLQuery>
 	^ self context introspectionSchemaQuery
 ]
 
@@ -68,13 +68,13 @@ GtGQLClient >> newEntity [
 
 { #category : #'api - communication' }
 GtGQLClient >> operation: anOperation [
-	<return: #GtGQLBasicResult>
+	<return: #GtGQLResult>
 	^ self query: (GtGQLQuery new operation: anOperation)
 ]
 
 { #category : #'api - communication' }
 GtGQLClient >> operation: anOperation input: anInput [
-	<return: #GtGQLBasicResult>
+	<return: #GtGQLResult>
 	^ self
 		query: (GtGQLQuery new
 				operation: anOperation;
@@ -83,7 +83,7 @@ GtGQLClient >> operation: anOperation input: anInput [
 
 { #category : #'private - communication' }
 GtGQLClient >> post [
-	<return: #GtGQLBasicResult>
+	<return: #GtGQLResult>
 	| aClient aJson |
 	[ aClient := self newClient ]
 		on: Error
@@ -116,7 +116,7 @@ GtGQLClient >> post [
 
 	aJson
 		at: #data
-		ifPresent: [ ^ GtGQLResult new
+		ifPresent: [ ^ GtGQLSuccessResult new
 				context: self context;
 				query: self query;
 				result: aJson ]
@@ -133,7 +133,7 @@ GtGQLClient >> post [
 				result: aJson ]
 		ifAbsent: [  "ignore" ].
 
-	^ GtGQLResult new
+	^ GtGQLSuccessResult new
 		context: self context;
 		query: self query;
 		result: aJson
@@ -146,7 +146,7 @@ GtGQLClient >> query [
 
 { #category : #'api - communication' }
 GtGQLClient >> query: aQuery [
-	<return: #GtGQLBasicResult>
+	<return: #GtGQLResult>
 	query := aQuery.
 	^ self post
 ]

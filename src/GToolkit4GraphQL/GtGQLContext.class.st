@@ -65,6 +65,16 @@ GtGQLContext >> clientBuilder: aBuilder [
 	clientBuilder := aBuilder
 ]
 
+{ #category : #accessing }
+GtGQLContext >> gtActionBrowseReportFor: anAction [
+	<gtAction>
+	^ anAction button
+		icon: BrGlamorousVectorIcons inspect;
+		label: 'Report';
+		tooltip: 'Inspect report';
+		action: [ :aButton | aButton phlow spawnObject: self report ]
+]
+
 { #category : #'gt - extensions' }
 GtGQLContext >> gtMutationFor: aView [
 	<gtView>
@@ -186,7 +196,7 @@ GtGQLContext >> introspectionEssentialSchema [
 
 { #category : #'api - introspection' }
 GtGQLContext >> introspectionSchemaQuery [
-	<return: #String>
+	<return: #GtGQLQuery>
 	^ self
 		optionAt: #introspectionSchemaQuery
 		ifAbsentPut: [ GtGQLIntrospectionSchemaQueryBuilder new
@@ -234,6 +244,28 @@ GtGQLContext >> printOn: aStream [
 { #category : #'api - global registration' }
 GtGQLContext >> register [
 	GtGQLContexts register: self
+]
+
+{ #category : #accessing }
+GtGQLContext >> report [
+	^ self
+		optionAt: #report
+		ifAbsentPut: [ self reportClass new context: self ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> report: aReport [
+	self optionAt: #report put: (aReport context: self)
+]
+
+{ #category : #accessing }
+GtGQLContext >> reportClass [
+	^ self optionAt: #reportClass ifAbsentPut: [ GtGQLReport ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> reportClass: aClass [
+	^ self optionAt: #reportClass put: aClass
 ]
 
 { #category : #accessing }

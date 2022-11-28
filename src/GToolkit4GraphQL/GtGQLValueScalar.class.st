@@ -1,21 +1,21 @@
 Class {
-	#name : #GtGQLResponseScalar,
-	#superclass : #GtGQLResponseData,
+	#name : #GtGQLValueScalar,
+	#superclass : #GtGQLValue,
 	#category : #'GToolkit4GraphQL-Response'
 }
 
 { #category : #visiting }
-GtGQLResponseScalar >> acceptVisitor: aVisitor [
-	^ aVisitor visitGtGQLResponseScalar: self
+GtGQLValueScalar >> acceptVisitor: aVisitor [
+	^ aVisitor visitGtGQLValueScalar: self
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseScalar >> gtFieldsViewValueText [
+GtGQLValueScalar >> gtFieldsViewValueText [
 	^ self value asRopedText
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseScalar >> gtValueFor: aView [
+GtGQLValueScalar >> gtValueFor: aView [
 	<gtView>
 	self data ifNil: [ ^ aView empty ].
 
@@ -31,7 +31,7 @@ GtGQLResponseScalar >> gtValueFor: aView [
 ]
 
 { #category : #accessing }
-GtGQLResponseScalar >> stringDescription [
+GtGQLValueScalar >> stringDescription [
 	<magritteDescription>
 	^ MAStringDescription new
 		label: 'Value';
@@ -42,6 +42,6 @@ GtGQLResponseScalar >> stringDescription [
 ]
 
 { #category : #accessing }
-GtGQLResponseScalar >> value [
+GtGQLValueScalar >> value [
 	^ self data ifNotNil: #jsonObject
 ]
