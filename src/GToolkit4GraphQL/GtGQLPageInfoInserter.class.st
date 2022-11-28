@@ -125,7 +125,7 @@ GtGQLPageInfoInserter >> insertField: aField [
 GtGQLPageInfoInserter >> insertSome [
 	self unfulfilledFields
 		do: [ :aField | 
-			(self connectorPaths includes: aField path)
+			(self connectorPaths includes: aField path resultPath)
 				ifTrue: [ modifiedQuery ifNil: [ self createNewQuery ].
 					self insertField: aField ] ]
 ]

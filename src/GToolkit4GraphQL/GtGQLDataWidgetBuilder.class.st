@@ -16,6 +16,13 @@ Class {
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
+{ #category : #accessing }
+GtGQLDataWidgetBuilder class >> isDeprecated [
+	"An experimental code that will be removed"
+
+	^ true
+]
+
 { #category : #'api - building' }
 GtGQLDataWidgetBuilder >> build [
 	containerStack := Stack new.
