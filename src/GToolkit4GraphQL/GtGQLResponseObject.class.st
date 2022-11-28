@@ -23,6 +23,29 @@ GtGQLResponseObject >> atFieldNamed: aName put: aModel [
 	fields at: aName put: aModel
 ]
 
+{ #category : #accessing }
+GtGQLResponseObject >> fieldNamed: aName [
+	^ self fieldNamed: aName ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> fieldNamed: aName ifAbsent: anAbsentBlock [
+	^ fields at: aName ifAbsent: anAbsentBlock
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> fieldNamed: aName ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
+	^ fields
+		at: aName
+		ifPresent: aPresentBlock
+		ifAbsent: anAbsentBlock
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> fields [
+	^ fields
+]
+
 { #category : #'gt - extensions' }
 GtGQLResponseObject >> gtFieldsFor: aView [
 	<gtView>
@@ -44,7 +67,21 @@ GtGQLResponseObject >> gtFieldsViewValueText [
 { #category : #initialization }
 GtGQLResponseObject >> initialize [
 	super initialize.
-	fields := Dictionary new
+	fields := OrderedDictionary new
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> magritteDescription [
+	| basicDescription |
+	basicDescription := GtGQLMagritteBuilder for: self.
+
+	^ basicDescription
+]
+
+{ #category : #accessing }
+GtGQLResponseObject >> magritteNullDescription [
+	<magritteDescription>
+	^ nil
 ]
 
 { #category : #accessing }

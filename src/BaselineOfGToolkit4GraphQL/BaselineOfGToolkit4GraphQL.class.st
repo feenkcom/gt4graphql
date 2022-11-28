@@ -7,5 +7,12 @@ Class {
 { #category : #baseline }
 BaselineOfGToolkit4GraphQL >> baseline: spec [
 	<baseline>
-	spec for: #common do: [ spec package: 'GToolkit4GraphQL' ]
+	
+	spec for: #common do: [ 
+		spec 
+			baseline: 'GToolkit4Magritte' with: [
+				spec repository: 'github://feenkcom/gt4magritte:main/src' ].
+		
+		spec package: 'GToolkit4GraphQL' with: [
+			spec requires: #('GToolkit4Magritte') ] ]
 ]

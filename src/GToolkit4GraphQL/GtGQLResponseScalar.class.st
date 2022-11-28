@@ -31,6 +31,17 @@ GtGQLResponseScalar >> gtValueFor: aView [
 ]
 
 { #category : #accessing }
+GtGQLResponseScalar >> stringDescription [
+	<magritteDescription>
+	^ MAStringDescription new
+		label: 'Value';
+		priority: 1;
+		accessor: (MAPluggableAccessor
+				read: [ :aModel | aModel value ]
+				write: [ :aModel :aValue | aModel value: aValue ])
+]
+
+{ #category : #accessing }
 GtGQLResponseScalar >> value [
 	^ self data ifNotNil: #jsonObject
 ]
