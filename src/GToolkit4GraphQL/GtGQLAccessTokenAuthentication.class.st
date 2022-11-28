@@ -10,6 +10,18 @@ Class {
 	#category : #'GToolkit4GraphQL-Client'
 }
 
+{ #category : #comparing }
+GtGQLAccessTokenAuthentication >> = anObject [
+	self == anObject
+		ifTrue: [ ^ true ].
+
+	self class = anObject class
+		ifFalse: [ ^ false ].
+
+	^ self accessToken = anObject accessToken
+		and: [ self headerName = anObject headerName ]
+]
+
 { #category : #accessing }
 GtGQLAccessTokenAuthentication >> accessToken [
 
@@ -43,6 +55,12 @@ GtGQLAccessTokenAuthentication >> configureZnClient: aZnClient [
 	self assertAccessToken: self accessToken.
 	
 	aZnClient headerAt: self headerName put: self accessToken
+]
+
+{ #category : #comparing }
+GtGQLAccessTokenAuthentication >> hash [
+	^ self accessToken hash
+		bitXor: (self headerName hash)
 ]
 
 { #category : #accessing }

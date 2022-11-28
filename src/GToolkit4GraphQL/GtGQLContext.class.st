@@ -231,6 +231,11 @@ GtGQLContext >> printOn: aStream [
 		nextPut: $)
 ]
 
+{ #category : #'api - global registration' }
+GtGQLContext >> register [
+	GtGQLContexts register: self
+]
+
 { #category : #accessing }
 GtGQLContext >> schema [
 	^ schema
@@ -244,6 +249,11 @@ GtGQLContext >> schema: anObject [
 { #category : #accessing }
 GtGQLContext >> schemaBuilder [
 	^ GtGQLIntrospectionSchemaBuilder new context: self
+]
+
+{ #category : #'api - global registration' }
+GtGQLContext >> unregister [
+	GtGQLContexts unregister: self
 ]
 
 { #category : #accessing }
