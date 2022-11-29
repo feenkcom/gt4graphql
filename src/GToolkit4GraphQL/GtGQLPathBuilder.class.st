@@ -1,7 +1,6 @@
 "
 I build {{gtClass:GtGQLPath}} for a given {{gtClass:GraphQLFieldNode}}. 
-
-##Examples
+#Examples
 ##One Path
 For a given GraphQL query: {{gtExample: GtGQLPathBuilderExamples >> #gitHubQueryWithFragmentPageInfoField | noCode | previewShow=#gtQueryFor: | previewHeight=300}} 
 I compute one possible path: {{gtExample: GtGQLPathBuilderExamples >> #builderWithGitHubQueryWithFragmentPageInfoField | noCode | previewHeight=50 | previewShow=#gtPathsFor:}}
