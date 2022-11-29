@@ -59,7 +59,7 @@ GtGQLScalar >> isScalar [
 	^ true
 ]
 
-{ #category : #accessing }
+{ #category : #'api - response' }
 GtGQLScalar >> newValueUsing: aBuilder [
 	^ aBuilder newValueScalarWithType: self
 ]

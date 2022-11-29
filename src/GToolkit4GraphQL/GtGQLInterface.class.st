@@ -32,6 +32,11 @@ GtGQLInterface >> isInterface [
 	^ true
 ]
 
+{ #category : #'api - response' }
+GtGQLInterface >> newValueUsing: aBuilder [
+	^ aBuilder newValueInterfaceWithType: self
+]
+
 { #category : #accessing }
 GtGQLInterface >> possibleTypes [
 	^ self propertyAt: #possibleTypes ifAbsent: [ #() ]
