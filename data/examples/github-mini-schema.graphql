@@ -120,6 +120,8 @@ A repository contains the content for a project.
 """
 type Repository implements Node & PackageOwner & ProjectOwner & ProjectV2Recent & RepositoryInfo & Starrable & Subscribable & UniformResourceLocatable {
   
+  id: ID!
+
   """
   The number of kilobytes this repository occupies on disk.
   """
@@ -180,6 +182,40 @@ type Repository implements Node & PackageOwner & ProjectOwner & ProjectV2Recent 
   """
   defaultBranchRef: Ref
 
+  """
+  The User owner of the repository.
+  """
+  owner: RepositoryOwner!
+
+    """
+  A list of issues that have been opened in the repository.
+  """
+  issues(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    A list of states to filter the issues by.
+    """
+    states: [IssueState!]
+  ): IssueConnection!
 }
 
 """
@@ -227,12 +263,19 @@ An account on GitHub, with one or more owners, that has repositories, members an
 """
 type Organization {
 
+  id: ID!
+
+  """
+  The organization's login name.
+  """
+  login: String!
+
   """
   The organization's public profile name.
   """
   name: String
 
- """
+  """
   The HTTP URL for this organization.
   """
   url: URI!
@@ -614,3 +657,334 @@ input CommitAuthor {
   id: ID
 }
 
+"""
+Represents an owner of a Repository.
+"""
+interface RepositoryOwner {
+
+  id: ID!
+
+  """
+  The username used to login.
+  """
+  login: String!
+
+  """
+  A list of repositories that the user owns.
+  """
+  repositories(
+
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    If non-null, filters repositories according to whether they are forks of another repository
+    """
+    isFork: Boolean
+
+    """
+    If non-null, filters repositories according to whether they have been locked
+    """
+    isLocked: Boolean
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    If non-null, filters repositories according to privacy
+    """
+    privacy: RepositoryPrivacy
+  ): RepositoryConnection!
+
+  """
+  Find Repository.
+  """
+  repository(
+    """
+    Follow repository renames. If disabled, a repository referenced by its old name will return an error.
+    """
+    followRenames: Boolean = true
+
+    """
+    Name of Repository to find.
+    """
+    name: String!
+  ): Repository
+
+  """
+  The HTTP URL for the owner.
+  """
+  resourcePath: URI!
+
+  """
+  The HTTP URL for the owner.
+  """
+  url: URI!
+}
+
+"""
+The connection type for Issue.
+"""
+type IssueConnection {
+  """
+  A list of edges.
+  """
+  edges: [IssueEdge]
+
+  """
+  A list of nodes.
+  """
+  nodes: [Issue]
+
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+
+"""
+An edge in a connection.
+"""
+type IssueEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: Issue
+}
+
+"""
+An Issue is a place to discuss ideas, enhancements, tasks, and bugs for a project.
+"""
+type Issue implements Assignable & Closable & Comment & Labelable & Lockable & Node & ProjectNextOwner & ProjectV2Owner & Reactable & RepositoryNode & Subscribable & UniformResourceLocatable & Updatable & UpdatableComment {
+
+  """
+  Identifies the body of the issue.
+  """
+  body: String!
+
+  """
+  The body rendered to HTML.
+  """
+  bodyHTML: HTML!
+
+  """
+  The http path for this issue body
+  """
+  bodyResourcePath: URI!
+
+  """
+  Identifies the body of the issue rendered to text.
+  """
+  bodyText: String!
+
+  """
+  The http URL for this issue body
+  """
+  bodyUrl: URI!
+
+  """
+  `true` if the object is closed (definition of closed may depend on type)
+  """
+  closed: Boolean!
+
+  """
+  Identifies the date and time when the object was closed.
+  """
+  closedAt: DateTime
+
+  """
+  Identifies the date and time when the object was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Check if this comment was created via an email reply.
+  """
+  createdViaEmail: Boolean!
+
+  """
+  Identifies the primary key from the database.
+  """
+  databaseId: Int
+
+  id: ID!
+
+  """
+  Check if this comment was edited and includes an edit with the creation data
+  """
+  includesCreatedEdit: Boolean!
+
+  """
+  Indicates whether or not this issue is currently pinned to the repository issues list
+  """
+  isPinned: Boolean
+
+  """
+  Is this issue read by the viewer
+  """
+  isReadByViewer: Boolean
+
+  """
+  The moment the editor made the last edit
+  """
+  lastEditedAt: DateTime
+
+  """
+  `true` if the object is locked
+  """
+  locked: Boolean!
+
+  """
+  Identifies the issue number.
+  """
+  number: Int!
+
+  """
+  Identifies when the comment was published at.
+  """
+  publishedAt: DateTime
+
+  """
+  The repository associated with this node.
+  """
+  repository: Repository!
+
+  """
+  The HTTP path for this issue
+  """
+  resourcePath: URI!
+
+  """
+  Identifies the state of the issue.
+  """
+  state: IssueState!
+
+  """
+  Identifies the issue title.
+  """
+  title: String!
+
+  """
+  Identifies the issue title rendered to HTML.
+  """
+  titleHTML: String!
+
+  """
+  A list of issues that track this issue
+  """
+  trackedInIssues(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): IssueConnection!
+
+  """
+  A list of issues tracked inside the current issue
+  """
+  trackedIssues(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: String
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: String
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+  ): IssueConnection!
+
+  """
+  Identifies the date and time when the object was last updated.
+  """
+  updatedAt: DateTime!
+
+  """
+  The HTTP URL for this issue
+  """
+  url: URI!
+
+  """
+  Can user react to this subject
+  """
+  viewerCanReact: Boolean!
+
+  """
+  Check if the viewer is able to change their subscription status for the repository.
+  """
+  viewerCanSubscribe: Boolean!
+
+  """
+  Check if the current viewer can update this object.
+  """
+  viewerCanUpdate: Boolean!
+
+  """
+  Did the viewer author this comment.
+  """
+  viewerDidAuthor: Boolean!
+}
+
+"""
+The possible states of an issue.
+"""
+enum IssueState {
+  """
+  An issue that has been closed
+  """
+  CLOSED
+
+  """
+  An issue that is still open
+  """
+  OPEN
+}
