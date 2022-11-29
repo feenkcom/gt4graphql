@@ -27,6 +27,27 @@ GtGQLCompletionStrategy >> completeField: aStream [
 ]
 
 { #category : #completing }
+GtGQLCompletionStrategy >> completeFieldOfType: aType andNode: aNode startingWith: prefix [
+	| fragmentNames fieldNames |
+	fragmentNames := Array
+			streamContents: [ :aStream | 
+				aStream nextPut: '...on _ { }'.
+				aNode topParent
+					allNodesOfType: GraphQLFragmentDefinitionNode
+					do: [ :eachNode | 
+						(eachNode name isNotNil and: [ eachNode name source isNotEmpty ])
+							ifTrue: [ aStream nextPut: '...' , eachNode name source asString ] ] ].
+
+	fragmentNames := fragmentNames asAsyncStream
+			select: [ :each | self isString: each prefixedBy: prefix ].
+
+	fieldNames := self
+			completeField: (aType fields asArray asAsyncStream
+					select: [ :each | self isString: each name prefixedBy: prefix ]).	"^ fragmentNames asAsyncStream merge: fieldNames asAsyncStream"
+	^ fieldNames asAsyncStream merge: fragmentNames asAsyncStream
+]
+
+{ #category : #completing }
 GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger [
 	| prefix ast node |
 	prefix := self completionPrefixAt: positionInteger in: aText.
@@ -90,7 +111,11 @@ GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: pre
 	(aNode parent isKindOf: GraphQLFragmentDefinitionNode)
 		ifTrue: [ (aNode parent selections identityIncludes: aNode)
 				ifTrue: [ (aNode parent typeIn: self schema)
-						ifNotNil: [ :type | ^ self completeField: type fields asArray asAsyncStream ] ] ].
+						ifNotNil: [ :type | 
+							^ self
+								completeFieldOfType: type
+								andNode: aNode
+								startingWith: prefix ] ] ].
 
 	^ nil
 ]
@@ -116,8 +141,12 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix a
 				ifTrue: [ (positionInteger
 						between: aNode leftBrace startPosition
 						and: aNode rightBrace stopPosition)
-						ifTrue: [ ^ (aNode typeIn: self schema)
-								ifNotNil: [ :type | self completeField: type fields asArray asAsyncStream ] ] ].
+						ifTrue: [ (aNode typeIn: self schema)
+								ifNotNil: [ :type | 
+									^ self
+										completeFieldOfType: type
+										andNode: aNode
+										startingWith: prefix ] ] ].
 
 			(aNode isKindOf: GraphQLFieldNode)
 				ifTrue: [ (positionInteger
@@ -136,8 +165,9 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix a
 			aParent ifNotNil: [ aType := aParent typeIn: self schema ].
 			aType ifNil: [ ^ #() asAsyncStream ].
 			^ self
-				completeField: (aType fields asArray asAsyncStream
-						select: [ :each | each name beginsWith: prefix ]) ].
+				completeFieldOfType: aType
+				andNode: aNode
+				startingWith: prefix ].
 
 	^ ((aNode parentOfType: GraphQLFieldNode)
 		ifNil: [ aNode isPartOfQuery
@@ -147,8 +177,9 @@ GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix a
 		ifNil: [ #() asAsyncStream ]
 		ifNotNil: [ :type | 
 			self
-				completeField: (type fields asArray asAsyncStream
-						select: [ :each | each name beginsWith: prefix ]) ]
+				completeFieldOfType: type
+				andNode: aNode
+				startingWith: prefix ]
 ]
 
 { #category : #completing }
@@ -175,7 +206,14 @@ GtGQLCompletionStrategy >> initialize [
 { #category : #testing }
 GtGQLCompletionStrategy >> isSeparatorCharacter: aCharacter [
 	^ (aCharacter isLetter
-		or: [ aCharacter isDigit or: [ '_$' includes: aCharacter ] ]) not
+		or: [ aCharacter isDigit or: [ '_$.' includes: aCharacter ] ]) not
+]
+
+{ #category : #private }
+GtGQLCompletionStrategy >> isString: aString prefixedBy: prefix [
+	prefix ifNil: [ ^ true ].
+	prefix ifEmpty: [ ^ true ].
+	^ aString beginsWith: prefix
 ]
 
 { #category : #accessing }
