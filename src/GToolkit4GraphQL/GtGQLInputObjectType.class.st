@@ -29,6 +29,16 @@ GtGQLInputObjectType >> deprecationReason: anObject [
 	self propertyAt: #deprecationReason put: anObject
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLInputObjectType >> gtRepricationReasonFor: aView [
+	<gtView>
+	self isDeprecated ifFalse: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Deprecation Reason';
+		priority: 50;
+		stencil: [ LeCoderTextElement coderElementFor: (self deprecationReason ifNil: [ '' ]) ]
+]
+
 { #category : #'api - initialization' }
 GtGQLInputObjectType >> gtTypeFor: aView [
 	<gtView>

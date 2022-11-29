@@ -1,5 +1,5 @@
 Class {
-	#name : #GtGQLResponseData,
+	#name : #GtGQLValue,
 	#superclass : #Object,
 	#instVars : [
 		'type',
@@ -11,7 +11,7 @@ Class {
 }
 
 { #category : #'gt - extensions' }
-GtGQLResponseData class >> gtFieldsFor: aView items: aBlock [
+GtGQLValue class >> gtFieldsFor: aView items: aBlock [
 
 	^ aView columnedTree
 		title: 'Fields';
@@ -27,61 +27,92 @@ GtGQLResponseData class >> gtFieldsFor: aView items: aBlock [
 ]
 
 { #category : #testing }
-GtGQLResponseData class >> isAbstract [
-	^ self name = #GtGQLResponseData
+GtGQLValue class >> isAbstract [
+	^ self name = #GtGQLValue
 ]
 
 { #category : #visiting }
-GtGQLResponseData >> acceptVisitor: aVisitor [
+GtGQLValue >> acceptVisitor: aVisitor [
 	^ self subclassResponsibility
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> baseType [
+GtGQLValue >> baseType [
 	^ self type ifNotNil: #baseType
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> context [
+GtGQLValue >> context [
 	^ context
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> context: anObject [
+GtGQLValue >> context: anObject [
 	context := anObject
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> data [
+GtGQLValue >> data [
+	<return: #GtJson>
 	^ data
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> data: anObject [
+GtGQLValue >> data: anObject [
 	data := anObject
 ]
 
+{ #category : #accessing }
+GtGQLValue >> gtDataJsonStringFor: aView [
+	<gtView>
+	self data ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'JSON String';
+		priority: 20;
+		object: [ self data ];
+		view: #gtJsonStringFor:
+]
+
 { #category : #'gt - extensions' }
-GtGQLResponseData >> gtFieldsViewChildren [
+GtGQLValue >> gtFieldsViewChildren [
 	^ #()
 ]
 
+{ #category : #testing }
+GtGQLValue >> isSuccess [
+	"Polymorphic to {{gtClass:GtGQLReport}}"
+
+	^ true
+]
+
+{ #category : #testing }
+GtGQLValue >> isValueObject [
+	^ false
+]
+
 { #category : #accessing }
-GtGQLResponseData >> parent [
+GtGQLValue >> parent [
 	^ parent
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> parent: anObject [
+GtGQLValue >> parent: anObject [
 	parent := anObject
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> type [
+GtGQLValue >> schema [
+	<return: #GtGQLSchema>
+	^ self context ifNotNil: #schema
+]
+
+{ #category : #accessing }
+GtGQLValue >> type [
 	^ type
 ]
 
 { #category : #accessing }
-GtGQLResponseData >> type: anObject [
+GtGQLValue >> type: anObject [
 	type := anObject
 ]

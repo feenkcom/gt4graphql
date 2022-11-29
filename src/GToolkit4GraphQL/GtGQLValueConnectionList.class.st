@@ -1,6 +1,6 @@
 Class {
-	#name : #GtGQLResponseConnectionList,
-	#superclass : #GtGQLResponseList,
+	#name : #GtGQLValueConnectionList,
+	#superclass : #GtGQLValueList,
 	#instVars : [
 		'itemType',
 		'listData',
@@ -10,49 +10,49 @@ Class {
 }
 
 { #category : #visiting }
-GtGQLResponseConnectionList >> acceptVisitor: aVisitor [
-	^ aVisitor visitGtGQLResponseConnectionObject: self
+GtGQLValueConnectionList >> acceptVisitor: aVisitor [
+	^ aVisitor visitGtGQLValueConnectionObject: self
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> itemType [
+GtGQLValueConnectionList >> itemType [
 	^ itemType
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> itemType: anObject [
+GtGQLValueConnectionList >> itemType: anObject [
 	itemType := anObject
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> listData [
+GtGQLValueConnectionList >> listData [
 	^ listData
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> listData: anObject [
+GtGQLValueConnectionList >> listData: anObject [
 	listData := anObject
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> listType [
+GtGQLValueConnectionList >> listType [
 	^ listType
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> listType: anObject [
+GtGQLValueConnectionList >> listType: anObject [
 	listType := anObject
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> userData [
+GtGQLValueConnectionList >> userData [
 	"Return data that is meaningful to users"
 
 	^ self listData
 ]
 
 { #category : #accessing }
-GtGQLResponseConnectionList >> userType [
+GtGQLValueConnectionList >> userType [
 	"Return type that is meaningful to users"
 
 	^ self listType

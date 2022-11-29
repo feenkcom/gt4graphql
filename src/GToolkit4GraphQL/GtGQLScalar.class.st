@@ -60,6 +60,6 @@ GtGQLScalar >> isScalar [
 ]
 
 { #category : #accessing }
-GtGQLScalar >> newResponseModelInstanceUsing: aBuilder [
-	^ aBuilder newResponseScalarModelInstanceWithType: self
+GtGQLScalar >> newValueUsing: aBuilder [
+	^ aBuilder newValueScalarWithType: self
 ]

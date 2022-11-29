@@ -42,6 +42,12 @@ GtGQLContexts class >> withUrl: anUrl [
 	^ self default withUrl: anUrl
 ]
 
+{ #category : #'api - global registration' }
+GtGQLContexts class >> withUrl: anUrl ifAbsentPut: anAbsentBlock [
+	<return: #GtGQLContext>
+	^ self default withUrl: anUrl ifAbsentPut: anAbsentBlock
+]
+
 { #category : #'api - adding / removing' }
 GtGQLContexts >> add: aContext [
 	self assert: [ aContext isNotNil ] description: [ 'Context must be non-nil' ].
@@ -97,4 +103,17 @@ GtGQLContexts >> withUrl: anUrl [
 	| aZnUrl |
 	aZnUrl := anUrl asZnUrl.
 	^ contexts detect: [ :eachContext | eachContext url = aZnUrl ] ifNone: [ nil ]
+]
+
+{ #category : #'api - enumerating' }
+GtGQLContexts >> withUrl: anUrl ifAbsentPut: anAbsentBlock [
+	<return: #GtGQLContext>
+	| aZnUrl |
+	aZnUrl := anUrl asZnUrl.
+	^ contexts
+		detect: [ :eachContext | eachContext url = aZnUrl ]
+		ifNone: [ | aContext |
+			aContext := anAbsentBlock value.
+			self add: aContext.
+			aContext ]
 ]

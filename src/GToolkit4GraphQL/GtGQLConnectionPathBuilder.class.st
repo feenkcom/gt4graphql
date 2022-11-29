@@ -36,12 +36,7 @@ GtGQLConnectionPathBuilder >> gtPathsFor: aView [
 		title: 'Paths';
 		priority: 1;
 		items: [ self paths ifNil: [ #() ] ];
-		itemText: [ :anArray | 
-			String
-				streamContents: [ :aStream | 
-					anArray
-						do: [ :aStep | aStream nextPutAll: aStep ]
-						separatedBy: [ aStream nextPut: $. ] ] ]
+		itemText: [ :aStep | aStep resultPathText ]
 ]
 
 { #category : #accessing }
@@ -56,9 +51,14 @@ GtGQLConnectionPathBuilder >> visitDocument: aNode [
 
 { #category : #visiting }
 GtGQLConnectionPathBuilder >> visitField: aNode [
-	| aName |
-	aName := aNode alias ifNotNil: #source ifNil: [ aNode name source ].
-	currentPath add: aName.
+	| aName anAlias |
+	anAlias := aNode alias ifNotNil: #source.
+	aName := aNode name ifNotNil: #source.
+	currentPath
+		add: (GtGQLPathStep new
+				alias: anAlias;
+				name: aName;
+				ast: aNode).
 
 	self acceptNode: aNode parent
 ]
@@ -92,5 +92,10 @@ GtGQLConnectionPathBuilder >> visitInlineFragment: aNode [
 GtGQLConnectionPathBuilder >> visitOperationDefinition: aNode [
 	"do nothing"
 
-	paths add: currentPath reversed asArray
+	| aPath |
+	aPath := GtGQLPath new
+			steps: currentPath reversed asArray;
+			ast: aNode.
+
+	paths add: aPath
 ]

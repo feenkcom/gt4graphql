@@ -184,38 +184,25 @@ GtGQLConnectionField >> pageInfoType [
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> path [
-	^ self paths ifNotEmpty: #first ifEmpty: [ #() ]
+	<return: #GtGQLPath or: nil>
+	^ self paths ifNotEmpty: #first ifEmpty: [ nil ]
 ]
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> pathString [
-	^ String
-		streamContents: [ :aStream | 
-			self path
-				do: [ :aName | aStream nextPutAll: aName ]
-				separatedBy: [ aStream nextPut: $. ] ]
+	^ self path ifNotNil: #resultPathString ifNil: [ '?' ]
 ]
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> pathText [
-	| aText aPath |
-	aText := '' asRopedText.
-	aPath := self path.
-
-	aPath
-		withIndexDo: [ :aName :anIndex | 
-			anIndex = aPath size
-				ifFalse: [ aText
-						append: aName asRopedText;
-						append: '.' asRopedText ]
-				ifTrue: [ aText append: aName asRopedText bold ] ].
-
-	^ aText
+	^ self path
+		ifNotNil: #resultPathText
+		ifNil: [ '?' asRopedText foreground: BrGlamorousColors errorBackgroundColor ]
 ]
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> paths [
-	<return: #Collection of: #Collection>
+	<return: #Collection of: #GtGQLPath>
 	^ GtGQLConnectionPathBuilder new
 		ast: self ast;
 		build;

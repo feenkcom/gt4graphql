@@ -24,6 +24,12 @@ GtGQLQuery >> ensureDictionary [
 							do: [ :anError | anError return: Dictionary new ] ] ]
 ]
 
+{ #category : #convenience }
+GtGQLQuery >> graphqlNode [
+	<return: #GraphQLDocumentNode>
+	^ GraphQLParser parse: self operation
+]
+
 { #category : #'gt - extensions' }
 GtGQLQuery >> gtQueryFor: aView [
 	<gtView>
@@ -34,7 +40,11 @@ GtGQLQuery >> gtQueryFor: aView [
 		priority: 1;
 		aptitude: [ BrGlamorousCodeEditorAptitude ];
 		styler: [ GraphQLParser gtStyler ];
-		text: [ self operation ]
+		text: [ self operation ];
+		actionButtonIcon: BrGlamorousIcons tree
+			label: 'AST'
+			tooltip: 'Inspect GraphQL AST structure'
+			action: [ :aButton | aButton phlow spawnObject: self graphqlNode ]
 ]
 
 { #category : #'gt - extensions' }

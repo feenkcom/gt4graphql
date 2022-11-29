@@ -14,7 +14,8 @@ Class {
 
 { #category : #'api - building' }
 GtGQLIntrospectionSchemaQueryBuilder >> build [
-	query := String
+	| anOperation |
+	anOperation := String
 			streamContents: [ :aStream | 
 				self nextPutTypeRefFragmentInto: aStream.
 				aStream cr.
@@ -26,6 +27,8 @@ GtGQLIntrospectionSchemaQueryBuilder >> build [
 				aStream cr.
 
 				self nextPutSchemaQueryInto: aStream ].
+
+	query := GtGQLQuery new operation: anOperation.
 
 	^ query
 ]
@@ -267,8 +270,14 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutTypeRefFragmentInto: aStream [
 ]
 
 { #category : #accessing }
-GtGQLIntrospectionSchemaQueryBuilder >> query [
+GtGQLIntrospectionSchemaQueryBuilder >> operation [
 	<return: #String>
+	^ query ifNotNil: #operation
+]
+
+{ #category : #accessing }
+GtGQLIntrospectionSchemaQueryBuilder >> query [
+	<return: #GtGQLQuery>
 	^ query
 ]
 

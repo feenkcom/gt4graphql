@@ -208,7 +208,7 @@ GtGQLPaginatorStream >> itemsName: anObject [
 
 { #category : #accessing }
 GtGQLPaginatorStream >> lastResult [
-	<return: #GtGQLBasicResult>
+	<return: #GtGQLResult>
 	^ lastResult
 ]
 

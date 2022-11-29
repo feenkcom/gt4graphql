@@ -21,7 +21,7 @@ GtGQLField >> arguments: aCollection [
 
 { #category : #accessing }
 GtGQLField >> deprecationReason [
-	^ self propertyAt: #fdeprecationReason
+	^ self propertyAt: #deprecationReason
 ]
 
 { #category : #accessing }
@@ -77,6 +77,16 @@ GtGQLField >> gtDescriptionFor: aView [
 		title: 'Description';
 		priority: 40;
 		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLField >> gtRepricationReasonFor: aView [
+	<gtView>
+	self isDeprecated ifFalse: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Deprecation Reason';
+		priority: 50;
+		stencil: [ LeCoderTextElement coderElementFor: (self deprecationReason ifNil: [ '' ]) ]
 ]
 
 { #category : #accessing }

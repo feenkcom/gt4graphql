@@ -1,6 +1,6 @@
 Class {
 	#name : #GtGQLPreparation,
-	#superclass : #GtGQLBasicResult,
+	#superclass : #GtGQLResult,
 	#category : #'GToolkit4GraphQL-Client'
 }
 

@@ -1,6 +1,6 @@
 Class {
-	#name : #GtGQLResponseList,
-	#superclass : #GtGQLResponseData,
+	#name : #GtGQLValueList,
+	#superclass : #GtGQLValue,
 	#instVars : [
 		'items'
 	],
@@ -8,19 +8,29 @@ Class {
 }
 
 { #category : #visiting }
-GtGQLResponseList >> acceptVisitor: aVisitor [
-	^ aVisitor visitGtGQLResponseList: self
+GtGQLValueList >> acceptVisitor: aVisitor [
+	^ aVisitor visitGtGQLValueList: self
 ]
 
 { #category : #accessing }
-GtGQLResponseList >> addItem: aModel [
+GtGQLValueList >> addItem: aModel [
 	aModel parent: self.
 
 	items add: aModel
 ]
 
+{ #category : #converting }
+GtGQLValueList >> asBrItemsProvider [
+	^ BrSequenceableCollectionItemsProvider forCollection: self
+]
+
 { #category : #accessing }
-GtGQLResponseList >> gtFieldsFor: aView [
+GtGQLValueList >> at: anIndex [
+	^ items at: anIndex
+]
+
+{ #category : #accessing }
+GtGQLValueList >> gtFieldsFor: aView [
 	<gtView>
 	items ifNil: [ ^ aView empty ].
 
@@ -28,14 +38,14 @@ GtGQLResponseList >> gtFieldsFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseList >> gtFieldsViewChildren [
+GtGQLValueList >> gtFieldsViewChildren [
 	^ items
 		ifNil: [ #() ]
 		ifNotNil: [ :aCollection | aCollection withIndexCollect: [ :aModel :anIndex | anIndex -> aModel ] ]
 ]
 
 { #category : #'gt - extensions' }
-GtGQLResponseList >> gtFieldsViewValueText [
+GtGQLValueList >> gtFieldsViewValueText [
 	^ items
 		ifNil: [ '0 items' ]
 		ifNotNil: [ :aCollection | 
@@ -53,24 +63,24 @@ GtGQLResponseList >> gtFieldsViewValueText [
 ]
 
 { #category : #accessing }
-GtGQLResponseList >> initialize [
+GtGQLValueList >> initialize [
 	super initialize.
 	
 	items := OrderedCollection new.
 ]
 
 { #category : #accessing }
-GtGQLResponseList >> itemType [
+GtGQLValueList >> itemType [
 	^ self type responseItemType
 ]
 
 { #category : #accessing }
-GtGQLResponseList >> listType [
+GtGQLValueList >> listType [
 	^ self type
 ]
 
 { #category : #printing }
-GtGQLResponseList >> printOn: aStream [
+GtGQLValueList >> printOn: aStream [
 	super printOn: aStream.
 
 	self listType ifNil: [ ^ self ].
@@ -82,7 +92,12 @@ GtGQLResponseList >> printOn: aStream [
 ]
 
 { #category : #accessing }
-GtGQLResponseList >> userData [
+GtGQLValueList >> size [
+	^ items ifNotNil: #size ifNil: [ 0 ]
+]
+
+{ #category : #accessing }
+GtGQLValueList >> userData [
 	"Return data that is meaningful to users"
 
 	^ self data

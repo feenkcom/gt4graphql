@@ -1,6 +1,6 @@
 Class {
 	#name : #GtGQLRequestProblem,
-	#superclass : #GtGQLBasicResult,
+	#superclass : #GtGQLResult,
 	#traits : 'TGtGQLWithZnRequestAndResponse',
 	#classTraits : 'TGtGQLWithZnRequestAndResponse classTrait',
 	#category : #'GToolkit4GraphQL-Client'

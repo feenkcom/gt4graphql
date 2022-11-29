@@ -368,8 +368,8 @@ GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
 	self snippetViewModel resultValue: aResult.
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
 		ifTrue: [ (self showInlineError: aResult)
-				ifFalse: [ theButton phlow spawnObject: aResult ] ]
-		ifFalse: [ theButton phlow spawnObject: aResult ].
+				ifFalse: [ theButton phlow spawnObject: aResult report ] ]
+		ifFalse: [ theButton phlow spawnObject: aResult report ].
 	theButton enable
 ]
 
