@@ -1,3 +1,13 @@
+"
+I represent a path from query or mutation GraphQL type down to a particular field name.
+I compose {{gtClass:GtGQLPathStep}} instances.
+The {{gtClass: GtGQLPathBuilder}} is responsible for building my instances.
+
+#Examples
+##Open Issues
+The following  {{gtExample: GtGQLPathBuilderExamples >> #openIssuesPath | label=#leafStepResultName }}  field: {{gtExample: GtGQLPathBuilderExamples >> #openIssuesPath | noCode | previewHeight=350 | previewShow= #gtAstExploreFor: }} 
+Can be found in a query response in the following path: {{gtExample: GtGQLPathBuilderExamples >> #openIssuesPath | noCode | previewHeight=200 | previewShow= #gtStepsFor: }}
+"
 Class {
 	#name : #GtGQLPath,
 	#superclass : #Object,
@@ -74,6 +84,11 @@ GtGQLPath >> leafAst [
 { #category : #accessing }
 GtGQLPath >> leafStep [
 	^ self steps ifNotEmpty: [ :aCollection | aCollection last ] ifEmpty: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLPath >> leafStepResultName [
+	^ self leafStep ifNotNil: #resultName
 ]
 
 { #category : #printing }
