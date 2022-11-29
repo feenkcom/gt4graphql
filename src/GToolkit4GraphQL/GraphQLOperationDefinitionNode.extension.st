@@ -14,5 +14,5 @@ GraphQLOperationDefinitionNode >> isPartOfQuery [
 GraphQLOperationDefinitionNode >> typeIn: schema [
 	^ self isPartOfQuery
 		ifTrue: [ schema queryType ]
-		ifFalse: [ self isPartOfMutation ifTrue: [ schema mutationType ] ]
+		ifFalse: [ self isPartOfMutation ifTrue: [ schema mutationType ] ifFalse: [ nil ] ]
 ]
