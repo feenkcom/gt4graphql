@@ -251,7 +251,9 @@ GtGQLContext >> register [
 GtGQLContext >> report [
 	^ self
 		optionAt: #report
-		ifAbsentPut: [ self reportClass new context: self ]
+		ifAbsentPut: [ self reportClass new
+				context: self;
+				type: (self schema typeNamed: self reportTypeName) ]
 ]
 
 { #category : #accessing }
@@ -267,6 +269,16 @@ GtGQLContext >> reportClass [
 { #category : #accessing }
 GtGQLContext >> reportClass: aClass [
 	^ self optionAt: #reportClass put: aClass
+]
+
+{ #category : #accessing }
+GtGQLContext >> reportTypeName [
+	^ self optionAt: #reportTypeName ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLContext >> reportTypeName: aTypeName [
+	self optionAt: #reportTypeName put: aTypeName
 ]
 
 { #category : #accessing }
