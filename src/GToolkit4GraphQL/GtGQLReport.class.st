@@ -10,7 +10,7 @@ Class {
 		'value',
 		'name'
 	],
-	#category : #'GToolkit4GraphQL-Support'
+	#category : #'GToolkit4GraphQL-Report'
 }
 
 { #category : #accessing }

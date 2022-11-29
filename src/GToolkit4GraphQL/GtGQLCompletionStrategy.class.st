@@ -74,13 +74,20 @@ GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger 
 GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: prefix [
 	(prefix = '$' and: [ aNode parent isKindOf: GraphQLArgumentNode ])
 		ifTrue: [ ^ self completionStreamForVariable: aNode startingWith: prefix ].
-	^ (aNode parent isKindOf: GraphQLFieldNode)
+
+	(aNode parent isKindOf: GraphQLFieldNode)
 		ifTrue: [ (aNode parent arguments identityIncludes: aNode)
 				ifTrue: [ (aNode parent fieldIn: self schema)
 						ifNotNil: [ :field | 
-							self
+							^ self
 								completeArgument: (field arguments asOrderedCollection asAsyncStream
-										select: [ :each | each name beginsWith: prefix ]) ] ] ]
+										select: [ :each | each name beginsWith: prefix ]) ] ] ].
+
+	(aNode parent isKindOf: GraphQLDocumentNode)
+		ifTrue: [ ^ self documentFieldNames asAsyncStream
+				select: [ :each | each beginsWith: prefix ] ].
+
+	^ nil
 ]
 
 { #category : #completing }
@@ -127,6 +134,11 @@ GtGQLCompletionStrategy >> completionStreamForVariable: aNode startingWith: pref
 			(operation variableDefinitions asAsyncStream
 				select: [ :each | each isErrorNode not and: [ each variable source beginsWith: prefix ] ])
 				collect: [ :each | each variable source ] ]
+]
+
+{ #category : #completing }
+GtGQLCompletionStrategy >> documentFieldNames [
+	^ #('query { }' 'mutation { }' 'fragment on { }')
 ]
 
 { #category : #initialization }
