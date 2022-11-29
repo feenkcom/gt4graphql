@@ -49,9 +49,9 @@ GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithFragment [
 		}
 		pageInfo {
 			hasNextPage
-			hasPreviousPage
 			endCursor
 			startCursor
+			hasPreviousPage
 		}
 	}
 }
@@ -89,9 +89,9 @@ GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithInlinedFragment [
 						}
 						pageInfo {
 							hasNextPage
-							hasPreviousPage
 							endCursor
 							startCursor
+							hasPreviousPage
 						}
 					}
 				}
@@ -336,9 +336,9 @@ GtGQLPageInfoInserterExamples >> modifiedQueryStringWithAddedPageInfoFields [
 						totalCount
 						pageInfo {
 							hasNextPage
-							hasPreviousPage
 							endCursor
 							startCursor
+							hasPreviousPage
 						}
 					}
 				}

@@ -1,7 +1,7 @@
 "
 I represent a step in a GraphQL path.
-I know {{gtMethod: GtGQLPathStep >> #resultName | label=#selector}}, a property name in a {{gtMethod: GtGQLSuccessResult >> #data}} JSON structure where a provided value can be found.
-I know {{gtMethod: GtGQLPathStep >> #fieldName | label=#selector}}, a {{gtClass:GtGQLObjectType}} field name.
+I know {{gtMethod: GtGQLStep >> #resultName | label=#selector}}, a property name in a {{gtMethod: GtGQLSuccessResult >> #data}} JSON structure where a provided value can be found.
+I know {{gtMethod: GtGQLStep >> #fieldName | label=#selector}}, a {{gtClass:GtGQLObjectType}} field name.
 I am part of {{gtClass: GtGQLPath}} where you can find futher information.
 
 "
@@ -85,16 +85,9 @@ GtGQLPathStep >> name: anObject [
 GtGQLPathStep >> printOn: aStream [
 	super printOn: aStream.
 
-	aStream nextPut: $(.
-	
-	self alias
-		ifNotNil: [ :anAlias | 
-			aStream
-				nextPutAll: anAlias asString;
-				nextPutAll: ': ' ].
-
 	aStream
-		nextPutAll: self fieldName;
+		nextPut: $(;
+		nextPutAll: self fullName;
 		nextPut: $)
 ]
 

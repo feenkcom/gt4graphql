@@ -5,7 +5,8 @@ Class {
 		'itemType',
 		'listData',
 		'listType',
-		'totalCount'
+		'totalCount',
+		'listStep'
 	],
 	#category : #'GToolkit4GraphQL-Report'
 }
@@ -13,6 +14,31 @@ Class {
 { #category : #visiting }
 GtGQLValueConnectionList >> acceptVisitor: aVisitor [
 	^ aVisitor visitGtGQLValueConnectionObject: self
+]
+
+{ #category : #'gt - extensions' }
+GtGQLValueConnectionList >> gtFieldsViewValueText [
+	^ items
+		ifNil: [ '0 items' ]
+		ifNotNil: [ :aCollection | 
+			String
+				streamContents: [ :aStream | 
+					aStream print: aCollection size.
+
+					self totalCount
+						ifNotNil: [ :aCount | 
+							aStream
+								nextPutAll: ' out of ';
+								print: aCount ].
+
+					self itemType
+						ifNotNil: [ :aType | 
+							aStream
+								space;
+								nextPutAll: aType name asString ].
+					aStream
+						space;
+						nextPutAll: ('item' asPluralBasedOn: aCollection size) ] ]
 ]
 
 { #category : #accessing }
@@ -33,6 +59,16 @@ GtGQLValueConnectionList >> listData [
 { #category : #accessing }
 GtGQLValueConnectionList >> listData: anObject [
 	listData := anObject
+]
+
+{ #category : #accessing }
+GtGQLValueConnectionList >> listStep [
+	^ listStep
+]
+
+{ #category : #accessing }
+GtGQLValueConnectionList >> listStep: anObject [
+	listStep := anObject
 ]
 
 { #category : #accessing }

@@ -2,7 +2,8 @@ Class {
 	#name : #GtGQLIntrospectionImplicitFieldsBuilder,
 	#superclass : #Object,
 	#instVars : [
-		'schema'
+		'schema',
+		'createMissingTypes'
 	],
 	#category : #'GToolkit4GraphQL-Introspection-Builder'
 }
@@ -31,7 +32,7 @@ GtGQLIntrospectionImplicitFieldsBuilder >> buildMetaSchemaField [
 					type: (self schema
 							typeNamed: '__Schema'
 							ifPresent: [ :theType | theType ]
-							ifAbsentPut: [ self error: '__Schema type must exist' ]) ].
+							ifAbsentPut: [ self createMissingObjectTypeNamed: '__Schema' ]) ].
 
 	aField := GtGQLField new.
 	aField type: aFieldType.
@@ -94,11 +95,39 @@ GtGQLIntrospectionImplicitFieldsBuilder >> createMetaTypeNameField [
 ]
 
 { #category : #'private - building' }
+GtGQLIntrospectionImplicitFieldsBuilder >> createMissingObjectTypeNamed: aName [
+	createMissingTypes
+		ifFalse: [ self error: ('{1} type must exist' format: aName) ].
+
+	^ GtGQLObjectType new name: aName
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionImplicitFieldsBuilder >> createMissingScalarTypeNamed: aName [
+	createMissingTypes
+		ifFalse: [ self error: ('{1} type must exist' format: aName) ].
+
+	^ GtGQLScalar new name: aName
+]
+
+{ #category : #'api - initialization' }
+GtGQLIntrospectionImplicitFieldsBuilder >> createMissingTypes [
+	createMissingTypes := true
+]
+
+{ #category : #initialization }
+GtGQLIntrospectionImplicitFieldsBuilder >> initialize [
+	super initialize.
+
+	createMissingTypes := false
+]
+
+{ #category : #'private - building' }
 GtGQLIntrospectionImplicitFieldsBuilder >> metaTypeType [
 	^ self schema
 		typeNamed: '__Type'
 		ifPresent: [ :theType | theType ]
-		ifAbsentPut: [ self error: '__Type type must exist' ]
+		ifAbsentPut: [ self createMissingObjectTypeNamed: '__Type' ]
 ]
 
 { #category : #'private - building' }
@@ -106,7 +135,11 @@ GtGQLIntrospectionImplicitFieldsBuilder >> nonNullStringType [
 	^ self schema
 		typeNamed: 'String!'
 		ifPresent: [ :theType | theType ]
-		ifAbsentPut: [ self error: 'String! type must exist' ]
+		ifAbsentPut: [ GtGQLNonNullable new
+				type: (self schema
+						typeNamed: 'String'
+						ifPresent: [ :theType | theType ]
+						ifAbsentPut: [ self createMissingScalarTypeNamed: 'String' ]) ]
 ]
 
 { #category : #'api - building' }
