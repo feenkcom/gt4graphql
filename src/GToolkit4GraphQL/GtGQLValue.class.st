@@ -7,7 +7,7 @@ Class {
 		'data',
 		'parent'
 	],
-	#category : #'GToolkit4GraphQL-Response'
+	#category : #'GToolkit4GraphQL-Report'
 }
 
 { #category : #'gt - extensions' }

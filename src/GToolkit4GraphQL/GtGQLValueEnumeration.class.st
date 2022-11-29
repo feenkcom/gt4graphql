@@ -1,7 +1,7 @@
 Class {
 	#name : #GtGQLValueEnumeration,
 	#superclass : #GtGQLValue,
-	#category : #'GToolkit4GraphQL-Response'
+	#category : #'GToolkit4GraphQL-Report'
 }
 
 { #category : #accessing }

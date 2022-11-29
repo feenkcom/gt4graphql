@@ -4,7 +4,7 @@ Class {
 	#instVars : [
 		'fields'
 	],
-	#category : #'GToolkit4GraphQL-Response'
+	#category : #'GToolkit4GraphQL-Report'
 }
 
 { #category : #visiting }
