@@ -38,6 +38,11 @@ GtGQLEnumeration >> isPrimitive [
 	^ true
 ]
 
+{ #category : #'api - response' }
+GtGQLEnumeration >> newValueUsing: aBuilder [
+	^ aBuilder newValueEnumerationWithType: self
+]
+
 { #category : #accessing }
 GtGQLEnumeration >> values [
 	^ self propertyAt: #values ifAbsent: [ #() ]

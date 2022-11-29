@@ -39,6 +39,12 @@ GtGQLNonNullable >> newValueUsing: aBuilder [
 	^ aBuilder newValueNonNullableWithType: self
 ]
 
+{ #category : #accessing }
+GtGQLNonNullable >> nonNullableType [
+	<return: #GtGQLType>
+	^ self type nonNullableType
+]
+
 { #category : #'api - response' }
 GtGQLNonNullable >> responseItemType [
 	^ self type responseItemType

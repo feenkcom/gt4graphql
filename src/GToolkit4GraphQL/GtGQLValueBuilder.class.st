@@ -25,16 +25,13 @@ GtGQLValueBuilder >> buildModelChildren: aModel [
 
 { #category : #'private - building' }
 GtGQLValueBuilder >> buildType: aType data: aJson [
-	| aModel |
-	aType ifNil: [ self error: 'Type must be non-nil' ].
-
-	aModel := aType newValueUsing: self.
-	aModel context: self context.
-	aModel data: aJson.
-
-	self buildModelChildren: aModel.
-
-	^ aModel
+	| aValue aNonInterfaceType |
+	aNonInterfaceType := self nonInterfaceType: aType data: aJson.
+	aValue := aNonInterfaceType newValueUsing: self.
+	aValue context: self context.
+	aValue data: aJson.
+	self buildModelChildren: aValue.
+	^ aValue
 ]
 
 { #category : #accessing }
@@ -81,22 +78,32 @@ GtGQLValueBuilder >> listTypeOfItemType: anItemType [
 ]
 
 { #category : #'double dispatch - types' }
+GtGQLValueBuilder >> newValueEnumerationWithType: aType [
+	^ GtGQLValueEnumeration new type: aType
+]
+
+{ #category : #'double dispatch - types' }
+GtGQLValueBuilder >> newValueInterfaceWithType: aType [
+	^ self newValueObjectWithType: aType
+]
+
+{ #category : #'double dispatch - types' }
 GtGQLValueBuilder >> newValueListWithType: aType [
 	^ GtGQLValueList new type: aType
 ]
 
 { #category : #'double dispatch - types' }
 GtGQLValueBuilder >> newValueNonNullableWithType: aType [
-	| aModel |
-	aModel := aType type newValueUsing: self.
+	| aValue |
+	aValue := aType type newValueUsing: self.
 
 	self
-		assert: [ aModel type = aType type ]
-		description: [ 'Model has incorrect type' ].
+		assert: [ aValue type = aType type ]
+		description: [ 'Value has incorrect type' ].
 
-	aModel type: aType.
+	aValue type: aType.
 
-	^ aModel
+	^ aValue
 ]
 
 { #category : #'double dispatch - types' }
@@ -109,6 +116,32 @@ GtGQLValueBuilder >> newValueObjectWithType: aType [
 { #category : #'double dispatch - types' }
 GtGQLValueBuilder >> newValueScalarWithType: aType [
 	^ GtGQLValueScalar new type: aType
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> nonInterfaceType: aType data: aJson [
+	| aNonInterfaceType aSchemaType |
+	aType ifNil: [ self error: 'Type must be non-nil' ].
+
+	aNonInterfaceType := aType nonNullableType isInterface
+			ifTrue: [ | aTypeName |
+				aTypeName := aJson at: '__typename'.
+				aTypeName exists
+					ifFalse: [ aType ]
+					ifTrue: [ self schema typeNamed: aTypeName jsonObject ] ]
+			ifFalse: [ aType ].
+
+	aNonInterfaceType ifNil: [ self error: 'Real type must be non-nil' ].
+
+	aSchemaType := (aType isNonNullable
+			and: [ aNonInterfaceType isNonNullable not ])
+			ifTrue: [ self schema
+					typeNamed: aNonInterfaceType name , '!'
+					ifPresent: [ :anExistingType | anExistingType ]
+					ifAbsentPut: [ GtGQLNonNullable new type: aNonInterfaceType ] ]
+			ifFalse: [ aNonInterfaceType ].
+
+	^ aSchemaType
 ]
 
 { #category : #accessing }
@@ -159,7 +192,7 @@ GtGQLValueBuilder >> value [
 
 { #category : #visiting }
 GtGQLValueBuilder >> visitGtGQLValueConnectionObject: aModel [
-	| aListData anItemType aListType |
+	| aListData anItemType aListType aTotalCount |
 	aListData := GtJsonMap
 			forJson: aModel data
 			at: #edges
@@ -183,7 +216,17 @@ GtGQLValueBuilder >> visitGtGQLValueConnectionObject: aModel [
 		listType: aListType;
 		itemType: anItemType.
 
+	aTotalCount := aModel data at: #totalCount.
+	aTotalCount exists ifTrue: [ aModel totalCount: aTotalCount jsonObject ].
+
 	self visitGtGQLValueList: aModel
+]
+
+{ #category : #visiting }
+GtGQLValueBuilder >> visitGtGQLValueEnumeration: aModel [
+	"nothing to do"
+
+	
 ]
 
 { #category : #visiting }
@@ -218,7 +261,6 @@ GtGQLValueBuilder >> visitGtGQLValueScalar: aModel [
 ]
 
 { #category : #visiting }
-GtGQLValueBuilder >> visitNode: aModel [
-
-	aModel acceptVisitor: self
+GtGQLValueBuilder >> visitNode: aType [
+	^ aType acceptVisitor: self
 ]

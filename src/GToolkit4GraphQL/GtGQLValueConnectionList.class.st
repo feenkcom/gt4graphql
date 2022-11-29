@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'itemType',
 		'listData',
-		'listType'
+		'listType',
+		'totalCount'
 	],
 	#category : #'GToolkit4GraphQL-Response'
 }
@@ -42,6 +43,16 @@ GtGQLValueConnectionList >> listType [
 { #category : #accessing }
 GtGQLValueConnectionList >> listType: anObject [
 	listType := anObject
+]
+
+{ #category : #accessing }
+GtGQLValueConnectionList >> totalCount [
+	^ totalCount ifNil: [ super size ]
+]
+
+{ #category : #accessing }
+GtGQLValueConnectionList >> totalCount: anObject [
+	totalCount := anObject
 ]
 
 { #category : #accessing }

@@ -122,6 +122,11 @@ GtGQLType >> newValueUsing: aType [
 	^ self subclassResponsibility
 ]
 
+{ #category : #accessing }
+GtGQLType >> nonNullableType [
+	^ self
+]
+
 { #category : #printing }
 GtGQLType >> printOn: aStream [
 	super printOn: aStream.
