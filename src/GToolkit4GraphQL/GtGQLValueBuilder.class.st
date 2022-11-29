@@ -6,24 +6,49 @@ Class {
 		'query',
 		'data',
 		'queryValue',
-		'value'
+		'value',
+		'dataPath'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
 { #category : #'api - building' }
 GtGQLValueBuilder >> build [
-	queryValue := self
-			buildType: self queryType
-			data: self data
-			step: (GtGQLValueStep new ast: self queryNode).
-	self skipQueryTypeIfOnlyOneFieldRequested
+	dataPath
+		ifNil: [ self buildStartingAtQuery ]
+		ifNotNil: [ self buildStartingAtDataPath ]
 ]
 
 { #category : #'private - building' }
 GtGQLValueBuilder >> buildModelChildren: aModel [
 
 	self visitNode: aModel.
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> buildStartingAtDataPath [
+	| aCurrentStep aCurrentType |
+	aCurrentStep := self queryStep.
+	aCurrentType := self queryType.
+
+	dataPath
+		do: [ :anAlias | 
+			aCurrentStep := aCurrentStep newStepForResultName: anAlias.
+			aCurrentType := (aCurrentType baseType fieldNamed: aCurrentStep fieldName) type ].
+
+	value := self
+			buildType: aCurrentType
+			data: self data
+			step: aCurrentStep
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> buildStartingAtQuery [
+	queryValue := self
+			buildType: self queryType
+			data: self data
+			step: self queryStep.
+	self skipQueryTypeIfOnlyOneFieldRequested
 ]
 
 { #category : #'private - building' }
@@ -59,6 +84,16 @@ GtGQLValueBuilder >> data [
 { #category : #accessing }
 GtGQLValueBuilder >> data: anObject [
 	data := anObject
+]
+
+{ #category : #accessing }
+GtGQLValueBuilder >> dataPath [
+	^ dataPath
+]
+
+{ #category : #accessing }
+GtGQLValueBuilder >> dataPath: anObject [
+	dataPath := anObject
 ]
 
 { #category : #'gt - extensions' }
@@ -227,6 +262,11 @@ GtGQLValueBuilder >> queryNode [
 		do: [ :aNode | aNode isPartOfQuery ifTrue: [ ^ aNode ] ifFalse: [ anOperationNode ] ].
 
 	^ anOperationNode
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> queryStep [
+	^ GtGQLValueStep new ast: self queryNode
 ]
 
 { #category : #accessing }
