@@ -87,6 +87,11 @@ GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: pre
 		ifTrue: [ ^ self documentFieldNames asAsyncStream
 				select: [ :each | each beginsWith: prefix ] ].
 
+	(aNode parent isKindOf: GraphQLFragmentDefinitionNode)
+		ifTrue: [ (aNode parent selections identityIncludes: aNode)
+				ifTrue: [ (aNode parent typeIn: self schema)
+						ifNotNil: [ :type | ^ self completeField: type fields asArray asAsyncStream ] ] ].
+
 	^ nil
 ]
 
@@ -94,26 +99,46 @@ GtGQLCompletionStrategy >> completionStreamForErrorNode: aNode startingWith: pre
 GtGQLCompletionStrategy >> completionStreamForNode: aNode startingWith: prefix at: positionInteger [
 	(aNode isKindOf: GraphQLNamedTypeNode)
 		ifTrue: [ ^ self typeNames asyncStreamStartingWith: prefix ].
+
 	aNode isErrorNode
 		ifTrue: [ (self completionStreamForErrorNode: aNode startingWith: prefix)
 				ifNotNil: [ :stream | ^ stream ] ].
+
 	(aNode isKindOf: GraphQLVariableNode)
 		ifTrue: [ (self completionStreamForVariable: aNode startingWith: prefix)
 				ifNotNil: [ :stream | ^ stream ] ].
+
 	prefix isEmpty
 		ifTrue: [ ((aNode isKindOf: GraphQLFieldNode)
-				or: [ aNode isKindOf: GraphQLOperationDefinitionNode ])
+				or: [ (aNode isKindOf: GraphQLOperationDefinitionNode)
+						or: [ (aNode isKindOf: GraphQLFragmentDefinitionNode)
+								or: [ aNode isKindOf: GraphQLInlineFragmentNode ] ] ])
 				ifTrue: [ (positionInteger
 						between: aNode leftBrace startPosition
 						and: aNode rightBrace stopPosition)
 						ifTrue: [ ^ (aNode typeIn: self schema)
 								ifNotNil: [ :type | self completeField: type fields asArray asAsyncStream ] ] ].
+
 			(aNode isKindOf: GraphQLFieldNode)
 				ifTrue: [ (positionInteger
 						between: aNode leftParen startPosition
 						and: aNode rightParen stopPosition)
 						ifTrue: [ ^ (aNode fieldIn: self schema)
 								ifNotNil: [ :field | self completeArgument: field arguments asArray asAsyncStream ] ] ] ].
+
+	(aNode isKindOf: GraphQLFieldNode)
+		ifTrue: [ | aParent aType |
+			aParent := aNode
+					parentOfType: {GraphQLFieldNode.
+							GraphQLInlineFragmentNode.
+							GraphQLFragmentDefinitionNode.
+							GraphQLOperationDefinitionNode}.
+			aParent ifNotNil: [ aType := aParent typeIn: self schema ].
+			aType ifNil: [ ^ #() asAsyncStream ].
+			^ self
+				completeField: (aType fields asArray asAsyncStream
+						select: [ :each | each name beginsWith: prefix ]) ].
+
 	^ ((aNode parentOfType: GraphQLFieldNode)
 		ifNil: [ aNode isPartOfQuery
 				ifTrue: [ self schema queryType ]
@@ -138,7 +163,7 @@ GtGQLCompletionStrategy >> completionStreamForVariable: aNode startingWith: pref
 
 { #category : #completing }
 GtGQLCompletionStrategy >> documentFieldNames [
-	^ #('query { }' 'mutation { }' 'fragment on { }')
+	^ #('query { }' 'mutation { }' 'fragment _ on { }')
 ]
 
 { #category : #initialization }
