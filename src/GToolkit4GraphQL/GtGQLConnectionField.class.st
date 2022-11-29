@@ -203,7 +203,7 @@ GtGQLConnectionField >> pathText [
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> paths [
 	<return: #Collection of: #GtGQLPath>
-	^ GtGQLConnectionPathBuilder new
+	^ GtGQLPathBuilder new
 		ast: self ast;
 		build;
 		paths

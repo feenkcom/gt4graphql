@@ -211,6 +211,56 @@ GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
 ]
 
 { #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryStringWithOrganizationRepositoriesAndOpenAndClosedIssues [
+	<gtExample>
+	^ 'fragment IssueDetails on IssueConnection {
+	__typename
+	totalCount
+}
+
+query Repositories($count: Int!, $login: String!, $after: String, $privacy: RepositoryPrivacy) {
+	organization (login: $login) {
+		login
+		name
+		url
+		repositories(first: $count, after: $after, privacy: $privacy) {
+			totalCount
+			totalDiskUsage
+			edges {
+				node {
+					__typename
+					id
+					name
+					sshUrl
+					url
+					owner {
+						__typename
+						id 
+						login
+						url
+					}
+					openIssues: issues(states: [ OPEN ]) {
+						...IssueDetails
+					}
+					closedIssues: issues(states: [ CLOSED ]) {
+						...IssueDetails
+					}
+					forks {
+						totalCount
+					}
+				}
+			}
+			pageInfo {
+				hasNextPage
+				startCursor
+				endCursor
+			}
+		}
+	}
+}'
+]
+
+{ #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithFragmentPageInfoField [
 	<gtExample>
 	| aQuery anOperation |
@@ -272,6 +322,21 @@ GtGQLDataExamples >> gitHubQueryWithMissingPageInfoField [
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self gitHubQueryStringWithMissingPageInfoField.
+
+	aQuery operation: anOperation.
+
+	self assert: aQuery operation equals: anOperation.
+
+	^ aQuery
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues [
+	<gtExample>
+	| aQuery anOperation |
+	aQuery := GtGQLQuery new.
+	anOperation := self
+			gitHubQueryStringWithOrganizationRepositoriesAndOpenAndClosedIssues.
 
 	aQuery operation: anOperation.
 
