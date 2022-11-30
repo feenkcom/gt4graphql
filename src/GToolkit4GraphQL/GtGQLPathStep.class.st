@@ -85,16 +85,9 @@ GtGQLPathStep >> name: anObject [
 GtGQLPathStep >> printOn: aStream [
 	super printOn: aStream.
 
-	aStream nextPut: $(.
-	
-	self alias
-		ifNotNil: [ :anAlias | 
-			aStream
-				nextPutAll: anAlias asString;
-				nextPutAll: ': ' ].
-
 	aStream
-		nextPutAll: self fieldName;
+		nextPut: $(;
+		nextPutAll: self fullName;
 		nextPut: $)
 ]
 

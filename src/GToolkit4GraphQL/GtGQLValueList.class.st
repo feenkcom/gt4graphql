@@ -2,7 +2,8 @@ Class {
 	#name : #GtGQLValueList,
 	#superclass : #GtGQLValue,
 	#instVars : [
-		'items'
+		'items',
+		'itemStep'
 	],
 	#category : #'GToolkit4GraphQL-Report'
 }
@@ -70,8 +71,33 @@ GtGQLValueList >> initialize [
 ]
 
 { #category : #accessing }
+GtGQLValueList >> itemStep [
+	^ itemStep
+]
+
+{ #category : #accessing }
+GtGQLValueList >> itemStep: anObject [
+	itemStep := anObject
+]
+
+{ #category : #accessing }
 GtGQLValueList >> itemType [
 	^ self type responseItemType
+]
+
+{ #category : #accessing }
+GtGQLValueList >> items [
+	^ items
+]
+
+{ #category : #accessing }
+GtGQLValueList >> items: anObject [
+	items := anObject
+]
+
+{ #category : #accessing }
+GtGQLValueList >> listStep [
+	^ self step
 ]
 
 { #category : #accessing }

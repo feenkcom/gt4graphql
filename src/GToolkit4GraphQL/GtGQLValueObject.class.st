@@ -108,6 +108,18 @@ GtGQLValueObject >> magritteNullDescription [
 	^ nil
 ]
 
+{ #category : #printing }
+GtGQLValueObject >> printOn: aStream [
+	super printOn: aStream.
+
+	self type ifNil: [ ^ self ].
+
+	aStream
+		nextPut: $(;
+		nextPutAll: self type name asString;
+		nextPut: $)
+]
+
 { #category : #accessing }
 GtGQLValueObject >> userData [
 	"Return data that is meaningful to users"

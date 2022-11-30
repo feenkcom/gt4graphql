@@ -5,7 +5,8 @@ Class {
 		'type',
 		'context',
 		'data',
-		'parent'
+		'parent',
+		'step'
 	],
 	#category : #'GToolkit4GraphQL-Report'
 }
@@ -105,6 +106,16 @@ GtGQLValue >> parent: anObject [
 GtGQLValue >> schema [
 	<return: #GtGQLSchema>
 	^ self context ifNotNil: #schema
+]
+
+{ #category : #accessing }
+GtGQLValue >> step [
+	^ step
+]
+
+{ #category : #accessing }
+GtGQLValue >> step: anObject [
+	step := anObject
 ]
 
 { #category : #accessing }

@@ -5,16 +5,18 @@ Class {
 		'context',
 		'query',
 		'data',
-		'rootValue',
-		'queryValue'
+		'queryValue',
+		'value',
+		'dataPath'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
 { #category : #'api - building' }
 GtGQLValueBuilder >> build [
-	queryValue := self buildType: self queryType data: self data.
-	self skipQueryTypeIfOnlyOneFieldRequested
+	dataPath
+		ifNil: [ self buildStartingAtQuery ]
+		ifNotNil: [ self buildStartingAtDataPath ]
 ]
 
 { #category : #'private - building' }
@@ -24,13 +26,43 @@ GtGQLValueBuilder >> buildModelChildren: aModel [
 ]
 
 { #category : #'private - building' }
-GtGQLValueBuilder >> buildType: aType data: aJson [
+GtGQLValueBuilder >> buildStartingAtDataPath [
+	| aCurrentStep aCurrentType |
+	aCurrentStep := self queryStep.
+	aCurrentType := self queryType.
+
+	dataPath
+		do: [ :anAlias | 
+			aCurrentStep := aCurrentStep newStepForResultName: anAlias.
+			aCurrentType := (aCurrentType baseType fieldNamed: aCurrentStep fieldName) type ].
+
+	value := self
+			buildType: aCurrentType
+			data: self data
+			step: aCurrentStep
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> buildStartingAtQuery [
+	queryValue := self
+			buildType: self queryType
+			data: self data
+			step: self queryStep.
+	self skipQueryTypeIfOnlyOneFieldRequested
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> buildType: aType data: aJson step: aStep [
 	| aValue aNonInterfaceType |
 	aNonInterfaceType := self nonInterfaceType: aType data: aJson.
+	
 	aValue := aNonInterfaceType newValueUsing: self.
 	aValue context: self context.
 	aValue data: aJson.
+	aValue step: aStep.
+	
 	self buildModelChildren: aValue.
+	
 	^ aValue
 ]
 
@@ -54,15 +86,25 @@ GtGQLValueBuilder >> data: anObject [
 	data := anObject
 ]
 
+{ #category : #accessing }
+GtGQLValueBuilder >> dataPath [
+	^ dataPath
+]
+
+{ #category : #accessing }
+GtGQLValueBuilder >> dataPath: anObject [
+	dataPath := anObject
+]
+
 { #category : #'gt - extensions' }
 GtGQLValueBuilder >> gtRootModelFor: aView [
 	<gtView>
-	rootValue ifNil: [ ^ aView empty ].
+	value ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Model';
+		title: 'Value';
 		priority: 1;
-		object: [ self model ];
+		object: [ self value ];
 		view: #gtFieldsFor:
 ]
 
@@ -144,6 +186,62 @@ GtGQLValueBuilder >> nonInterfaceType: aType data: aJson [
 	^ aSchemaType
 ]
 
+{ #category : #'private - model creation' }
+GtGQLValueBuilder >> prepareGtGQLValueConnectionObject: aValue withEdges: aListStep [
+	"Return true if there edge items exists, false otherwise"
+
+	<return: #Boolean>
+	| aNodeStep aListData anEdgesType anItemType anItemStep aListType |
+	aNodeStep := aListStep newStepForResultName: #node.
+
+	aNodeStep ifNil: [ ^ false ].
+
+	aListData := GtJsonMap
+			forJson: aValue data
+			at: aListStep resultName
+			collect: aNodeStep resultName asSymbol.
+
+	aListData exists ifFalse: [ ^ false ].
+
+	anEdgesType := (aValue baseType fieldNamed: aListStep fieldName) type.
+	anItemType := (anEdgesType baseType fieldNamed: aNodeStep fieldName) type.
+	anItemStep := aNodeStep.
+
+	aListType := self listTypeOfItemType: anItemType.
+
+	aValue
+		listData: aListData;
+		listType: aListType;
+		itemType: anItemType;
+		listStep: aListStep;
+		itemStep: anItemStep.
+
+	^ true
+]
+
+{ #category : #'private - model creation' }
+GtGQLValueBuilder >> prepareGtGQLValueConnectionObject: aValue withNodes: aListStep [
+	"Return true if there edge items exists, false otherwise"
+
+	<return: #Boolean>
+	| aListData aNodesType anItemType aListType |
+	aListData := aValue data at: aListStep resultName.
+
+	aListData exists ifFalse: [ ^ false ].
+
+	aNodesType := (aValue baseType fieldNamed: aListStep fieldName) type.
+	anItemType := aNodesType baseType.
+
+	aListType := self listTypeOfItemType: anItemType.
+
+	aValue
+		listData: aListData;
+		listType: aListType;
+		itemType: anItemType;
+		listStep: aListStep;
+		itemStep: aListStep
+]
+
 { #category : #accessing }
 GtGQLValueBuilder >> query [
 	^ query
@@ -152,6 +250,23 @@ GtGQLValueBuilder >> query [
 { #category : #accessing }
 GtGQLValueBuilder >> query: anObject [
 	query := anObject
+]
+
+{ #category : #'private - model creation' }
+GtGQLValueBuilder >> queryNode [
+	| aDocumentNode anOperationNode |
+	aDocumentNode := self query graphqlNode.
+	anOperationNode := nil.
+	aDocumentNode
+		allNodesOfType: GraphQLOperationDefinitionNode
+		do: [ :aNode | aNode isPartOfQuery ifTrue: [ ^ aNode ] ifFalse: [ anOperationNode ] ].
+
+	^ anOperationNode
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> queryStep [
+	^ GtGQLValueStep new ast: self queryNode
 ]
 
 { #category : #accessing }
@@ -181,45 +296,35 @@ GtGQLValueBuilder >> schema [
 { #category : #'private - building' }
 GtGQLValueBuilder >> skipQueryTypeIfOnlyOneFieldRequested [
 	queryValue fields size = 1
-		ifTrue: [ rootValue := queryValue fields anyOne ]
-		ifFalse: [ rootValue := queryValue ]
+		ifTrue: [ value := queryValue fields anyOne ]
+		ifFalse: [ value := queryValue ]
 ]
 
 { #category : #accessing }
 GtGQLValueBuilder >> value [
-	^ rootValue
+	^ value
 ]
 
 { #category : #visiting }
-GtGQLValueBuilder >> visitGtGQLValueConnectionObject: aModel [
-	| aListData anItemType aListType aTotalCount |
-	aListData := GtJsonMap
-			forJson: aModel data
-			at: #edges
-			collect: #node.
+GtGQLValueBuilder >> visitGtGQLValueConnectionObject: aValue [
+	| aTotalCount aListStep aTotalCountStep hasData |
+	aTotalCountStep := aValue step newStepForFieldName: #totalCount.
+	aTotalCountStep
+		ifNotNil: [ aTotalCount := aValue data at: aTotalCountStep resultName.
+			aTotalCount exists ifTrue: [ aValue totalCount: aTotalCount jsonObject ] ].
 
-	aListData exists
-		ifTrue: [ | anEdgesType |
-			anEdgesType := (aModel baseType fieldNamed: #edges) type.
-			anItemType := (anEdgesType baseType fieldNamed: #node) type ]
-		ifFalse: [ aListData := aModel data at: #nodes.
-			aListData exists
-				ifTrue: [ | aNodesType |
-					aNodesType := (aModel baseType fieldNamed: #nodes) type.
-					anItemType := aNodesType baseType ]
-				ifFalse: [ ^ self ] ].
+	hasData := false.
 
-	aListType := self listTypeOfItemType: anItemType.
+	aListStep := aValue step newStepForFieldName: #edges.
+	aListStep
+		ifNotNil: [ hasData := self prepareGtGQLValueConnectionObject: aValue withEdges: aListStep ]
+		ifNil: [ aListStep := aValue step newStepForFieldName: #nodes.
+			aListStep
+				ifNotNil: [ hasData := self prepareGtGQLValueConnectionObject: aValue withNodes: aListStep ]
+				ifNil: [ aValue listData: (GtJson forJsonObject: #()) ] ].
 
-	aModel
-		listData: aListData;
-		listType: aListType;
-		itemType: anItemType.
-
-	aTotalCount := aModel data at: #totalCount.
-	aTotalCount exists ifTrue: [ aModel totalCount: aTotalCount jsonObject ].
-
-	self visitGtGQLValueList: aModel
+	hasData ifFalse: [ ^ self ].
+	self visitGtGQLValueList: aValue
 ]
 
 { #category : #visiting }
@@ -230,27 +335,36 @@ GtGQLValueBuilder >> visitGtGQLValueEnumeration: aModel [
 ]
 
 { #category : #visiting }
-GtGQLValueBuilder >> visitGtGQLValueList: aModel [
-	| aType |
-	aType := aModel itemType.
-	aModel userData
-		do: [ :aChildJson | 
+GtGQLValueBuilder >> visitGtGQLValueList: aValue [
+	| aType anItemStep |
+	aType := aValue itemType.
+	anItemStep := aValue itemStep.
+	aValue userData
+		do: [ :aChildJson :anIndex | 
 			| aChildModel |
-			aChildModel := self buildType: aType data: aChildJson.
-			aModel addItem: aChildModel ]
+			aChildModel := self
+					buildType: aType
+					data: aChildJson
+					step: anItemStep.
+			aValue addItem: aChildModel ]
 ]
 
 { #category : #visiting }
-GtGQLValueBuilder >> visitGtGQLValueObject: aModel [
-	aModel userType fields
-		do: [ :eachField | 
-			| aType aJson |
-			aType := eachField type.
-			aJson := aModel userData at: eachField name.
-			self flag: 'FIXIT: we do not handle aliases'.
+GtGQLValueBuilder >> visitGtGQLValueObject: aValue [
+	aValue userData
+		do: [ :aJson :anAlias | 
+			| aStep aField aType |
+			aStep := aValue step newStepForResultName: anAlias.
+			aField := aValue userType fieldNamed: aStep fieldName.
+			aType := aField type.
 
-			aJson exists
-				ifTrue: [ aModel atFieldNamed: eachField name put: (self buildType: aType data: aJson) ] ]
+			aField isMetaField
+				ifFalse: [ aValue
+						atFieldNamed: aStep resultName
+						put: (self
+								buildType: aType
+								data: aJson
+								step: aStep) ] ]
 ]
 
 { #category : #visiting }

@@ -213,7 +213,12 @@ GtGQLSchema >> import: aNode [
 	self importUnions: aNode.
 	self importComposites: aNode.
 	self queryType: (self typeNamed: 'Query').
-	self mutationType: (self typeNamed: 'Mutation')
+	self mutationType: (self typeNamed: 'Mutation').
+
+	GtGQLIntrospectionImplicitFieldsBuilder new
+		schema: self;
+		createMissingTypes;
+		build
 ]
 
 { #category : #importing }

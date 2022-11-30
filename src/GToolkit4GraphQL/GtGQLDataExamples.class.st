@@ -13,8 +13,8 @@ GtGQLDataExamples >> gitHubMiniSchema [
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
-	self assert: aSchema baseTypes size equals: 26.
-	self assert: aSchema types size equals: 44.
+	self assert: aSchema baseTypes size equals: 33.
+	self assert: aSchema types size equals: 58.
 
 	anOrganizationField := aSchema queryType fieldNamed: 'organization'.
 
@@ -369,6 +369,191 @@ GtGQLDataExamples >> gitHubRepositoriesJsonObject [
 	^ aJson
 ]
 
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJson [
+	<gtExample>
+	| aJson |
+	aJson := GtJson
+			forJsonString: self gitHubRepositoriesWithOpenAndClosedIssuesJsonString.
+
+	self assert: aJson isNotNil.
+	self assert: aJson exists.
+	self assert: aJson jsonObject isDictionary.
+	self assert: aJson jsonObject isNotEmpty.
+
+	^ aJson
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonData [
+	<gtExample>
+	| aJson aData |
+	aJson := self gitHubRepositoriesWithOpenAndClosedIssuesJson.
+	aData := aJson at: #data.
+
+	self assert: aData isNotNil.
+	self assert: aData exists.
+	self assert: aData jsonObject isDictionary.
+	self assert: aData jsonObject isNotEmpty.
+
+	^ aData
+]
+
+{ #category : #'examples - github' }
+GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
+	<gtExample>
+	^ '{
+	"data" : {
+		"organization" : {
+			"login" : "feenkcom",
+			"name" : "feenk",
+			"url" : "https://github.com/feenkcom",
+			"repositories" : {
+				"totalCount" : 174,
+				"totalDiskUsage" : 819224,
+				"edges" : [
+					{
+						"node" : {
+							"__typename" : "Repository",
+							"id" : "MDEwOlJlcG9zaXRvcnk0MDA3NTQyMg==",
+							"name" : "jdt2famix",
+							"sshUrl" : "git@github.com:feenkcom/jdt2famix.git",
+							"url" : "https://github.com/feenkcom/jdt2famix",
+							"owner" : {
+								"__typename" : "Organization",
+								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
+								"login" : "feenkcom",
+								"url" : "https://github.com/feenkcom"
+							},
+							"openIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 22
+							},
+							"closedIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 15
+							},
+							"forks" : {
+								"totalCount" : 21
+							}
+						}
+					},
+					{
+						"node" : {
+							"__typename" : "Repository",
+							"id" : "MDEwOlJlcG9zaXRvcnk0NjExOTIwMA==",
+							"name" : "FameJava",
+							"sshUrl" : "git@github.com:feenkcom/FameJava.git",
+							"url" : "https://github.com/feenkcom/FameJava",
+							"owner" : {
+								"__typename" : "Organization",
+								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
+								"login" : "feenkcom",
+								"url" : "https://github.com/feenkcom"
+							},
+							"openIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 0
+							},
+							"closedIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 0
+							},
+							"forks" : {
+								"totalCount" : 4
+							}
+						}
+					},
+					{
+						"node" : {
+							"__typename" : "Repository",
+							"id" : "MDEwOlJlcG9zaXRvcnk2MDExMjU0Ng==",
+							"name" : "libMoz2D",
+							"sshUrl" : "git@github.com:feenkcom/libMoz2D.git",
+							"url" : "https://github.com/feenkcom/libMoz2D",
+							"owner" : {
+								"__typename" : "Organization",
+								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
+								"login" : "feenkcom",
+								"url" : "https://github.com/feenkcom"
+							},
+							"openIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 3
+							},
+							"closedIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 2
+							},
+							"forks" : {
+								"totalCount" : 2
+							}
+						}
+					},
+					{
+						"node" : {
+							"__typename" : "Repository",
+							"id" : "MDEwOlJlcG9zaXRvcnk2NjM3Njk5NA==",
+							"name" : "sparta",
+							"sshUrl" : "git@github.com:feenkcom/sparta.git",
+							"url" : "https://github.com/feenkcom/sparta",
+							"owner" : {
+								"__typename" : "Organization",
+								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
+								"login" : "feenkcom",
+								"url" : "https://github.com/feenkcom"
+							},
+							"openIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 2
+							},
+							"closedIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 4
+							},
+							"forks" : {
+								"totalCount" : 6
+							}
+						}
+					},
+					{
+						"node" : {
+							"__typename" : "Repository",
+							"id" : "MDEwOlJlcG9zaXRvcnk2OTI5MTYyMA==",
+							"name" : "gt4gemstone-old",
+							"sshUrl" : "git@github.com:feenkcom/gt4gemstone-old.git",
+							"url" : "https://github.com/feenkcom/gt4gemstone-old",
+							"owner" : {
+								"__typename" : "Organization",
+								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
+								"login" : "feenkcom",
+								"url" : "https://github.com/feenkcom"
+							},
+							"openIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 35
+							},
+							"closedIssues" : {
+								"__typename" : "IssueConnection",
+								"totalCount" : 24
+							},
+							"forks" : {
+								"totalCount" : 4
+							}
+						}
+					}
+				],
+				"pageInfo" : {
+					"hasNextPage" : true,
+					"startCursor" : "Y3Vyc29yOnYyOpHOAmOAng==",
+					"endCursor" : "Y3Vyc29yOnYyOpHOBCFOZA=="
+				}
+			}
+		}
+	}
+}'
+]
+
 { #category : #'examples - schema' }
 GtGQLDataExamples >> graphQLIntrospectionSchema [
 	<gtExample>
@@ -430,7 +615,7 @@ GtGQLDataExamples >> inputTypeSchema [
 
 	self assert: aSchema isNotNil.
 	self assert: aSchema baseTypes size equals: 6.
-	self assert: aSchema types size equals: 7.
+	self assert: aSchema types size equals: 8.
 
 	aType := aSchema typeNamed: 'ReviewInput'.
 	self assert: aType isNotNil.
