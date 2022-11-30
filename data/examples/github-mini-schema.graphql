@@ -261,9 +261,19 @@ enum RepositoryPrivacy {
 """
 An account on GitHub, with one or more owners, that has repositories, members and teams.
 """
-type Organization {
+type Organization { 
 
   id: ID!
+
+  """
+  The organization's public email.
+  """
+  email: String
+
+  """
+  Whether the organization has verified its profile email and website.
+  """
+  isVerified: Boolean!
 
   """
   The organization's login name.
@@ -987,4 +997,82 @@ enum IssueState {
   An issue that is still open
   """
   OPEN
+}
+
+"""
+A user is an individual's account on GitHub that owns repositories and can make new content.
+"""
+type User implements Actor & Node & PackageOwner & ProfileOwner & ProjectNextOwner & ProjectOwner & ProjectV2Owner & ProjectV2Recent & RepositoryDiscussionAuthor & RepositoryDiscussionCommentAuthor & RepositoryOwner & Sponsorable & UniformResourceLocatable {
+
+  """
+  The user's public profile bio.
+  """
+  bio: String
+
+  """
+  The user's public profile bio as HTML.
+  """
+  bioHTML: HTML!
+
+  """
+  The user's public profile company.
+  """
+  company: String
+
+  """
+  The user's public profile company as HTML.
+  """
+  companyHTML: HTML!
+
+  """
+  Identifies the date and time when the object was created.
+  """
+  createdAt: DateTime!
+
+  """
+  Identifies the primary key from the database.
+  """
+  databaseId: Int
+
+  """
+  The user's publicly visible profile email.
+  """
+  email: String!
+
+  id: ID!
+
+  """
+  Whether or not this user is a GitHub employee.
+  """
+  isEmployee: Boolean!
+
+  """
+  The user's public profile location.
+  """
+  location: String
+
+  """
+  The username used to login.
+  """
+  login: String!
+
+  """
+  The user's public profile name.
+  """
+  name: String
+
+  """
+  The SSH URL to clone this repository
+  """
+  sshUrl: GitSSHRemote!
+  
+  """
+  The HTTP URL for this user
+  """
+  url: URI!
+
+  """
+  A URL pointing to the user's public website/blog.
+  """
+  websiteUrl: URI
 }

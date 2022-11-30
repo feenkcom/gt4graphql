@@ -13,8 +13,8 @@ GtGQLDataExamples >> gitHubMiniSchema [
 	aSchema import: anAst.
 
 	self assert: aSchema isNotNil.
-	self assert: aSchema baseTypes size equals: 33.
-	self assert: aSchema types size equals: 58.
+	self assert: aSchema baseTypes size equals: 34.
+	self assert: aSchema types size equals: 59.
 
 	anOrganizationField := aSchema queryType fieldNamed: 'organization'.
 
@@ -238,6 +238,14 @@ query Repositories($count: Int!, $login: String!, $after: String, $privacy: Repo
 						id 
 						login
 						url
+						...on User { 
+							bio
+							isEmployee
+						}
+						...on Organization {
+							email
+							isVerified
+						}
 					}
 					openIssues: issues(states: [ OPEN ]) {
 						...IssueDetails
@@ -410,7 +418,7 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 			"url" : "https://github.com/feenkcom",
 			"repositories" : {
 				"totalCount" : 174,
-				"totalDiskUsage" : 819224,
+				"totalDiskUsage" : 818825,
 				"edges" : [
 					{
 						"node" : {
@@ -423,7 +431,9 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 								"__typename" : "Organization",
 								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
 								"login" : "feenkcom",
-								"url" : "https://github.com/feenkcom"
+								"url" : "https://github.com/feenkcom",
+								"email" : null,
+								"isVerified" : false
 							},
 							"openIssues" : {
 								"__typename" : "IssueConnection",
@@ -449,7 +459,9 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 								"__typename" : "Organization",
 								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
 								"login" : "feenkcom",
-								"url" : "https://github.com/feenkcom"
+								"url" : "https://github.com/feenkcom",
+								"email" : null,
+								"isVerified" : false
 							},
 							"openIssues" : {
 								"__typename" : "IssueConnection",
@@ -475,7 +487,9 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 								"__typename" : "Organization",
 								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
 								"login" : "feenkcom",
-								"url" : "https://github.com/feenkcom"
+								"url" : "https://github.com/feenkcom",
+								"email" : null,
+								"isVerified" : false
 							},
 							"openIssues" : {
 								"__typename" : "IssueConnection",
@@ -501,7 +515,9 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 								"__typename" : "Organization",
 								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
 								"login" : "feenkcom",
-								"url" : "https://github.com/feenkcom"
+								"url" : "https://github.com/feenkcom",
+								"email" : null,
+								"isVerified" : false
 							},
 							"openIssues" : {
 								"__typename" : "IssueConnection",
@@ -527,7 +543,9 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 								"__typename" : "Organization",
 								"id" : "MDEyOk9yZ2FuaXphdGlvbjIyMTIyMzY2",
 								"login" : "feenkcom",
-								"url" : "https://github.com/feenkcom"
+								"url" : "https://github.com/feenkcom",
+								"email" : null,
+								"isVerified" : false
 							},
 							"openIssues" : {
 								"__typename" : "IssueConnection",
