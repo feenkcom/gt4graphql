@@ -3,11 +3,16 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'parentStep',
-		'fieldName',
-		'step'
+		'step',
+		'accessor'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
+
+{ #category : #'api - initialization' }
+GtGQLValueStepBuilder >> aliasName: aName [
+	accessor := GtGQLAliasNodeAccessor new aliasName: aName
+]
 
 { #category : #'api - building' }
 GtGQLValueStepBuilder >> build [
@@ -18,8 +23,7 @@ GtGQLValueStepBuilder >> build [
 GtGQLValueStepBuilder >> buildStepStartingNode: aParentNode [
 	aParentNode selections
 		do: [ :aNode | 
-			((aNode isKindOf: GraphQLFieldNode)
-				and: [ (aNode name ifNotNil: #source) = self fieldName ])
+			((aNode isKindOf: GraphQLFieldNode) and: [ accessor isFieldNode: aNode ])
 				ifTrue: [ step := self parentStep class new
 							alias: (aNode alias ifNotNil: #source);
 							name: (aNode name ifNotNil: #source);
@@ -36,14 +40,9 @@ GtGQLValueStepBuilder >> buildStepStartingNode: aParentNode [
 					self hasStep ifTrue: [ ^ self ] ] ]
 ]
 
-{ #category : #accessing }
-GtGQLValueStepBuilder >> fieldName [
-	^ fieldName
-]
-
-{ #category : #accessing }
-GtGQLValueStepBuilder >> fieldName: anObject [
-	fieldName := anObject
+{ #category : #'api - initialization' }
+GtGQLValueStepBuilder >> fieldName: aName [
+	accessor := GtGQLNameNodeAccessor new fieldName: aName
 ]
 
 { #category : #testing }

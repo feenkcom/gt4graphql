@@ -73,18 +73,11 @@ GtGQLValueStep >> newStepForFieldName: aName [
 { #category : #'api - instance creation' }
 GtGQLValueStep >> newStepForResultName: anAlias [
 	<return: #GtGQLValueStep or: nil>
-	^ self ast selections
-		detect: [ :eachNode | 
-			eachNode alias
-				ifNotNil: [ :aToken | aToken source = anAlias ]
-				ifNil: [ eachNode name ifNotNil: [ :aToken | aToken source = anAlias ] ] ]
-		ifFound: [ :aNode | 
-			self class new
-				alias: (aNode alias ifNotNil: #source);
-				name: (aNode name ifNotNil: #source);
-				parent: self;
-				ast: aNode ]
-		ifNone: [ self error: 'must not happen' ]
+	^ GtGQLValueStepBuilder new
+		parentStep: self;
+		aliasName: anAlias;
+		build;
+		step
 ]
 
 { #category : #accessing }

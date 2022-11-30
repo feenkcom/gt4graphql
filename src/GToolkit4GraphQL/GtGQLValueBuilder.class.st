@@ -356,6 +356,13 @@ GtGQLValueBuilder >> visitGtGQLValueObject: aValue [
 			| aStep aField aType |
 			aStep := aValue step newStepForResultName: anAlias.
 			aField := aValue userType fieldNamed: aStep fieldName.
+
+			self
+				assert: [ aField isNotNil ]
+				description: [ 'Schema type {1} is missing field named {1}'
+						format: {aValue userType name.
+								aStep fieldName} ].
+
 			aType := aField type.
 
 			aField isMetaField

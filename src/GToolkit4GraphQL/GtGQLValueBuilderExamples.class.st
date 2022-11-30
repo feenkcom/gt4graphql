@@ -44,7 +44,7 @@ GtGQLValueBuilderExamples >> githubBuilder [
 { #category : #'examples - builder' }
 GtGQLValueBuilderExamples >> githubBuilderWithValue [
 	<gtExample>
-	| aBuilder anOrganization aRepositories aRepository anOpenIssues aClosedIssues |
+	| aBuilder anOrganization aRepositories aRepository anOpenIssues aClosedIssues anOwner isVerifiedOwner |
 	aBuilder := self githubBuilder.
 
 	aBuilder build.
@@ -90,6 +90,15 @@ GtGQLValueBuilderExamples >> githubBuilderWithValue [
 	aClosedIssues := aRepository fieldNamed: #closedIssues.
 	self assert: aClosedIssues isNotNil.
 	self assert: aClosedIssues totalCount equals: 15.
+
+	anOwner := aRepository fieldNamed: #owner.
+	self assert: anOwner isNotNil.
+
+	isVerifiedOwner := anOwner fieldNamed: #isVerified.
+	self assert: isVerifiedOwner isNotNil.
+	self
+		assert: isVerifiedOwner value not
+		description: [ 'Owner must not be verified' ].
 
 	^ aBuilder
 ]
