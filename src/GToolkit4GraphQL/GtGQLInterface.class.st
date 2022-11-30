@@ -1,6 +1,6 @@
 Class {
 	#name : #GtGQLInterface,
-	#superclass : #GtGQLCompositeType,
+	#superclass : #GtGQLComposite,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 

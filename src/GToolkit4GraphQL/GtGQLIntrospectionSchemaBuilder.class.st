@@ -242,7 +242,7 @@ GtGQLIntrospectionSchemaBuilder >> createFieldsFromJson: aJson [
 { #category : #'private - building' }
 GtGQLIntrospectionSchemaBuilder >> createInputFieldFromJson: aJson [
 	| aType |
-	aType := GtGQLInputObjectType new.
+	aType := GtGQLInputObject new.
 
 	self
 		ifJson: aJson

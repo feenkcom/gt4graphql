@@ -93,7 +93,7 @@ GtGQLField >> gtRepricationReasonFor: aView [
 GtGQLField >> gtTypeFor: aView [
 	<gtView>
 	self type ifNil: [ ^ aView empty ].
-	(self type baseType isKindOf: GtGQLCompositeType) ifFalse: [ ^ aView empty ].
+	(self type baseType isKindOf: GtGQLComposite) ifFalse: [ ^ aView empty ].
 
 	^ (GtGQLSchema gtTypesFor: aView items: [ {self type baseType} ])
 		title: 'Type';

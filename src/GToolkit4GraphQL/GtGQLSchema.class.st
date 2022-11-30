@@ -240,7 +240,7 @@ GtGQLSchema >> importComposites: aNode [
 							def definitions
 								do: [ :arg | 
 									field
-										addArgument: (GtGQLInputObjectType new
+										addArgument: (GtGQLInputObject new
 												name: arg name source;
 												type: (self typeFor: arg type);
 												yourself) ].

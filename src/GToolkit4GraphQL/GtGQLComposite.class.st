@@ -1,16 +1,16 @@
 Class {
-	#name : #GtGQLCompositeType,
+	#name : #GtGQLComposite,
 	#superclass : #GtGQLType,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #testing }
-GtGQLCompositeType class >> isAbstract [
-	^ self name = #GtGQLCompositeType
+GtGQLComposite class >> isAbstract [
+	^ self name = #GtGQLComposite
 ]
 
 { #category : #'api - initialization' }
-GtGQLCompositeType >> addField: aGQLField [
+GtGQLComposite >> addField: aGQLField [
 	self
 		propertyAt: self propertyFieldName
 		ifPresent: [ :aDict | aDict at: aGQLField name put: aGQLField ]
@@ -20,22 +20,22 @@ GtGQLCompositeType >> addField: aGQLField [
 ]
 
 { #category : #accessing }
-GtGQLCompositeType >> fieldNamed: aName [
+GtGQLComposite >> fieldNamed: aName [
 	^ self fields at: aName ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
-GtGQLCompositeType >> fields [
+GtGQLComposite >> fields [
 	^ self propertyAt: self propertyFieldName ifAbsentPut: [ Dictionary new ]
 ]
 
 { #category : #'api - initialization' }
-GtGQLCompositeType >> fields: aCollection [
+GtGQLComposite >> fields: aCollection [
 	aCollection do: [ :eachField | self addField: eachField ]
 ]
 
 { #category : #accessing }
-GtGQLCompositeType >> gtFieldsFor: aView [
+GtGQLComposite >> gtFieldsFor: aView [
 	<gtView>
 	^ (GtGQLSchema
 		gtTypesFor: aView
@@ -45,7 +45,7 @@ GtGQLCompositeType >> gtFieldsFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLCompositeType >> gtSearchFieldTypesFor: aSearch [
+GtGQLComposite >> gtSearchFieldTypesFor: aSearch [
 	<gtSearch>
 	^ aSearch list
 		priority: 20;
@@ -58,7 +58,7 @@ GtGQLCompositeType >> gtSearchFieldTypesFor: aSearch [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLCompositeType >> gtSearchFieldsFor: aSearch [
+GtGQLComposite >> gtSearchFieldsFor: aSearch [
 	<gtSearch>
 	^ aSearch list
 		priority: 10;
@@ -70,17 +70,17 @@ GtGQLCompositeType >> gtSearchFieldsFor: aSearch [
 ]
 
 { #category : #accessing }
-GtGQLCompositeType >> initialize [
+GtGQLComposite >> initialize [
 	super initialize.
 	self fields
 ]
 
 { #category : #testing }
-GtGQLCompositeType >> isComposite [
+GtGQLComposite >> isComposite [
 	^ true
 ]
 
 { #category : #'api - initialization' }
-GtGQLCompositeType >> propertyFieldName [
+GtGQLComposite >> propertyFieldName [
 	^ #fields
 ]
