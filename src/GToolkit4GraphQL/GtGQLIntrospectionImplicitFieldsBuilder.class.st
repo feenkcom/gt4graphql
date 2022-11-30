@@ -56,7 +56,7 @@ GtGQLIntrospectionImplicitFieldsBuilder >> buildMetaTypeField [
 
 	anArgumentType := self nonNullStringType.
 
-	aFieldArgument := GtGQLInputObjectType new.
+	aFieldArgument := GtGQLInputObject new.
 	aFieldArgument name: 'name'.
 	aFieldArgument type: anArgumentType.
 	aFieldArgument description: 'Name of a type that is introspected'.
@@ -99,7 +99,7 @@ GtGQLIntrospectionImplicitFieldsBuilder >> createMissingObjectTypeNamed: aName [
 	createMissingTypes
 		ifFalse: [ self error: ('{1} type must exist' format: aName) ].
 
-	^ GtGQLObjectType new name: aName
+	^ GtGQLObject new name: aName
 ]
 
 { #category : #'private - building' }

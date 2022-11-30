@@ -1,36 +1,36 @@
 Class {
-	#name : #GtGQLInputObjectType,
-	#superclass : #GtGQLCompositeType,
+	#name : #GtGQLInputObject,
+	#superclass : #GtGQLComposite,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
-GtGQLInputObjectType class >> kindName [
+GtGQLInputObject class >> kindName [
 	^ 'INPUT_OBJECT'
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> defaultValue [
+GtGQLInputObject >> defaultValue [
 	^ self propertyAt: #defaultValue
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> defaultValue: anObject [
+GtGQLInputObject >> defaultValue: anObject [
 	self propertyAt: #defaultValue put: anObject
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> deprecationReason [
+GtGQLInputObject >> deprecationReason [
 	^ self propertyAt: #deprecationReason
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> deprecationReason: anObject [
+GtGQLInputObject >> deprecationReason: anObject [
 	self propertyAt: #deprecationReason put: anObject
 ]
 
 { #category : #'gt - extensions' }
-GtGQLInputObjectType >> gtRepricationReasonFor: aView [
+GtGQLInputObject >> gtRepricationReasonFor: aView [
 	<gtView>
 	self isDeprecated ifFalse: [ ^ aView empty ].
 	^ aView explicit
@@ -40,7 +40,7 @@ GtGQLInputObjectType >> gtRepricationReasonFor: aView [
 ]
 
 { #category : #'api - initialization' }
-GtGQLInputObjectType >> gtTypeFor: aView [
+GtGQLInputObject >> gtTypeFor: aView [
 	<gtView>
 	self type ifNil: [ ^ aView empty ].
 
@@ -50,7 +50,7 @@ GtGQLInputObjectType >> gtTypeFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLInputObjectType >> gtTypesNameText [
+GtGQLInputObject >> gtTypesNameText [
 	| aText |
 	aText := self name asRopedText.
 
@@ -67,32 +67,32 @@ GtGQLInputObjectType >> gtTypesNameText [
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> inputFields [
+GtGQLInputObject >> inputFields [
 	^ self fields
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> inputFields: aCollection [
+GtGQLInputObject >> inputFields: aCollection [
 	self fields: aCollection
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> isDeprecated [
+GtGQLInputObject >> isDeprecated [
 	^ self propertyAt: #isDeprecated ifAbsent: [ false ]
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> isDeprecated: anObject [
+GtGQLInputObject >> isDeprecated: anObject [
 	self propertyAt: #isDeprecated put: anObject
 ]
 
 { #category : #testing }
-GtGQLInputObjectType >> isRequired [
+GtGQLInputObject >> isRequired [
 	^ self type ifNotNil: #isRequired ifNil: [ false ]
 ]
 
 { #category : #printing }
-GtGQLInputObjectType >> printTypeOn: aStream [
+GtGQLInputObject >> printTypeOn: aStream [
 	self type
 		ifNotNil: [ :aType | 
 			aStream
@@ -101,16 +101,16 @@ GtGQLInputObjectType >> printTypeOn: aStream [
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> propertyFieldName [
+GtGQLInputObject >> propertyFieldName [
 	^ #inputFields
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> type [
+GtGQLInputObject >> type [
 	^ self propertyAt: #type
 ]
 
 { #category : #accessing }
-GtGQLInputObjectType >> type: anObject [
+GtGQLInputObject >> type: anObject [
 	self propertyAt: #type put: anObject
 ]

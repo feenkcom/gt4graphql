@@ -1,30 +1,30 @@
 Class {
-	#name : #GtGQLObjectType,
-	#superclass : #GtGQLCompositeType,
+	#name : #GtGQLObject,
+	#superclass : #GtGQLComposite,
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
 { #category : #accessing }
-GtGQLObjectType class >> kindName [
+GtGQLObject class >> kindName [
 	^ 'OBJECT'
 ]
 
 { #category : #accessing }
-GtGQLObjectType >> interfaces [
+GtGQLObject >> interfaces [
 	^ self propertyAt: #interfaces ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
-GtGQLObjectType >> interfaces: aCollection [
+GtGQLObject >> interfaces: aCollection [
 	self propertyAt: #interfaces put: aCollection
 ]
 
 { #category : #accessing }
-GtGQLObjectType >> isObjectType [
+GtGQLObject >> isObjectType [
 	^ true
 ]
 
 { #category : #'api - response' }
-GtGQLObjectType >> newValueUsing: aBuilder [
+GtGQLObject >> newValueUsing: aBuilder [
 	^ aBuilder newValueObjectWithType: self
 ]

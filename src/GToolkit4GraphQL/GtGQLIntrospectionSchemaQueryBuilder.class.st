@@ -161,7 +161,7 @@ GtGQLIntrospectionSchemaQueryBuilder >> fullTypeFragment [
 
 { #category : #'private - building' }
 GtGQLIntrospectionSchemaQueryBuilder >> includeDeprecatedArgumentOfField: aField [
-	<return: #GtGQLInputObjectType>
+	<return: #GtGQLInputObject>
 	^ aField arguments
 		detect: [ :anArgument | 
 			anArgument name = 'includeDeprecated'

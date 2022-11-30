@@ -1,7 +1,7 @@
 "
 I represent a step in a GraphQL path.
 I know {{gtMethod: GtGQLPathStep >> #resultName | label=#selector}}, a property name in a {{gtMethod: GtGQLSuccessResult >> #data}} JSON structure where a provided value can be found.
-I know {{gtMethod: GtGQLPathStep >> #fieldName | label=#selector}}, a {{gtClass:GtGQLObjectType}} field name.
+I know {{gtMethod: GtGQLPathStep >> #fieldName | label=#selector}}, a {{gtClass:GtGQLObject}} field name.
 I am part of {{gtClass: GtGQLPath}} where you can find futher information.
 
 "
