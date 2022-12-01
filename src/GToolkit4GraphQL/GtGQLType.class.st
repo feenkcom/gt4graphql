@@ -53,6 +53,28 @@ GtGQLType >> gtDescriptionFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLType >> gtQueryPathViewNameText [
+	^ self name
+]
+
+{ #category : #'gt - extensions' }
+GtGQLType >> gtQueryPathsFor: aView [
+	<gtView>
+	(self hasOptionAt: #queryPaths) ifFalse: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Query Paths';
+		priority: 48;
+		items: [ self queryPaths ];
+		column: 'Name' text: [ :aPath | aPath gtQueryPathViewNameText ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLType >> gtTypeReferencesViewReferencedTypeText [
+	^ self name
+]
+
+{ #category : #'gt - extensions' }
 GtGQLType >> gtTypesNameText [
 	^ self name
 ]
@@ -102,6 +124,11 @@ GtGQLType >> isScalar [
 	^ false
 ]
 
+{ #category : #testing }
+GtGQLType >> isUnion [
+	^ false
+]
+
 { #category : #accessing }
 GtGQLType >> kindName [
 	^ self class kindName
@@ -144,6 +171,16 @@ GtGQLType >> printOn: aStream [
 
 { #category : #printing }
 GtGQLType >> printTypeOn: aStream [ 
+]
+
+{ #category : #accessing }
+GtGQLType >> queryPaths [
+	^ self optionAt: #queryPaths ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLType >> queryPaths: aTypePaths [
+	self optionAt: #queryPaths put: aTypePaths
 ]
 
 { #category : #accessing }

@@ -18,7 +18,7 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 			text: [ :each | 
 				(self typeForObject: each)
 					ifNotNil: [ :aType | aType baseType typeName ]
-					ifNil: [ '' ] ];
+					ifNil: [ '' ] ] width: 100;
 		items: aBlock;
 		children: [ :each | 
 			(self typeForObject: each)
@@ -36,6 +36,11 @@ GtGQLSchema class >> typeForObject: aTypeOrField [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> baseInterfaces [
+	^ self baseTypes select: #isInterface
+]
+
+{ #category : #accessing }
 GtGQLSchema >> baseTypes [
 	^ self types reject: [ :each | each isList or: [ each isNonNullable ] ]
 ]
@@ -46,6 +51,16 @@ GtGQLSchema >> baseTypesCount [
 		propertyAt: #types
 		ifPresent: [ :aDict | self baseTypes size ]
 		ifAbsent: [ 0 ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> baseTypesWithQueryPaths [
+	^ self baseTypes select: [ :each | each queryPaths isNotNil ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> baseUnions [
+	^ self baseTypes select: #isUnion
 ]
 
 { #category : #accessing }
@@ -103,6 +118,16 @@ GtGQLSchema >> gtDirectivesFor: aView [
 		column: 'Description'
 			text: [ :each | each description ifNil: [ '' ] ]
 			weight: 3
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtInterfacesFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self baseInterfaces asSortedCollection: [ :a :b | a name < b name ] ])
+			title: 'Interfaces';
+			priority: 45
 ]
 
 { #category : #'gt - extensions' }
@@ -204,6 +229,27 @@ GtGQLSchema >> gtTypesFor: aView [
 	^ self class
 		gtTypesFor: aView
 		items: [ self baseTypes asSortedCollection: [ :a :b | a name < b name ] ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtTypesWithQueryPathsFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self baseTypesWithQueryPaths asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Types With Query Types';
+		priority: 47;
+		column: 'Paths' text: [ :aType | aType queryPaths size ] width: 40
+]
+
+{ #category : #'gt - extensions' }
+GtGQLSchema >> gtUnionsFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self baseUnions asSortedCollection: [ :a :b | a name < b name ] ])
+			title: 'Unions';
+			priority: 46
 ]
 
 { #category : #importing }
