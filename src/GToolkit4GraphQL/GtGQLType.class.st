@@ -66,6 +66,16 @@ GtGQLType >> gtQueryPathsFor: aView [
 		title: 'Query Paths';
 		priority: 48;
 		items: [ self queryPaths ];
+		column: ''
+			stencil: [ :aPath | 
+				| anIcon |
+				anIcon := BlElement new size: 8 @ 8.
+				aPath isDeprecated
+					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
+						anIcon
+							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
+					ifFalse: [ anIcon background: BlBackground transparent ] ]
+			width: 10;
 		column: 'Name' text: [ :aPath | aPath gtQueryPathViewNameText ]
 ]
 
