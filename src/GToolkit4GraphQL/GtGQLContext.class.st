@@ -37,13 +37,20 @@ GtGQLContext >> bearerToken: aToken [
 	self authentication: (GtGQLBearerAuthentication new token: aToken)
 ]
 
-{ #category : #accessing }
+{ #category : #'api - building' }
 GtGQLContext >> buildSchema [
 	| aBuilder |
 	aBuilder := self schemaBuilder.
 	aBuilder build.
 	self schema: aBuilder schema.
 	self jsonSchema: aBuilder json
+]
+
+{ #category : #'api - building' }
+GtGQLContext >> buildTypePaths [
+	GtGQLQueryPathBuilder new
+		schema: self schema;
+		build
 ]
 
 { #category : #accessing }

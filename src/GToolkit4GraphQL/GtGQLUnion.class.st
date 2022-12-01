@@ -9,12 +9,30 @@ GtGQLUnion class >> kindName [
 	^ 'UNION'
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLUnion >> gtPossibleTypesFor: aView [
+	<gtView>
+	^ (GtGQLSchema gtTypesFor: aView items: [ self possibleTypes ])
+		title: 'Possible Types';
+		priority: 11
+]
+
 { #category : #accessing }
 GtGQLUnion >> gtTypesFor: aView [
 	<gtView>
 	^ GtGQLSchema
 		gtTypesFor: aView
 		items: [ self types asSortedCollection: [ :a :b | a name < b name ] ]
+]
+
+{ #category : #testing }
+GtGQLUnion >> isUnion [
+	^ true
+]
+
+{ #category : #accessing }
+GtGQLUnion >> possibleTypes [
+	^ self types
 ]
 
 { #category : #accessing }
@@ -24,10 +42,10 @@ GtGQLUnion >> possibleTypes: aCollection [
 
 { #category : #accessing }
 GtGQLUnion >> types [
-	^ self propertyAt: #types ifAbsent: [ #() ]
+	^ self propertyAt: #possibleTypes ifAbsent: [ #() ]
 ]
 
 { #category : #accessing }
 GtGQLUnion >> types: aCollection [
-	self propertyAt: #types put: aCollection
+	self propertyAt: #possibleTypes put: aCollection
 ]
