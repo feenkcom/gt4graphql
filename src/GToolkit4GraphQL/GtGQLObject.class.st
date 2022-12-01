@@ -10,6 +10,40 @@ GtGQLObject class >> kindName [
 ]
 
 { #category : #accessing }
+GtGQLObject >> gtImplementedInterfacesFor: aView [
+	<gtView>
+	(self hasOptionAt: #implementedInterfaces) ifFalse: [ ^ aView empty ].
+
+	^ (GtGQLSchema
+		gtTypesFor: aView
+		items: [ self implementedInterfaces asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Implemented Interfaces';
+		priority: 46
+]
+
+{ #category : #accessing }
+GtGQLObject >> gtPartOfUnionsFor: aView [
+	<gtView>
+	(self hasOptionAt: #partOfUnions) ifFalse: [ ^ aView empty ].
+
+	^ (GtGQLSchema
+		gtTypesFor: aView
+		items: [ self partOfUnions asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Part of Unions';
+		priority: 47
+]
+
+{ #category : #accessing }
+GtGQLObject >> implementedInterfaces [
+	^ self optionAt: #implementedInterfaces ifAbsent: [ #() ]
+]
+
+{ #category : #'api - initialization' }
+GtGQLObject >> implementedInterfaces: aCollection [
+	self optionAt: #implementedInterfaces put: aCollection
+]
+
+{ #category : #accessing }
 GtGQLObject >> interfaces [
 	^ self propertyAt: #interfaces ifAbsent: [ #() ]
 ]
@@ -27,4 +61,14 @@ GtGQLObject >> isObjectType [
 { #category : #'api - response' }
 GtGQLObject >> newValueUsing: aBuilder [
 	^ aBuilder newValueObjectWithType: self
+]
+
+{ #category : #accessing }
+GtGQLObject >> partOfUnions [
+	^ self optionAt: #partOfUnions ifAbsent: [ #() ]
+]
+
+{ #category : #'api - initialization' }
+GtGQLObject >> partOfUnions: aCollection [
+	self optionAt: #partOfUnions put: aCollection
 ]
