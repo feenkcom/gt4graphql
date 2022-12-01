@@ -15,6 +15,18 @@ GtGQLTypePath >> firstStep [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLTypePath >> gtQueryFor: aView [
+	<gtView>
+	self steps ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Query';
+		priority: 10;
+		object: [ self query ];
+		view: #gtQueryFor:
+]
+
+{ #category : #'gt - extensions' }
 GtGQLTypePath >> gtQueryPathViewNameText [
 	| aText |
 	aText := '' asRopedText.
@@ -109,6 +121,14 @@ GtGQLTypePath >> printOn: aStream [
 		nextPutAll: ' ... ';
 		nextPutAll: self stopType name asString;
 		nextPut: $)
+]
+
+{ #category : #accessing }
+GtGQLTypePath >> query [
+	^ GtGQLPathToQueryBuilder new
+		path: self;
+		build;
+		query
 ]
 
 { #category : #accessing }
