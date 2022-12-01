@@ -28,8 +28,11 @@ GtGQLIntrospectionSchemaBuilder >> build [
 	self
 		assert: [ self context isNotNil ]
 		description: [ 'Context must be non-nil' ].
+
 	self buildSchema.
 	self buildImplicitFields.
+	self buildTypeLinks.
+
 	^ self schema
 ]
 
@@ -113,6 +116,14 @@ GtGQLIntrospectionSchemaBuilder >> buildType [
 	aTypeJson exists ifFalse: [ ^ nil ].
 
 	^ self createTypeFromJson: aTypeJson
+]
+
+{ #category : #'private - building' }
+GtGQLIntrospectionSchemaBuilder >> buildTypeLinks [
+	GtGQLTypeLinker new
+		schema: self schema;
+		build;
+		apply
 ]
 
 { #category : #accessing }
@@ -344,6 +355,17 @@ GtGQLIntrospectionSchemaBuilder >> ensureJson [
 	aResultJson := self retreiveJson.
 	self json: aResultJson.
 	^ self json
+]
+
+{ #category : #'gt - extensions' }
+GtGQLIntrospectionSchemaBuilder >> gtTypesFor: aView [
+	<gtView>
+	self schema ifNil: [ ^ aView empty ].
+
+	^ aView forward
+		title: 'Types';
+		object: [ self schema ];
+		view: #gtTypesFor:
 ]
 
 { #category : #'private - building' }
