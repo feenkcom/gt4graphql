@@ -65,7 +65,17 @@ GtGQLType >> gtQueryPathsFor: aView [
 	^ aView columnedList
 		title: 'Query Paths';
 		priority: 48;
-		items: [ self queryPaths ];
+		items: [ self queryPaths
+				asSortedCollection: [ :a :b | 
+					| aMark bMark |
+					aMark := a isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
+					bMark := b isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
+
+					aMark = bMark
+						ifFalse: [ aMark < bMark ]
+						ifTrue: [ a steps size = b steps size
+								ifFalse: [ a steps size < b steps size ]
+								ifTrue: [ a gtQueryPathViewNameText asString < b gtQueryPathViewNameText asString ] ] ] ];
 		column: ''
 			stencil: [ :aPath | 
 				| anIcon |
