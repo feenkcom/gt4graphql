@@ -12,17 +12,11 @@ GtGQLUnion class >> kindName [
 { #category : #'gt - extensions' }
 GtGQLUnion >> gtPossibleTypesFor: aView [
 	<gtView>
-	^ (GtGQLSchema gtTypesFor: aView items: [ self possibleTypes ])
+	^ (GtGQLSchema
+		gtTypesFor: aView
+		items: [ self possibleTypes asSortedCollection: [ :a :b | a name < b name ] ])
 		title: 'Possible Types';
 		priority: 11
-]
-
-{ #category : #accessing }
-GtGQLUnion >> gtTypesFor: aView [
-	<gtView>
-	^ GtGQLSchema
-		gtTypesFor: aView
-		items: [ self types asSortedCollection: [ :a :b | a name < b name ] ]
 ]
 
 { #category : #testing }

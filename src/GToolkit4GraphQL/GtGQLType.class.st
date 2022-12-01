@@ -65,7 +65,27 @@ GtGQLType >> gtQueryPathsFor: aView [
 	^ aView columnedList
 		title: 'Query Paths';
 		priority: 48;
-		items: [ self queryPaths ];
+		items: [ self queryPaths
+				asSortedCollection: [ :a :b | 
+					| aMark bMark |
+					aMark := a isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
+					bMark := b isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
+
+					aMark = bMark
+						ifFalse: [ aMark < bMark ]
+						ifTrue: [ a steps size = b steps size
+								ifFalse: [ a steps size < b steps size ]
+								ifTrue: [ a gtQueryPathViewNameText asString < b gtQueryPathViewNameText asString ] ] ] ];
+		column: ''
+			stencil: [ :aPath | 
+				| anIcon |
+				anIcon := BlElement new size: 8 @ 8.
+				aPath isDeprecated
+					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
+						anIcon
+							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
+					ifFalse: [ anIcon background: BlBackground transparent ] ]
+			width: 10;
 		column: 'Name' text: [ :aPath | aPath gtQueryPathViewNameText ]
 ]
 
@@ -80,7 +100,12 @@ GtGQLType >> gtTypesNameText [
 ]
 
 { #category : #testing }
-GtGQLType >> isBoolean [
+GtGQLType >> isBooleanType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isCommonScalarType [
 	^ false
 ]
 
@@ -91,6 +116,21 @@ GtGQLType >> isComposite [
 
 { #category : #testing }
 GtGQLType >> isDeprecated [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isFloatType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isIdType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isIntType [
 	^ false
 ]
 
@@ -121,6 +161,11 @@ GtGQLType >> isRequired [
 
 { #category : #testing }
 GtGQLType >> isScalar [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isStringType [
 	^ false
 ]
 

@@ -5,71 +5,29 @@ Class {
 		'schema',
 		'paths',
 		'typeReferences',
-		'interfaceReferences',
-		'unionReferences',
 		'traversedTypes',
 		'currentPath'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
-{ #category : #'private - applying' }
-GtGQLQueryPathBuilder >> applyInterfaces [
-	interfaceReferences
-		keysAndValuesDo: [ :aType :implementedInterfaces | aType implementedInterfaces: implementedInterfaces asArray ]
-]
-
-{ #category : #'private - applying' }
-GtGQLQueryPathBuilder >> applyUnions [
-	unionReferences
-		keysAndValuesDo: [ :aType :itsUnions | aType partOfUnions: itsUnions asArray ]
-]
-
-{ #category : #'private - accessing' }
-GtGQLQueryPathBuilder >> baseInterfaces [
-	^ self schema baseInterfaces
-]
-
 { #category : #'private - accessing' }
 GtGQLQueryPathBuilder >> baseTypes [
 	^ self schema baseTypes
 ]
 
-{ #category : #'private - accessing' }
-GtGQLQueryPathBuilder >> baseUnions [
-	^ self schema baseUnions
-]
-
 { #category : #'api - building' }
 GtGQLQueryPathBuilder >> build [
 	self buildTypeReferences.
-	self buildInterfaceReferences.
-	self buildUnionReferences.
-
-	self applyInterfaces.
-	self applyUnions.
-
 	self buildPathsFromQuery
-]
-
-{ #category : #'private - building' }
-GtGQLQueryPathBuilder >> buildInterfaceReferences [
-	interfaceReferences := Dictionary new.
-
-	self baseInterfaces
-		do: [ :aSourceInterface | 
-			aSourceInterface possibleTypes
-				do: [ :aTargetType | 
-					interfaceReferences
-						at: aTargetType
-						ifPresent: [ :aCollection | aCollection add: aSourceInterface ]
-						ifAbsentPut: [ OrderedCollection with: aSourceInterface ] ] ]
 ]
 
 { #category : #'private - building' }
 GtGQLQueryPathBuilder >> buildPathsFromQuery [
 	typeReferences
-		keysDo: [ :aStopType | self buildPathsFromStart: self queryType toStop: aStopType ]
+		keysDo: [ :aStopType | 
+			aStopType isCommonScalarType
+				ifFalse: [ self buildPathsFromStart: self queryType toStop: aStopType ] ]
 ]
 
 { #category : #'private - building' }
@@ -77,7 +35,7 @@ GtGQLQueryPathBuilder >> buildPathsFromStart: aStartType toStop: aStopType [
 	(self isType: aStartType kindOf: aStopType) ifTrue: [ ^ self ].
 
 	paths := OrderedCollection new.
-	traversedTypes := LinkedList new.
+	traversedTypes := OrderedCollection new.
 	currentPath := LinkedList new.
 
 	self
@@ -113,18 +71,10 @@ GtGQLQueryPathBuilder >> buildTypeReferences [
 								ifAbsentPut: [ OrderedCollection with: aTypeReference ] ] ] ]
 ]
 
-{ #category : #'private - building' }
-GtGQLQueryPathBuilder >> buildUnionReferences [
-	unionReferences := Dictionary new.
-
-	self baseUnions
-		do: [ :aSourceUnion | 
-			aSourceUnion possibleTypes
-				do: [ :aTargetType | 
-					unionReferences
-						at: aTargetType
-						ifPresent: [ :aCollection | aCollection add: aSourceUnion ]
-						ifAbsentPut: [ OrderedCollection with: aSourceUnion ] ] ]
+{ #category : #'api - building' }
+GtGQLQueryPathBuilder >> clear [
+	self baseTypes
+		do: [ :aType | aType clearOption: #queryPaths ifAbsent: [  "ignore" ] ]
 ]
 
 { #category : #'private - traversing' }
@@ -139,48 +89,9 @@ GtGQLQueryPathBuilder >> completePathForStartType: aStartType stopType: aStopTyp
 ]
 
 { #category : #'gt - extensions' }
-GtGQLQueryPathBuilder >> gtInterfaceReferencesFor: aView [
-	<gtView>
-	interfaceReferences ifNil: [ ^ aView empty ].
-
-	^ aView columnedTree
-		title: 'Interface References';
-		priority: 21;
-		items: [ interfaceReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
-		children: [ :aType | 
-			interfaceReferences
-				at: aType
-				ifPresent: [ :aCollection | aCollection asSortedCollection: [ :a :b | a name < b name ] ]
-				ifAbsent: [ #() ] ];
-		column: 'Referenced Type'
-			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ];
-		column: 'Interfaces'
-			text: [ :aType | self gtInterfaceReferencesViewInterfacesTextFor: aType ]
-			weight: 2
-]
-
-{ #category : #'gt - extensions' }
-GtGQLQueryPathBuilder >> gtInterfaceReferencesViewInterfacesTextFor: aType [
-	aType isInterface ifTrue: [ ^ '' ].
-
-	^ interfaceReferences
-		at: aType
-		ifPresent: [ :aCollection | 
-			| aSortedInterfaces |
-			aSortedInterfaces := aCollection
-					asSortedCollection: [ :a :b | a name < b name ].
-			String
-				streamContents: [ :aStream | 
-					aSortedInterfaces
-						do: [ :anInterface | aStream nextPutAll: anInterface name ]
-						separatedBy: [ aStream nextPutAll: ', ' ] ] ]
-		ifAbsent: [ '' ]
-]
-
-{ #category : #'gt - extensions' }
 GtGQLQueryPathBuilder >> gtQueryPathsFor: aView [
 	<gtView>
-	unionReferences ifNil: [ ^ aView empty ].
+	schema ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
 		title: 'Query Paths';
@@ -223,45 +134,6 @@ GtGQLQueryPathBuilder >> gtTypeReferencesFor: aView [
 				ifAbsent: [ #() ] ];
 		column: 'Referenced Type'
 			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ]
-]
-
-{ #category : #'gt - extensions' }
-GtGQLQueryPathBuilder >> gtUnionReferencesFor: aView [
-	<gtView>
-	unionReferences ifNil: [ ^ aView empty ].
-
-	^ aView columnedTree
-		title: 'Union References';
-		priority: 22;
-		items: [ unionReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
-		children: [ :aType | 
-			unionReferences
-				at: aType
-				ifPresent: [ :aCollection | aCollection asSortedCollection: [ :a :b | a name < b name ] ]
-				ifAbsent: [ #() ] ];
-		column: 'Referenced Type'
-			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ];
-		column: 'Unions'
-			text: [ :aType | self gtUnionReferencesViewUnionTextFor: aType ]
-			weight: 2
-]
-
-{ #category : #'gt - extensions' }
-GtGQLQueryPathBuilder >> gtUnionReferencesViewUnionTextFor: aType [
-	aType isUnion ifTrue: [ ^ '' ].
-
-	^ unionReferences
-		at: aType
-		ifPresent: [ :aCollection | 
-			| aSortedInterfaces |
-			aSortedInterfaces := aCollection
-					asSortedCollection: [ :a :b | a name < b name ].
-			String
-				streamContents: [ :aStream | 
-					aSortedInterfaces
-						do: [ :anInterface | aStream nextPutAll: anInterface name ]
-						separatedBy: [ aStream nextPutAll: ', ' ] ] ]
-		ifAbsent: [ '' ]
 ]
 
 { #category : #'private - traversing' }

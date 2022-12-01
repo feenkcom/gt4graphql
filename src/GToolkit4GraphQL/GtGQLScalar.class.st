@@ -45,8 +45,30 @@ GtGQLScalar class >> string [
 ]
 
 { #category : #testing }
-GtGQLScalar >> isBoolean [
+GtGQLScalar >> isBooleanType [
 	^ self name = 'Boolean'
+]
+
+{ #category : #testing }
+GtGQLScalar >> isCommonScalarType [
+	^ self isBooleanType
+		or: [ self isFloatType
+				or: [ self isIntType or: [ self isStringType or: [ self isIdType ] ] ] ]
+]
+
+{ #category : #testing }
+GtGQLScalar >> isFloatType [
+	^ self name = 'Float'
+]
+
+{ #category : #testing }
+GtGQLScalar >> isIdType [
+	^ self name = 'ID'
+]
+
+{ #category : #testing }
+GtGQLScalar >> isIntType [
+	^ self name = 'Int'
 ]
 
 { #category : #testing }
@@ -57,6 +79,11 @@ GtGQLScalar >> isPrimitive [
 { #category : #testing }
 GtGQLScalar >> isScalar [
 	^ true
+]
+
+{ #category : #testing }
+GtGQLScalar >> isStringType [
+	^ self name = 'String'
 ]
 
 { #category : #'api - response' }
