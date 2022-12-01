@@ -33,7 +33,7 @@ GtGQLQueryPathBuilder >> buildPathsFromStart: aStartType toStop: aStopType [
 	(self isType: aStartType kindOf: aStopType) ifTrue: [ ^ self ].
 
 	paths := OrderedCollection new.
-	traversedTypes := LinkedList new.
+	traversedTypes := OrderedCollection new.
 	currentPath := LinkedList new.
 
 	self
