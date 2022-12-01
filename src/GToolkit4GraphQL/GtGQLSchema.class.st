@@ -239,7 +239,9 @@ GtGQLSchema >> gtTypesWithQueryPathsFor: aView [
 		items: [ self baseTypesWithQueryPaths asSortedCollection: [ :a :b | a name < b name ] ])
 		title: 'Types With Query Types';
 		priority: 47;
-		column: 'Paths' text: [ :aType | aType queryPaths size ] width: 40
+		column: 'Paths'
+			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType queryPaths size ] ifFalse: [ '' ] ]
+			width: 40
 ]
 
 { #category : #'gt - extensions' }
