@@ -165,7 +165,7 @@ GtGQLIntrospectionSchemaQueryBuilder >> includeDeprecatedArgumentOfField: aField
 	^ aField arguments
 		detect: [ :anArgument | 
 			anArgument name = 'includeDeprecated'
-				and: [ anArgument type baseType isBoolean ] ]
+				and: [ anArgument type baseType isBooleanType ] ]
 		ifNone: [ nil ]
 ]
 

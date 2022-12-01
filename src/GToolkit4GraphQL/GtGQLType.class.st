@@ -80,7 +80,12 @@ GtGQLType >> gtTypesNameText [
 ]
 
 { #category : #testing }
-GtGQLType >> isBoolean [
+GtGQLType >> isBooleanType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isCommonScalarType [
 	^ false
 ]
 
@@ -91,6 +96,21 @@ GtGQLType >> isComposite [
 
 { #category : #testing }
 GtGQLType >> isDeprecated [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isFloatType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isIdType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isIntType [
 	^ false
 ]
 
@@ -121,6 +141,11 @@ GtGQLType >> isRequired [
 
 { #category : #testing }
 GtGQLType >> isScalar [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isStringType [
 	^ false
 ]
 

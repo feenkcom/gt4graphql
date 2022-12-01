@@ -25,7 +25,9 @@ GtGQLQueryPathBuilder >> build [
 { #category : #'private - building' }
 GtGQLQueryPathBuilder >> buildPathsFromQuery [
 	typeReferences
-		keysDo: [ :aStopType | self buildPathsFromStart: self queryType toStop: aStopType ]
+		keysDo: [ :aStopType | 
+			aStopType isCommonScalarType
+				ifFalse: [ self buildPathsFromStart: self queryType toStop: aStopType ] ]
 ]
 
 { #category : #'private - building' }
