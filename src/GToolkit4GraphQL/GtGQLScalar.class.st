@@ -44,6 +44,17 @@ GtGQLScalar class >> string [
 		yourself
 ]
 
+{ #category : #'api - paths' }
+GtGQLScalar >> defaultVariableValue [
+	self isStringType ifTrue: [ ^ '' ].
+	self isIntType ifTrue: [ ^ 0 ].
+	self isFloatType ifTrue: [ ^ 0.0 ].
+	self isBooleanType ifTrue: [ ^ false ].
+	self isIdType ifTrue: [ ^ 'id' ].
+
+	^ ''
+]
+
 { #category : #testing }
 GtGQLScalar >> isBooleanType [
 	^ self name = 'Boolean'

@@ -68,7 +68,17 @@ GtGQLSnippetElement >> contextDropDown [
 
 	dropDownLook := BrGlamorousWithDropdownAptitude
 			handle: [ self createDropDownButton ]
-			content: [ BrSimpleList new
+			content: [ | aContextVariables hasVariables aListItems |
+				aContextVariables := self contextVariables.
+				hasVariables := aContextVariables isNotNil
+						and: [ aContextVariables isNotEmpty ].
+				aListItems := aContextVariables
+						ifNil: [ #('cannot select variables due to missing context') ]
+						ifNotNil: [ aContextVariables
+								ifEmpty: [ #('there are no available variables') ]
+								ifNotEmpty: [ aContextVariables ] ].
+
+				BrSimpleList new
 					fitContent;
 					stencil: [ :each | 
 						BrHorizontalPane new
@@ -82,15 +92,16 @@ GtGQLSnippetElement >> contextDropDown [
 							when: BlClickEvent
 								do: [ :anEvent | 
 									anEvent consumed: true.
-									button label: each.
 									anEvent currentTarget fireEvent: BrDropdownHideWish new.
-									self snippet context: each ];
+									hasVariables
+										ifTrue: [ button label: each.
+											self snippet context: each ] ];
 							addChild: (BrLabel new
 									aptitude: BrGlamorousLabelAptitude new glamorousRegularFont glamorousCodeSmallSize;
 									text: each;
 									yourself);
 							yourself ];
-					items: self contextVariables;
+					items: aListItems;
 					yourself ].
 	dropDownLook doNotHideWidget.
 	button addAptitude: dropDownLook.
@@ -109,7 +120,14 @@ GtGQLSnippetElement >> contextVariable [
 
 { #category : #accessing }
 GtGQLSnippetElement >> contextVariables [
-	^ self snippet contextVariablesUsing: self snippetContext
+	"Return a collection of variable names.
+	- empty collection indicates that there is an existing snippet context, but there are not variables.
+	- nil indicates that there is no snippet context (and therefore there is not way to select variables)"
+
+	<return: #Collection or: nil>
+	| aSnippetContext |
+	aSnippetContext := self snippetContext ifNil: [ ^ nil ].
+	^ self snippet contextVariablesUsing: aSnippetContext
 ]
 
 { #category : #accessing }
@@ -599,7 +617,7 @@ GtGQLSnippetElement >> updateInputEditor [
 		childNamed: #inputEditor
 		ifFound: [ :editor | 
 			editor editor text asString ~= self snippet input
-				ifTrue: [ editor editor text: self snippet input asRopedText ] ]
+				ifTrue: [ editor editor text: (self snippet input ifNil: [ '' ]) asRopedText ] ]
 ]
 
 { #category : #updating }

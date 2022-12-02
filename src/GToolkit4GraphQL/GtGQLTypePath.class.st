@@ -4,10 +4,23 @@ Class {
 	#instVars : [
 		'steps',
 		'startType',
-		'stopType'
+		'stopType',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Support'
 }
+
+{ #category : #accessing }
+GtGQLTypePath >> context [
+
+	^ context
+]
+
+{ #category : #accessing }
+GtGQLTypePath >> context: anObject [
+
+	context := anObject
+]
 
 { #category : #accessing }
 GtGQLTypePath >> firstStep [
@@ -19,36 +32,23 @@ GtGQLTypePath >> gtQueryFor: aView [
 	<gtView>
 	self steps ifNil: [ ^ aView empty ].
 
-	^ aView forward
+	^ aView explicit
 		title: 'Query';
 		priority: 10;
-		object: [ self query ];
-		view: #gtQueryFor:
-]
-
-{ #category : #'gt - extensions' }
-GtGQLTypePath >> gtQueryPathViewNameText [
-	| aText |
-	aText := '' asRopedText.
-
-	self steps
-		do: [ :aStep | 
-			| aStepText isLeafStep |
-			isLeafStep := aStep = self leafStep.
-			aStepText := aStep fieldName asRopedText.
-			isLeafStep ifTrue: [ aStepText bold ].
-
-			aStep isDeprecated
-				ifTrue: [ aStepText
-						lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
-
-			aText append: aStepText.
-
-			isLeafStep
-				ifFalse: [ aText
-						append: ('.' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ] ].
-
-	^ aText
+		stencil: [ | aQuery aSnippet aPage aPageViewModel |
+			aQuery := self query.
+			aSnippet := GtGQLSnippet new
+					operation: aQuery operation;
+					input: (STONJSON toStringPretty: aQuery input).
+			aPage := LePage new
+					addSnippet: aSnippet;
+					yourself.
+			aPageViewModel := LePageViewModel new
+					pageModel: aPage;
+					receiver: self.
+			LePageToolContentTreeElement new
+				pageViewModel: aPageViewModel;
+				matchParent ]
 ]
 
 { #category : #'gt - extensions' }
@@ -63,6 +63,16 @@ GtGQLTypePath >> gtStepsFor: aView [
 		column: 'Index'
 			text: [ :_ :anIndex | anIndex ]
 			width: 40;
+		column: ''
+			stencil: [ :aStep | 
+				| anIcon |
+				anIcon := BlElement new size: 8 @ 8.
+				aStep isDeprecated
+					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
+						anIcon
+							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
+					ifFalse: [ anIcon background: BlBackground transparent ] ]
+			width: 10;
 		column: 'Step'
 			text: [ :aStep | 
 				| aName |
@@ -129,6 +139,31 @@ GtGQLTypePath >> query [
 		path: self;
 		build;
 		query
+]
+
+{ #category : #accessing }
+GtGQLTypePath >> queryPathViewNameText [
+	| aText |
+	aText := '' asRopedText.
+
+	self steps
+		do: [ :aStep | 
+			| aStepText isLeafStep |
+			isLeafStep := aStep = self leafStep.
+			aStepText := aStep fieldName asRopedText.
+			isLeafStep ifTrue: [ aStepText bold ].
+
+			aStep isDeprecated
+				ifTrue: [ aStepText
+						lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
+
+			aText append: aStepText.
+
+			isLeafStep
+				ifFalse: [ aText
+						append: ('.' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ] ].
+
+	^ aText
 ]
 
 { #category : #accessing }

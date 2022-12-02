@@ -14,6 +14,11 @@ GtGQLNonNullable >> baseType [
 	^ self type ifNotNil: #baseType
 ]
 
+{ #category : #'api - paths' }
+GtGQLNonNullable >> defaultVariableValue [
+	^ self type defaultVariableValue
+]
+
 { #category : #testing }
 GtGQLNonNullable >> isNonNullable [
 	^ true

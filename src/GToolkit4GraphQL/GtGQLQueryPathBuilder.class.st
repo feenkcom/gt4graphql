@@ -6,7 +6,8 @@ Class {
 		'paths',
 		'typeReferences',
 		'traversedTypes',
-		'currentPath'
+		'currentPath',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
@@ -45,7 +46,9 @@ GtGQLQueryPathBuilder >> buildPathsFromStart: aStartType toStop: aStopType [
 
 	paths
 		ifNotEmpty: [ | aTypePaths |
-			aTypePaths := GtGQLTypePaths new paths: paths asArray.
+			aTypePaths := paths asArray.
+
+			self sortPaths: aTypePaths.
 
 			aStartType = self queryType ifTrue: [ aStopType queryPaths: aTypePaths ] ]
 ]
@@ -83,9 +86,21 @@ GtGQLQueryPathBuilder >> completePathForStartType: aStartType stopType: aStopTyp
 	aPath := GtGQLTypePath new
 			steps: currentPath asArray;
 			startType: aStartType;
-			stopType: aStopType.
+			stopType: aStopType;
+			context: self context.
 
 	paths add: aPath
+]
+
+{ #category : #accessing }
+GtGQLQueryPathBuilder >> context [
+	<return: #GtGQLContext or: nil>
+	^ context
+]
+
+{ #category : #accessing }
+GtGQLQueryPathBuilder >> context: aContext [
+	context := aContext
 ]
 
 { #category : #'gt - extensions' }
@@ -102,7 +117,7 @@ GtGQLQueryPathBuilder >> gtQueryPathsFor: aView [
 			(anObject isKindOf: GtGQLType)
 				ifTrue: [ anObject queryPaths ifNil: [ #() ] ]
 				ifFalse: [ #() ] ];
-		column: 'Name' text: [ :aType | aType gtQueryPathViewNameText ];
+		column: 'Name' text: [ :aType | aType queryPathViewNameText ];
 		column: 'Paths'
 			text: [ :anObject | 
 				(anObject isKindOf: GtGQLType)
@@ -187,6 +202,21 @@ GtGQLQueryPathBuilder >> schema [
 { #category : #accessing }
 GtGQLQueryPathBuilder >> schema: anObject [
 	schema := anObject
+]
+
+{ #category : #'private - building' }
+GtGQLQueryPathBuilder >> sortPaths: aTypePaths [
+	aTypePaths
+		sort: [ :a :b | 
+			| aMark bMark |
+			aMark := a isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
+			bMark := b isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
+
+			aMark = bMark
+				ifFalse: [ aMark < bMark ]
+				ifTrue: [ a steps size = b steps size
+						ifFalse: [ a steps size < b steps size ]
+						ifTrue: [ a queryPathViewNameText asString < b queryPathViewNameText asString ] ] ]
 ]
 
 { #category : #'private - traversing' }

@@ -9,6 +9,11 @@ GtGQLEnumeration class >> kindName [
 	^ 'ENUM'
 ]
 
+{ #category : #'api - paths' }
+GtGQLEnumeration >> defaultVariableValue [
+	^ self values anyOne name asString
+]
+
 { #category : #accessing }
 GtGQLEnumeration >> fields [
 	^ self values

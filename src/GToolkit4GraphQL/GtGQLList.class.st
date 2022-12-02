@@ -14,6 +14,11 @@ GtGQLList >> baseType [
 	^ self type ifNotNil: #baseType
 ]
 
+{ #category : #'api - paths' }
+GtGQLList >> defaultVariableValue [
+	^ Array with: self type defaultVariableValue
+]
+
 { #category : #testing }
 GtGQLList >> isList [
 	^ true
