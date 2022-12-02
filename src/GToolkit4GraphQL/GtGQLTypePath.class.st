@@ -39,7 +39,7 @@ GtGQLTypePath >> gtQueryFor: aView [
 			aQuery := self query.
 			aSnippet := GtGQLSnippet new
 					operation: aQuery operation;
-					input: aQuery input.
+					input: (STONJSON toStringPretty: aQuery input).
 			aPage := LePage new
 					addSnippet: aSnippet;
 					yourself.

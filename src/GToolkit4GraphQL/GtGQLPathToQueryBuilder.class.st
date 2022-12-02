@@ -10,7 +10,8 @@ Class {
 		'query',
 		'indentation',
 		'stream',
-		'currentStep'
+		'currentStep',
+		'variables'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
@@ -40,6 +41,9 @@ GtGQLPathToQueryBuilder >> buildCurrentStep [
 
 	aFieldName := currentStep field name.
 	stream nextPutAll: aFieldName.
+	
+	self buildFieldArguments.
+	
 	self isCurrentStepLeaf
 		ifTrue: [ (self hasFieldTypeWithSelections: currentStep)
 				ifTrue: [ stream nextPutAll: ' {' ] ]
@@ -78,6 +82,31 @@ GtGQLPathToQueryBuilder >> buildCurrentStep [
 ]
 
 { #category : #'private - building' }
+GtGQLPathToQueryBuilder >> buildFieldArguments [
+	| fieldArguments requiredArguments |
+	fieldArguments := currentStep field arguments.
+	fieldArguments ifEmpty: [ ^ self ].
+
+	requiredArguments := fieldArguments select: #isRequired.
+	requiredArguments ifEmpty: [ ^ self ].
+
+	stream nextPut: $(.
+
+	requiredArguments
+		do: [ :anArgument | 
+			| aVariableName |
+			stream nextPutAll: anArgument name.
+
+			aVariableName := self variableNameForArgument: anArgument.
+
+			stream nextPutAll: ': $'.
+			stream nextPutAll: aVariableName ]
+		separatedBy: [ stream nextPutAll: ', ' ].
+
+	stream nextPut: $)
+]
+
+{ #category : #'private - building' }
 GtGQLPathToQueryBuilder >> buildOpeningPath [
 	self path steps
 		do: [ :eachStep | 
@@ -88,34 +117,70 @@ GtGQLPathToQueryBuilder >> buildOpeningPath [
 
 { #category : #'api - building' }
 GtGQLPathToQueryBuilder >> buildOperation [
-	^ String
-		streamContents: [ :aStream | 
-			indentation := 0.
-			stream := aStream.
+	| anOperation aQueryName |
+	anOperation := String
+			streamContents: [ :aStream | 
+				variables := Dictionary new.
+				indentation := 0.
+				stream := aStream.
 
-			stream
-				nextPutAll: 'query {';
-				cr.
-				
-			self increaseIndentation.
+				stream
+					nextPutAll: 'query <<<NAME_AND_VARIABLES>>> {';
+					cr.
 
-			self buildOpeningPath.
-			self buildClosingPath.
-			
-			self decreaseIndentation.
+				self increaseIndentation.
 
-			self
-				assert: [ indentation isZero ]
-				description: [ 'Indentation must be zero at the end of operation building process' ].
+				self buildOpeningPath.
+				self buildClosingPath.
 
-			stream
-				nextPut: $};
-				cr ]
+				self decreaseIndentation.
+
+				self
+					assert: [ indentation isZero ]
+					description: [ 'Indentation must be zero at the end of operation building process' ].
+
+				stream
+					nextPut: $};
+					cr.
+
+				stream := nil ].
+
+	aQueryName := variables
+			ifEmpty: [ '' ]
+			ifNotEmpty: [ String
+					streamContents: [ :aStream | 
+						aStream nextPutAll: self path stopType name.
+						aStream nextPut: $(.
+						variables
+							do: [ :aVariable | 
+								aStream nextPut: $$.
+								aStream nextPutAll: aVariable name.
+								aStream nextPutAll: ': '.
+								aStream nextPutAll: aVariable type name ]
+							separatedBy: [ aStream nextPutAll: ', ' ].
+						aStream nextPut: $) ] ].
+
+	^ anOperation copyReplaceAll: '<<<NAME_AND_VARIABLES>>>' with: aQueryName.
 ]
 
 { #category : #'api - building' }
 GtGQLPathToQueryBuilder >> buildQuery [
-	query := GtGQLQuery new operation: self buildOperation
+	query := GtGQLQuery new
+			operation: self buildOperation;
+			input: self buildVariables.
+]
+
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> buildVariables [
+	| input |
+	variables ifNil: [ ^ nil ].
+	variables ifEmpty: [ ^ nil ].
+
+	input := Dictionary new.
+
+	variables do: [ :aVariable | input at: aVariable name put: aVariable value ].
+
+	^ input
 ]
 
 { #category : #'private - building' }
@@ -166,4 +231,31 @@ GtGQLPathToQueryBuilder >> query [
 { #category : #accessing }
 GtGQLPathToQueryBuilder >> query: anObject [
 	query := anObject
+]
+
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> variableNameForArgument: anArgument [
+	| aName aType aVariable anIndex |
+	aName := anArgument name.
+	aType := anArgument type.
+
+	aVariable := nil.
+	anIndex := 0.
+
+	[ aVariable isNil ]
+		whileTrue: [ | aVariableName |
+			aVariableName := anIndex isZero
+					ifTrue: [ aName ]
+					ifFalse: [ aName , anIndex asString ].
+
+			aVariable := variables
+					at: aVariableName
+					ifAbsentPut: [ GtGQLVariable new
+							name: aVariableName;
+							type: aType ].
+
+			aType = aVariable type ifFalse: [ aVariable := nil ].
+			anIndex := anIndex + 1 ].
+
+	^ aVariable name
 ]
