@@ -70,10 +70,13 @@ GtGQLSnippetElement >> contextDropDown [
 			handle: [ self createDropDownButton ]
 			content: [ | aContextVariables hasVariables aListItems |
 				aContextVariables := self contextVariables.
-				hasVariables := aContextVariables isNotNil and: [ hasVariables isNotEmpty ].
+				hasVariables := aContextVariables isNotNil
+						and: [ aContextVariables isNotEmpty ].
 				aListItems := aContextVariables
 						ifNil: [ #('cannot select variables due to missing context') ]
-						ifNotNil: [ #(there are no available variables) ].
+						ifNotNil: [ aContextVariables
+								ifEmpty: [ #('there are no available variables') ]
+								ifNotEmpty: [ aContextVariables ] ].
 
 				BrSimpleList new
 					fitContent;

@@ -6,7 +6,8 @@ Class {
 		'paths',
 		'typeReferences',
 		'traversedTypes',
-		'currentPath'
+		'currentPath',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
@@ -85,9 +86,21 @@ GtGQLQueryPathBuilder >> completePathForStartType: aStartType stopType: aStopTyp
 	aPath := GtGQLTypePath new
 			steps: currentPath asArray;
 			startType: aStartType;
-			stopType: aStopType.
+			stopType: aStopType;
+			context: self context.
 
 	paths add: aPath
+]
+
+{ #category : #accessing }
+GtGQLQueryPathBuilder >> context [
+	<return: #GtGQLContext or: nil>
+	^ context
+]
+
+{ #category : #accessing }
+GtGQLQueryPathBuilder >> context: aContext [
+	context := aContext
 ]
 
 { #category : #'gt - extensions' }

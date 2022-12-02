@@ -4,10 +4,23 @@ Class {
 	#instVars : [
 		'steps',
 		'startType',
-		'stopType'
+		'stopType',
+		'context'
 	],
 	#category : #'GToolkit4GraphQL-Support'
 }
+
+{ #category : #accessing }
+GtGQLTypePath >> context [
+
+	^ context
+]
+
+{ #category : #accessing }
+GtGQLTypePath >> context: anObject [
+
+	context := anObject
+]
 
 { #category : #accessing }
 GtGQLTypePath >> firstStep [
@@ -19,11 +32,23 @@ GtGQLTypePath >> gtQueryFor: aView [
 	<gtView>
 	self steps ifNil: [ ^ aView empty ].
 
-	^ aView forward
+	^ aView explicit
 		title: 'Query';
 		priority: 10;
-		object: [ self query ];
-		view: #gtQueryFor:
+		stencil: [ | aQuery aSnippet aPage aPageViewModel |
+			aQuery := self query.
+			aSnippet := GtGQLSnippet new
+					operation: aQuery operation;
+					input: aQuery input.
+			aPage := LePage new
+					addSnippet: aSnippet;
+					yourself.
+			aPageViewModel := LePageViewModel new
+					pageModel: aPage;
+					receiver: self.
+			LePageToolContentTreeElement new
+				pageViewModel: aPageViewModel;
+				matchParent ]
 ]
 
 { #category : #'gt - extensions' }

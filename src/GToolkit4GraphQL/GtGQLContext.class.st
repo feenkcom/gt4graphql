@@ -50,6 +50,7 @@ GtGQLContext >> buildSchema [
 GtGQLContext >> buildTypePaths [
 	GtGQLQueryPathBuilder new
 		schema: self schema;
+		context: self;
 		build
 ]
 
