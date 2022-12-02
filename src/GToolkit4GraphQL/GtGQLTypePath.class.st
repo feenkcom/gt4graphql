@@ -63,6 +63,16 @@ GtGQLTypePath >> gtStepsFor: aView [
 		column: 'Index'
 			text: [ :_ :anIndex | anIndex ]
 			width: 40;
+		column: ''
+			stencil: [ :aStep | 
+				| anIcon |
+				anIcon := BlElement new size: 8 @ 8.
+				aStep isDeprecated
+					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
+						anIcon
+							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
+					ifFalse: [ anIcon background: BlBackground transparent ] ]
+			width: 10;
 		column: 'Step'
 			text: [ :aStep | 
 				| aName |
