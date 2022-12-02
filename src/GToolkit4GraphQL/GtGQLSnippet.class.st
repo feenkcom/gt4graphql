@@ -84,7 +84,14 @@ GtGQLSnippet >> context [
 
 { #category : #accessing }
 GtGQLSnippet >> context: aString [
-	context := aString
+	context = aString ifTrue: [ ^ self ].
+
+	context := aString.
+	self
+		notifyAnnouncement: (GtGQLSnippetContextChanged new
+				source: self;
+				snippet: self;
+				context: aString)
 ]
 
 { #category : #accessing }
@@ -105,6 +112,8 @@ GtGQLSnippet >> contextUsing: snippetContext [
 { #category : #accessing }
 GtGQLSnippet >> contextVariablesUsing: snippetContext [
 	| variableBindings variables selfObj |
+	snippetContext ifNil: [ ^ #() ].
+
 	variableBindings := snippetContext sharedBindings.
 	variables := (self allSnippetVariables
 			select: [ :each | 
@@ -139,6 +148,8 @@ GtGQLSnippet >> input [
 
 { #category : #accessing }
 GtGQLSnippet >> input: aString [
+	input = aString ifTrue: [ ^ self ].
+
 	input := aString.
 	self
 		notifyAnnouncement: (GtGQLSnippetInputChanged new
@@ -159,6 +170,8 @@ GtGQLSnippet >> operation [
 
 { #category : #accessing }
 GtGQLSnippet >> operation: aString [
+	operation = aString ifTrue: [ ^ self ].
+
 	operation := aString.
 	self
 		notifyAnnouncement: (GtGQLSnippetOperationChanged new
