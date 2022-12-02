@@ -59,6 +59,13 @@ GtGQLReport >> data [
 	^ self value ifNotNil: #data
 ]
 
+{ #category : #'utility - debugging' }
+GtGQLReport >> debugStream: aStream [
+	^ aStream toArray await
+		then: [ :aValue | aValue ]
+		otherwise: [ :anError | anError pass ]
+]
+
 { #category : #accessing }
 GtGQLReport >> gtDataJsonStringFor: aView [
 	<gtView>
