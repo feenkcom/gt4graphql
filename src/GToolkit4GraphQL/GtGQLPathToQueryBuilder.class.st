@@ -150,9 +150,7 @@ GtGQLPathToQueryBuilder >> buildOperation [
 					assert: [ indentation isZero ]
 					description: [ 'Indentation must be zero at the end of operation building process' ].
 
-				stream
-					nextPut: $};
-					cr.
+				stream nextPut: $}.
 
 				stream := nil ].
 
@@ -171,7 +169,7 @@ GtGQLPathToQueryBuilder >> buildOperation [
 							separatedBy: [ aStream nextPutAll: ', ' ].
 						aStream nextPut: $) ] ].
 
-	^ anOperation copyReplaceAll: '<<<NAME_AND_VARIABLES>>>' with: aQueryName.
+	^ anOperation copyReplaceAll: '<<<NAME_AND_VARIABLES>>>' with: aQueryName
 ]
 
 { #category : #'api - building' }
