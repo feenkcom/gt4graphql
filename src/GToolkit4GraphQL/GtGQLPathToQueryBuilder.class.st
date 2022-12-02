@@ -41,9 +41,9 @@ GtGQLPathToQueryBuilder >> buildCurrentStep [
 
 	aFieldName := currentStep field name.
 	stream nextPutAll: aFieldName.
-	
+
 	self buildFieldArguments.
-	
+
 	self isCurrentStepLeaf
 		ifTrue: [ (self hasFieldTypeWithSelections: currentStep)
 				ifTrue: [ stream nextPutAll: ' {' ] ]
@@ -63,10 +63,10 @@ GtGQLPathToQueryBuilder >> buildCurrentStep [
 							stream nextPutAll: self path stopType name.
 
 							(self hasFieldTypeWithSelections: currentStep)
-								ifTrue: [ stream nextPutAll: ' {' ] ].
+								ifTrue: [ stream nextPutAll: ' {' ].
 
-					self increaseIndentation.
-					shouldDecreaseIndentation := true ].
+							self increaseIndentation.
+							shouldDecreaseIndentation := true ] ].
 
 			stream cr.
 			self nextPutIndentationTabs.
@@ -88,6 +88,17 @@ GtGQLPathToQueryBuilder >> buildFieldArguments [
 	fieldArguments ifEmpty: [ ^ self ].
 
 	requiredArguments := fieldArguments select: #isRequired.
+
+	currentStep field arguments
+		detect: [ :anArgument | anArgument name = 'first' ]
+		ifFound: [ :anArgument | requiredArguments := {anArgument} , requiredArguments ]
+		ifNone: [  "ignore" ].
+
+	currentStep field arguments
+		detect: [ :anArgument | anArgument name = 'after' ]
+		ifFound: [ :anArgument | requiredArguments := {anArgument} , requiredArguments ]
+		ifNone: [  "ignore" ].
+
 	requiredArguments ifEmpty: [ ^ self ].
 
 	stream nextPut: $(.
@@ -120,7 +131,7 @@ GtGQLPathToQueryBuilder >> buildOperation [
 	| anOperation aQueryName |
 	anOperation := String
 			streamContents: [ :aStream | 
-				variables := Dictionary new.
+				variables := OrderedDictionary new.
 				indentation := 0.
 				stream := aStream.
 
@@ -176,7 +187,7 @@ GtGQLPathToQueryBuilder >> buildVariables [
 	variables ifNil: [ ^ nil ].
 	variables ifEmpty: [ ^ nil ].
 
-	input := Dictionary new.
+	input := OrderedDictionary new.
 
 	variables do: [ :aVariable | input at: aVariable name put: aVariable value ].
 
@@ -248,13 +259,18 @@ GtGQLPathToQueryBuilder >> variableNameForArgument: anArgument [
 					ifTrue: [ aName ]
 					ifFalse: [ aName , anIndex asString ].
 
-			aVariable := variables
-					at: aVariableName
-					ifAbsentPut: [ GtGQLVariable new
+			variables
+				at: aVariableName
+				ifAbsentPut: [ aVariable := GtGQLVariable new
 							name: aVariableName;
-							type: aType ].
+							type: aType.
 
-			aType = aVariable type ifFalse: [ aVariable := nil ].
+					(aName = 'first' and: [ aType baseType isIntType ])
+						ifTrue: [ aVariable value: 10 ].
+
+					aVariable ].
+
+			"aType = aVariable type ifFalse: [ aVariable := nil ]."
 			anIndex := anIndex + 1 ].
 
 	^ aVariable name

@@ -351,6 +351,8 @@ GtGQLValueBuilder >> visitGtGQLValueList: aValue [
 
 { #category : #visiting }
 GtGQLValueBuilder >> visitGtGQLValueObject: aValue [
+	aValue userData jsonObject ifNil: [ ^ self ].
+
 	aValue userData
 		do: [ :aJson :anAlias | 
 			| aStep aField aType |

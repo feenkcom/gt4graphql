@@ -3,7 +3,8 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'name',
-		'type'
+		'type',
+		'value'
 	],
 	#category : #'GToolkit4GraphQL-Support'
 }
@@ -30,7 +31,14 @@ GtGQLVariable >> type: anObject [
 
 { #category : #accessing }
 GtGQLVariable >> value [
+	value ifNotNil: [ ^ value ].
+
 	self type isNonNullable ifFalse: [ ^ nil ].
 
 	^ self type defaultVariableValue
+]
+
+{ #category : #accessing }
+GtGQLVariable >> value: anObject [
+	value := anObject
 ]
