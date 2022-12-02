@@ -160,7 +160,7 @@ GtGQLPaginatorStream >> hasNextPage [
 	hasNextPage := self hasNextPageObject.
 	hasNextPage ifNil: [ ^ false ].
 	hasNextPage exists ifFalse: [ ^ false ].
-	hasNextPage jsonObject isBooleanType ifFalse: [ ^ false ].
+	hasNextPage jsonObject isBoolean ifFalse: [ ^ false ].
 	^ hasNextPage jsonObject
 ]
 
