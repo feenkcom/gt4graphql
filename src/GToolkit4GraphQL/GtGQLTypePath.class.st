@@ -27,31 +27,6 @@ GtGQLTypePath >> gtQueryFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLTypePath >> gtQueryPathViewNameText [
-	| aText |
-	aText := '' asRopedText.
-
-	self steps
-		do: [ :aStep | 
-			| aStepText isLeafStep |
-			isLeafStep := aStep = self leafStep.
-			aStepText := aStep fieldName asRopedText.
-			isLeafStep ifTrue: [ aStepText bold ].
-
-			aStep isDeprecated
-				ifTrue: [ aStepText
-						lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
-
-			aText append: aStepText.
-
-			isLeafStep
-				ifFalse: [ aText
-						append: ('.' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ] ].
-
-	^ aText
-]
-
-{ #category : #'gt - extensions' }
 GtGQLTypePath >> gtStepsFor: aView [
 	<gtView>
 	self steps ifNil: [ ^ aView empty ].
@@ -129,6 +104,31 @@ GtGQLTypePath >> query [
 		path: self;
 		build;
 		query
+]
+
+{ #category : #accessing }
+GtGQLTypePath >> queryPathViewNameText [
+	| aText |
+	aText := '' asRopedText.
+
+	self steps
+		do: [ :aStep | 
+			| aStepText isLeafStep |
+			isLeafStep := aStep = self leafStep.
+			aStepText := aStep fieldName asRopedText.
+			isLeafStep ifTrue: [ aStepText bold ].
+
+			aStep isDeprecated
+				ifTrue: [ aStepText
+						lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
+
+			aText append: aStepText.
+
+			isLeafStep
+				ifFalse: [ aText
+						append: ('.' asRopedText foreground: BrGlamorousColors disabledButtonTextColor) ] ].
+
+	^ aText
 ]
 
 { #category : #accessing }

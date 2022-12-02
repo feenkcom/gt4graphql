@@ -53,11 +53,6 @@ GtGQLType >> gtDescriptionFor: aView [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLType >> gtQueryPathViewNameText [
-	^ self name
-]
-
-{ #category : #'gt - extensions' }
 GtGQLType >> gtQueryPathsFor: aView [
 	<gtView>
 	(self hasOptionAt: #queryPaths) ifFalse: [ ^ aView empty ].
@@ -65,17 +60,7 @@ GtGQLType >> gtQueryPathsFor: aView [
 	^ aView columnedList
 		title: 'Query Paths';
 		priority: 48;
-		items: [ self queryPaths
-				asSortedCollection: [ :a :b | 
-					| aMark bMark |
-					aMark := a isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
-					bMark := b isDeprecated ifTrue: [ 10 ] ifFalse: [ 0 ].
-
-					aMark = bMark
-						ifFalse: [ aMark < bMark ]
-						ifTrue: [ a steps size = b steps size
-								ifFalse: [ a steps size < b steps size ]
-								ifTrue: [ a gtQueryPathViewNameText asString < b gtQueryPathViewNameText asString ] ] ] ];
+		items: [ self queryPaths ];
 		column: ''
 			stencil: [ :aPath | 
 				| anIcon |
@@ -86,7 +71,7 @@ GtGQLType >> gtQueryPathsFor: aView [
 							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
 					ifFalse: [ anIcon background: BlBackground transparent ] ]
 			width: 10;
-		column: 'Name' text: [ :aPath | aPath gtQueryPathViewNameText ]
+		column: 'Name' text: [ :aPath | aPath queryPathViewNameText ]
 ]
 
 { #category : #'gt - extensions' }
@@ -216,6 +201,11 @@ GtGQLType >> printOn: aStream [
 
 { #category : #printing }
 GtGQLType >> printTypeOn: aStream [ 
+]
+
+{ #category : #'gt - extensions' }
+GtGQLType >> queryPathViewNameText [
+	^ self name
 ]
 
 { #category : #accessing }

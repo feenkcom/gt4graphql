@@ -599,7 +599,7 @@ GtGQLSnippetElement >> updateInputEditor [
 		childNamed: #inputEditor
 		ifFound: [ :editor | 
 			editor editor text asString ~= self snippet input
-				ifTrue: [ editor editor text: self snippet input asRopedText ] ]
+				ifTrue: [ editor editor text: (self snippet input ifNil: [ '' ]) asRopedText ] ]
 ]
 
 { #category : #updating }

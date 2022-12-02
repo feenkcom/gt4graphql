@@ -124,6 +124,7 @@ GtGQLSnippet >> contextVariablesUsing: snippetContext [
 { #category : #accessing }
 GtGQLSnippet >> defaultContextUsing: snippetContext [
 	| obj |
+	snippetContext ifNil: [ ^ nil ].
 	obj := snippetContext selfObject.
 	(self isContext: obj) ifTrue: [ ^ 'self' ].
 	obj class allInstVarNames
