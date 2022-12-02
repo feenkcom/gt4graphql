@@ -7,65 +7,108 @@ Class {
 	#superclass : #Object,
 	#instVars : [
 		'path',
-		'query'
+		'query',
+		'indentation',
+		'stream',
+		'currentStep'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
 { #category : #'api - building' }
 GtGQLPathToQueryBuilder >> build [
-	self buildQuery.
-	^ self query
+	self buildQuery
+]
+
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> buildClosingPath [
+	self path steps
+		reverseDo: [ :eachStep | 
+			self decreaseIndentation.
+			self nextPutIndentationTabs.
+
+			eachStep = self path leafStep
+				ifTrue: [ (self hasFieldTypeWithSelections: eachStep) ifTrue: [ stream nextPutAll: '}' ] ]
+				ifFalse: [ stream nextPutAll: '}' ].
+			stream cr ]
+]
+
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> buildCurrentStep [
+	| aFieldName |
+	self nextPutIndentationTabs.
+
+	aFieldName := currentStep field name.
+	stream nextPutAll: aFieldName.
+	self isCurrentStepLeaf
+		ifTrue: [ (self hasFieldTypeWithSelections: currentStep)
+				ifTrue: [ stream nextPutAll: ' {' ] ]
+		ifFalse: [ stream nextPutAll: ' {' ].
+
+	self increaseIndentation.
+
+	(self isTypeWithSelections: currentStep type baseType)
+		ifTrue: [ | shouldDecreaseIndentation |
+			shouldDecreaseIndentation := false.
+
+			self isCurrentStepLeaf
+				ifTrue: [ self path stopType = currentStep fieldBaseType
+						ifFalse: [ stream cr.
+							self nextPutIndentationTabs.
+							stream nextPutAll: '...on '.
+							stream nextPutAll: self path stopType name.
+
+							(self hasFieldTypeWithSelections: currentStep)
+								ifTrue: [ stream nextPutAll: ' {' ] ].
+
+					self increaseIndentation.
+					shouldDecreaseIndentation := true ].
+
+			stream cr.
+			self nextPutIndentationTabs.
+			stream nextPutAll: GtGQLIntrospectionConstants metaMetaTypeName.
+
+			shouldDecreaseIndentation
+				ifTrue: [ self decreaseIndentation.
+					stream cr.
+					self nextPutIndentationTabs.
+					stream nextPut: $} ] ].
+
+	stream cr
+]
+
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> buildOpeningPath [
+	self path steps
+		do: [ :eachStep | 
+			currentStep := eachStep.
+			self buildCurrentStep.
+			currentStep := nil ]
 ]
 
 { #category : #'api - building' }
 GtGQLPathToQueryBuilder >> buildOperation [
 	^ String
 		streamContents: [ :aStream | 
-			| indentation |
 			indentation := 0.
+			stream := aStream.
 
-			aStream
+			stream
 				nextPutAll: 'query {';
 				cr.
-			indentation := indentation + 1.
+				
+			self increaseIndentation.
 
-			self path steps
-				do: [ :eachStep | 
-					| aFieldName |
-					aFieldName := eachStep field name.
+			self buildOpeningPath.
+			self buildClosingPath.
+			
+			self decreaseIndentation.
 
-					indentation timesRepeat: [ aStream tab ].
+			self
+				assert: [ indentation isZero ]
+				description: [ 'Indentation must be zero at the end of operation building process' ].
 
-					aStream nextPutAll: aFieldName.
-
-					eachStep = self path leafStep
-						ifTrue: [ (self hasFieldTypeWithSelections: eachStep)
-								ifTrue: [ aStream nextPutAll: ' {' ] ]
-						ifFalse: [ aStream nextPutAll: ' {' ].
-
-					indentation := indentation + 1.
-
-					(self isTypeWithSelections: eachStep type baseType)
-						ifTrue: [ aStream cr.
-							indentation timesRepeat: [ aStream tab ].
-							aStream nextPutAll: GtGQLIntrospectionConstants metaMetaTypeName ].
-
-					aStream cr ].
-
-			self path steps
-				reverseDo: [ :eachStep | 
-					indentation := indentation - 1.
-
-					indentation timesRepeat: [ aStream tab ].
-
-					eachStep = self path leafStep
-						ifTrue: [ (self hasFieldTypeWithSelections: eachStep)
-								ifTrue: [ aStream nextPutAll: '}' ] ]
-						ifFalse: [ aStream nextPutAll: '}' ].
-					aStream cr ].
-
-			aStream
+			stream
 				nextPut: $};
 				cr ]
 ]
@@ -75,14 +118,34 @@ GtGQLPathToQueryBuilder >> buildQuery [
 	query := GtGQLQuery new operation: self buildOperation
 ]
 
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> decreaseIndentation [
+	indentation := indentation - 1
+]
+
 { #category : #'api - building' }
 GtGQLPathToQueryBuilder >> hasFieldTypeWithSelections: eachStep [
 	^ self isTypeWithSelections: eachStep fieldBaseType
 ]
 
 { #category : #'api - building' }
+GtGQLPathToQueryBuilder >> increaseIndentation [
+	indentation := indentation + 1
+]
+
+{ #category : #'private - testing' }
+GtGQLPathToQueryBuilder >> isCurrentStepLeaf [
+	^ currentStep = self path leafStep
+]
+
+{ #category : #'api - building' }
 GtGQLPathToQueryBuilder >> isTypeWithSelections: aBaseType [
 	^ aBaseType isComposite or: [ aBaseType isUnion ]
+]
+
+{ #category : #'private - building' }
+GtGQLPathToQueryBuilder >> nextPutIndentationTabs [
+	indentation timesRepeat: [ stream tab ]
 ]
 
 { #category : #accessing }
