@@ -55,6 +55,11 @@ GtGQLSchema >> baseTypesCount [
 ]
 
 { #category : #accessing }
+GtGQLSchema >> baseTypesWithMutationPaths [
+	^ self baseTypes select: [ :each | each mutationPaths isNotNil ]
+]
+
+{ #category : #accessing }
 GtGQLSchema >> baseTypesWithQueryPaths [
 	^ self baseTypes select: [ :each | each queryPaths isNotNil ]
 ]
@@ -233,12 +238,25 @@ GtGQLSchema >> gtTypesFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLSchema >> gtTypesWithMutationPathsFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self baseTypesWithMutationPaths asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Types With Mutation Paths';
+		priority: 48;
+		column: 'Paths'
+			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType mutationPaths size ] ifFalse: [ '' ] ]
+			width: 40
+]
+
+{ #category : #'gt - extensions' }
 GtGQLSchema >> gtTypesWithQueryPathsFor: aView [
 	<gtView>
 	^ (self class
 		gtTypesFor: aView
 		items: [ self baseTypesWithQueryPaths asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Types With Query Types';
+		title: 'Types With Query Paths';
 		priority: 47;
 		column: 'Paths'
 			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType queryPaths size ] ifFalse: [ '' ] ]

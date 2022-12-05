@@ -53,13 +53,35 @@ GtGQLType >> gtDescriptionFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLType >> gtMutationPathsFor: aView [
+	<gtView>
+	(self hasOptionAt: #mutationPaths) ifFalse: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Mutation Paths';
+		priority: 48;
+		items: [ self mutationPaths ];
+		column: ''
+			stencil: [ :aPath | 
+				| anIcon |
+				anIcon := BlElement new size: 8 @ 8.
+				aPath isDeprecated
+					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
+						anIcon
+							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated mutation path') ]
+					ifFalse: [ anIcon background: BlBackground transparent ] ]
+			width: 10;
+		column: 'Name' text: [ :aPath | aPath queryPathViewNameText ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLType >> gtQueryPathsFor: aView [
 	<gtView>
 	(self hasOptionAt: #queryPaths) ifFalse: [ ^ aView empty ].
 
 	^ aView columnedList
 		title: 'Query Paths';
-		priority: 48;
+		priority: 47;
 		items: [ self queryPaths ];
 		column: ''
 			stencil: [ :aPath | 
@@ -162,6 +184,16 @@ GtGQLType >> isUnion [
 { #category : #accessing }
 GtGQLType >> kindName [
 	^ self class kindName
+]
+
+{ #category : #accessing }
+GtGQLType >> mutationPaths [
+	^ self optionAt: #mutationPaths ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLType >> mutationPaths: aTypePaths [
+	self optionAt: #mutationPaths put: aTypePaths
 ]
 
 { #category : #accessing }

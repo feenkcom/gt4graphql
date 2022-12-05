@@ -107,6 +107,22 @@ GtGQLTypePath >> isDeprecated [
 ]
 
 { #category : #accessing }
+GtGQLTypePath >> isMutation [
+	self context
+		ifNotNil: [ :aContext | aContext schema ifNotNil: [ :aSchema | ^ self startType = aSchema mutationType ] ].
+
+	^ self startType name = 'Mutation'
+]
+
+{ #category : #accessing }
+GtGQLTypePath >> isQuery [
+	self context
+		ifNotNil: [ :aContext | aContext schema ifNotNil: [ :aSchema | ^ self startType = aSchema queryType ] ].
+
+	^ self startType name = 'Query'
+]
+
+{ #category : #accessing }
 GtGQLTypePath >> leafStep [
 	^ self steps ifNotEmpty: #last ifEmpty: [ nil ]
 ]

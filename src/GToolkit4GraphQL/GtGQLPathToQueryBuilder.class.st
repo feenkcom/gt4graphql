@@ -134,9 +134,12 @@ GtGQLPathToQueryBuilder >> buildOperation [
 				variables := OrderedDictionary new.
 				indentation := 0.
 				stream := aStream.
-
+				
+				self path isQuery ifTrue: [ (stream nextPutAll: 'query') ].
+				self path isMutation ifTrue: [ (stream nextPutAll: 'mutation') ].
+				
 				stream
-					nextPutAll: 'query <<<NAME_AND_VARIABLES>>> {';
+					nextPutAll: ' <<<NAME_AND_VARIABLES>>> {';
 					cr.
 
 				self increaseIndentation.

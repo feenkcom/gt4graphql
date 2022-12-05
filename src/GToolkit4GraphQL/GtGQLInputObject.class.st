@@ -19,6 +19,11 @@ GtGQLInputObject >> defaultValue: anObject [
 	self propertyAt: #defaultValue put: anObject
 ]
 
+{ #category : #'api - paths' }
+GtGQLInputObject >> defaultVariableValue [
+	^ Dictionary new
+]
+
 { #category : #accessing }
 GtGQLInputObject >> deprecationReason [
 	^ self propertyAt: #deprecationReason
