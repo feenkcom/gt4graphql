@@ -135,8 +135,13 @@ GtGQLReport >> printOn: aStream [
 
 	aStream
 		nextPut: $(;
-		nextPutAll: self name asString;
-		nextPutAll: ': ';
+		nextPutAll: self name asString.
+
+	self name
+		ifEmpty: [ aStream nextPutAll: ':' ]
+		ifNotEmpty: [ aStream nextPutAll: ': ' ].
+
+	aStream
 		nextPutAll: self baseType name asString;
 		nextPut: $)
 ]

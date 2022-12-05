@@ -28,8 +28,8 @@ GtGQLValueBuilder >> buildModelChildren: aModel [
 { #category : #'private - building' }
 GtGQLValueBuilder >> buildStartingAtDataPath [
 	| aCurrentStep aCurrentType |
-	aCurrentStep := self queryStep.
-	aCurrentType := self queryType.
+	aCurrentStep := self operationStep.
+	aCurrentType := self operationType.
 
 	dataPath
 		do: [ :anAlias | 
@@ -45,9 +45,9 @@ GtGQLValueBuilder >> buildStartingAtDataPath [
 { #category : #'private - building' }
 GtGQLValueBuilder >> buildStartingAtQuery [
 	queryValue := self
-			buildType: self queryType
+			buildType: self operationType
 			data: self data
-			step: self queryStep.
+			step: self operationStep.
 	self skipQueryTypeIfOnlyOneFieldRequested
 ]
 
@@ -119,6 +119,12 @@ GtGQLValueBuilder >> listTypeOfItemType: anItemType [
 		ifAbsentPut: [ aList ]
 ]
 
+{ #category : #accessing }
+GtGQLValueBuilder >> mutationType [
+	<return: #GtGQLType>
+	^ self schema ifNotNil: #mutationType
+]
+
 { #category : #'double dispatch - types' }
 GtGQLValueBuilder >> newValueEnumerationWithType: aType [
 	^ GtGQLValueEnumeration new type: aType
@@ -187,6 +193,34 @@ GtGQLValueBuilder >> nonInterfaceType: aType data: aJson [
 ]
 
 { #category : #'private - model creation' }
+GtGQLValueBuilder >> operationNode [
+	| aDocumentNode anOperationNode |
+	aDocumentNode := self query graphqlNode.
+	anOperationNode := nil.
+	aDocumentNode
+		allNodesOfType: GraphQLOperationDefinitionNode
+		do: [ :aNode | 
+			(aNode isPartOfQuery or: [ aNode isPartOfMutation ])
+				ifTrue: [ ^ aNode ]
+				ifFalse: [ anOperationNode ] ].
+
+	^ anOperationNode
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> operationStep [
+	^ GtGQLValueStep new ast: self operationNode
+]
+
+{ #category : #'private - building' }
+GtGQLValueBuilder >> operationType [
+	self query isQueryOperation ifTrue: [ ^ self queryType ].
+	self query isMutationOperation ifTrue: [ ^ self mutationType ].
+
+	^ nil
+]
+
+{ #category : #'private - model creation' }
 GtGQLValueBuilder >> prepareGtGQLValueConnectionObject: aValue withEdges: aListStep [
 	"Return true if there edge items exists, false otherwise"
 
@@ -250,23 +284,6 @@ GtGQLValueBuilder >> query [
 { #category : #accessing }
 GtGQLValueBuilder >> query: anObject [
 	query := anObject
-]
-
-{ #category : #'private - model creation' }
-GtGQLValueBuilder >> queryNode [
-	| aDocumentNode anOperationNode |
-	aDocumentNode := self query graphqlNode.
-	anOperationNode := nil.
-	aDocumentNode
-		allNodesOfType: GraphQLOperationDefinitionNode
-		do: [ :aNode | aNode isPartOfQuery ifTrue: [ ^ aNode ] ifFalse: [ anOperationNode ] ].
-
-	^ anOperationNode
-]
-
-{ #category : #'private - building' }
-GtGQLValueBuilder >> queryStep [
-	^ GtGQLValueStep new ast: self queryNode
 ]
 
 { #category : #accessing }
