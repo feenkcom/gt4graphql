@@ -29,10 +29,11 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLSchema class >> typeForObject: aTypeOrField [
-	^ (aTypeOrField isKindOf: GtGQLField)
-		ifTrue: [ aTypeOrField type ]
-		ifFalse: [ aTypeOrField ]
+GtGQLSchema class >> typeForObject: anObject [
+	(anObject isKindOf: GtGQLField) ifTrue: [ ^ anObject type ].
+	(anObject isKindOf: GtGQLInputObject) ifTrue: [ ^ anObject type ].
+
+	^ anObject
 ]
 
 { #category : #accessing }
