@@ -73,7 +73,7 @@ GtGQLContext >> clientBuilder: aBuilder [
 	clientBuilder := aBuilder
 ]
 
-{ #category : #accessing }
+{ #category : #'gt - extensions' }
 GtGQLContext >> gtActionBrowseReportFor: anAction [
 	<gtAction>
 	^ anAction button
@@ -255,7 +255,7 @@ GtGQLContext >> register [
 	GtGQLContexts register: self
 ]
 
-{ #category : #accessing }
+{ #category : #'api - report' }
 GtGQLContext >> report [
 	^ self
 		optionAt: #report
@@ -264,27 +264,27 @@ GtGQLContext >> report [
 				type: (self schema typeNamed: self reportTypeName) ]
 ]
 
-{ #category : #accessing }
+{ #category : #'api - report' }
 GtGQLContext >> report: aReport [
 	self optionAt: #report put: (aReport context: self)
 ]
 
-{ #category : #accessing }
+{ #category : #'api - report' }
 GtGQLContext >> reportClass [
 	^ self optionAt: #reportClass ifAbsentPut: [ GtGQLReport ]
 ]
 
-{ #category : #accessing }
+{ #category : #'api - report' }
 GtGQLContext >> reportClass: aClass [
 	^ self optionAt: #reportClass put: aClass
 ]
 
-{ #category : #accessing }
+{ #category : #'api - report' }
 GtGQLContext >> reportTypeName [
 	^ self optionAt: #reportTypeName ifAbsent: [ nil ]
 ]
 
-{ #category : #accessing }
+{ #category : #'api - report' }
 GtGQLContext >> reportTypeName: aTypeName [
 	self optionAt: #reportTypeName put: aTypeName
 ]
