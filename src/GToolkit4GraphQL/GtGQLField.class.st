@@ -105,6 +105,9 @@ GtGQLField >> gtTypesNameText [
 	| aText |
 	aText := self name asRopedText.
 
+	self isMetaField
+		ifTrue: [ ^ aText foreground: BrGlamorousColors disabledButtonTextColor ].
+
 	self isRequired ifTrue: [ aText bold ].
 
 	self isDeprecated ifTrue: [ aText lineThroughDo: [ :anAttribute |  ] ].
