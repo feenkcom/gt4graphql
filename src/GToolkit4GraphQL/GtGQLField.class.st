@@ -1,6 +1,9 @@
 Class {
 	#name : #GtGQLField,
 	#superclass : #GtGQLModel,
+	#instVars : [
+		'parentType'
+	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -70,6 +73,16 @@ GtGQLField >> gtArgumentsFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLField >> gtDepricationReasonFor: aView [
+	<gtView>
+	self isDeprecated ifFalse: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Deprecation Reason';
+		priority: 50;
+		stencil: [ LeCoderTextElement coderElementFor: (self deprecationReason ifNil: [ '' ]) ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLField >> gtDescriptionFor: aView [
 	<gtView>
 	self description ifNil: [ ^ aView empty ].
@@ -77,16 +90,6 @@ GtGQLField >> gtDescriptionFor: aView [
 		title: 'Description';
 		priority: 40;
 		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
-]
-
-{ #category : #'gt - extensions' }
-GtGQLField >> gtRepricationReasonFor: aView [
-	<gtView>
-	self isDeprecated ifFalse: [ ^ aView empty ].
-	^ aView explicit
-		title: 'Deprecation Reason';
-		priority: 50;
-		stencil: [ LeCoderTextElement coderElementFor: (self deprecationReason ifNil: [ '' ]) ]
 ]
 
 { #category : #accessing }
@@ -97,7 +100,11 @@ GtGQLField >> gtTypeFor: aView [
 
 	^ (GtGQLSchema gtTypesFor: aView items: [ {self type baseType} ])
 		title: 'Type';
-		expandUpTo: 1
+		expandUpTo: 1;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Type'
+			tooltip: 'Inspect field type'
+			action: [ :aButton | aButton phlow spawnObject: self type baseType ]
 ]
 
 { #category : #'gt - extensions' }

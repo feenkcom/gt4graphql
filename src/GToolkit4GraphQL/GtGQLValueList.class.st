@@ -2,8 +2,7 @@ Class {
 	#name : #GtGQLValueList,
 	#superclass : #GtGQLValue,
 	#instVars : [
-		'items',
-		'itemStep'
+		'items'
 	],
 	#category : #'GToolkit4GraphQL-Report'
 }
@@ -72,12 +71,7 @@ GtGQLValueList >> initialize [
 
 { #category : #accessing }
 GtGQLValueList >> itemStep [
-	^ itemStep
-]
-
-{ #category : #accessing }
-GtGQLValueList >> itemStep: anObject [
-	itemStep := anObject
+	^ self step
 ]
 
 { #category : #accessing }

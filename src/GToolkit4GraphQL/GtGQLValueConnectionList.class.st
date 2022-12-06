@@ -6,7 +6,8 @@ Class {
 		'listData',
 		'listType',
 		'totalCount',
-		'listStep'
+		'listStep',
+		'itemStep'
 	],
 	#category : #'GToolkit4GraphQL-Report'
 }
@@ -39,6 +40,16 @@ GtGQLValueConnectionList >> gtFieldsViewValueText [
 					aStream
 						space;
 						nextPutAll: ('item' asPluralBasedOn: aCollection size) ] ]
+]
+
+{ #category : #accessing }
+GtGQLValueConnectionList >> itemStep [
+	^ itemStep
+]
+
+{ #category : #accessing }
+GtGQLValueConnectionList >> itemStep: anObject [
+	itemStep := anObject
 ]
 
 { #category : #accessing }

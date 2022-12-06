@@ -194,22 +194,21 @@ GtGQLValueBuilder >> nonInterfaceType: aType data: aJson [
 
 { #category : #'private - model creation' }
 GtGQLValueBuilder >> operationNode [
-	| aDocumentNode anOperationNode |
+	| aDocumentNode |
 	aDocumentNode := self query graphqlNode.
-	anOperationNode := nil.
 	aDocumentNode
 		allNodesOfType: GraphQLOperationDefinitionNode
-		do: [ :aNode | 
-			(aNode isPartOfQuery or: [ aNode isPartOfMutation ])
-				ifTrue: [ ^ aNode ]
-				ifFalse: [ anOperationNode ] ].
+		do: [ :aNode | (aNode isPartOfQuery or: [ aNode isPartOfMutation ]) ifTrue: [ ^ aNode ] ].
 
-	^ anOperationNode
+	self error: 'An operation definition node must exist'
 ]
 
 { #category : #'private - building' }
 GtGQLValueBuilder >> operationStep [
-	^ GtGQLValueStep new ast: self operationNode
+	| aNode |
+	^ GtGQLValueStep new
+		ast: (aNode := self operationNode);
+		name: (aNode type ifNotNil: #source)
 ]
 
 { #category : #'private - building' }

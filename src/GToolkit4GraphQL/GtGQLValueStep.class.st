@@ -38,6 +38,13 @@ GtGQLValueStep >> fieldName [
 	^ self name ifNil: [ '?' ]
 ]
 
+{ #category : #printing }
+GtGQLValueStep >> fullName [
+	"Return step name in a form of `alias: name`"
+
+	^ String streamContents: [ :aStream | self printFullNameOn: aStream ]
+]
+
 { #category : #'gt - extensions' }
 GtGQLValueStep >> gtAstExploreFor: aView [
 	<gtView>
@@ -48,6 +55,18 @@ GtGQLValueStep >> gtAstExploreFor: aView [
 		priority: 1;
 		object: [ self ast ];
 		view: #gtExploreFor:
+]
+
+{ #category : #'gt - extensions' }
+GtGQLValueStep >> gtParentsFor: aView [
+	<gtView>
+	self parent ifNil: [ ^ aView empty ].
+
+	^ aView columnedList
+		title: 'Parents';
+		priority: 1;
+		items: [ self withAllParents ];
+		column: 'Name' text: [ :aStep | aStep fullName ]
 ]
 
 { #category : #accessing }
@@ -91,20 +110,23 @@ GtGQLValueStep >> parent: anObject [
 ]
 
 { #category : #printing }
-GtGQLValueStep >> printOn: aStream [
-	super printOn: aStream.
-
-	aStream nextPut: $(.
-
+GtGQLValueStep >> printFullNameOn: aStream [
 	self alias
 		ifNotNil: [ :anAlias | 
 			aStream
 				nextPutAll: anAlias asString;
 				nextPutAll: ': ' ].
 
-	aStream
-		nextPutAll: self fieldName;
-		nextPut: $)
+	aStream nextPutAll: self fieldName
+]
+
+{ #category : #printing }
+GtGQLValueStep >> printOn: aStream [
+	super printOn: aStream.
+
+	aStream nextPut: $(.
+	self printFullNameOn: aStream.
+	aStream nextPut: $)
 ]
 
 { #category : #printing }
@@ -113,4 +135,16 @@ GtGQLValueStep >> resultName [
 
 	<return: #String>
 	^ self alias ifNil: [ self fieldName ]
+]
+
+{ #category : #enumerating }
+GtGQLValueStep >> withAllParents [
+	^ Array
+		streamContents: [ :aStream | self withAllParentsDo: [ :aStep | aStream nextPut: aStep ] ]
+]
+
+{ #category : #enumerating }
+GtGQLValueStep >> withAllParentsDo: aBlock [
+	self parent ifNotNil: [ :aParent | aParent withAllParentsDo: aBlock ].
+	aBlock cull: self
 ]
