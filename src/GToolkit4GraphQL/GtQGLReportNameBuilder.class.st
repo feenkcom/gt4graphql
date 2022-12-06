@@ -34,7 +34,7 @@ GtQGLReportNameBuilder >> build [
 
 { #category : #accessing }
 GtQGLReportNameBuilder >> name [
-	^ name ifNil: [ '?' ]
+	^ name ifNil: [ '' ]
 ]
 
 { #category : #accessing }

@@ -7,7 +7,8 @@ Class {
 		'typeReferences',
 		'traversedTypes',
 		'currentPath',
-		'context'
+		'context',
+		'startAccessor'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
@@ -19,16 +20,18 @@ GtGQLQueryPathBuilder >> baseTypes [
 
 { #category : #'api - building' }
 GtGQLQueryPathBuilder >> build [
-	self buildTypeReferences.
-	self buildPathsFromQuery
+	startAccessor
+		ifNil: [ self buildQueryPaths.
+			self buildMutationPaths.
+			^ self ].
+
+	self buildPathsFromStartType
 ]
 
-{ #category : #'private - building' }
-GtGQLQueryPathBuilder >> buildPathsFromQuery [
-	typeReferences
-		keysDo: [ :aStopType | 
-			aStopType isCommonScalarType
-				ifFalse: [ self buildPathsFromStart: self queryType toStop: aStopType ] ]
+{ #category : #'api - building' }
+GtGQLQueryPathBuilder >> buildMutationPaths [
+	self forMutation.
+	self buildPathsFromStartType
 ]
 
 { #category : #'private - building' }
@@ -50,7 +53,21 @@ GtGQLQueryPathBuilder >> buildPathsFromStart: aStartType toStop: aStopType [
 
 			self sortPaths: aTypePaths.
 
-			aStartType = self queryType ifTrue: [ aStopType queryPaths: aTypePaths ] ]
+			startAccessor write: aStopType paths: aTypePaths ]
+]
+
+{ #category : #'private - building' }
+GtGQLQueryPathBuilder >> buildPathsFromStartType [
+	self baseTypes
+		do: [ :aStopType | 
+			aStopType isCommonScalarType
+				ifFalse: [ self buildPathsFromStart: self startType toStop: aStopType ] ]
+]
+
+{ #category : #'api - building' }
+GtGQLQueryPathBuilder >> buildQueryPaths [
+	self forQuery.
+	self buildPathsFromStartType
 ]
 
 { #category : #'private - building' }
@@ -77,7 +94,9 @@ GtGQLQueryPathBuilder >> buildTypeReferences [
 { #category : #'api - building' }
 GtGQLQueryPathBuilder >> clear [
 	self baseTypes
-		do: [ :aType | aType clearOption: #queryPaths ifAbsent: [  "ignore" ] ]
+		do: [ :aType | 
+			aType clearOption: #queryPaths ifAbsent: [  "ignore" ].
+			aType clearOption: #mutationPaths ifAbsent: [  "ignore" ] ]
 ]
 
 { #category : #'private - traversing' }
@@ -101,6 +120,39 @@ GtGQLQueryPathBuilder >> context [
 { #category : #accessing }
 GtGQLQueryPathBuilder >> context: aContext [
 	context := aContext
+]
+
+{ #category : #'api - initialization' }
+GtGQLQueryPathBuilder >> forMutation [
+	startAccessor := GtGQLMutationPathAccessor new builder: self
+]
+
+{ #category : #'api - initialization' }
+GtGQLQueryPathBuilder >> forQuery [
+	startAccessor := GtGQLQueryPathAccessor new builder: self
+]
+
+{ #category : #'gt - extensions' }
+GtGQLQueryPathBuilder >> gtMutationPathsFor: aView [
+	<gtView>
+	schema ifNil: [ ^ aView empty ].
+
+	^ aView columnedTree
+		title: 'Mutation Paths';
+		priority: 11;
+		items: [ (self baseTypes select: [ :each | each mutationPaths isNotNil ])
+				asSortedCollection: [ :a :b | a name < b name ] ];
+		children: [ :anObject | 
+			(anObject isKindOf: GtGQLType)
+				ifTrue: [ anObject mutationPaths ifNil: [ #() ] ]
+				ifFalse: [ #() ] ];
+		column: 'Name' text: [ :aType | aType queryPathViewNameText ];
+		column: 'Paths'
+			text: [ :anObject | 
+				(anObject isKindOf: GtGQLType)
+					ifTrue: [ anObject mutationPaths size ]
+					ifFalse: [ '' ] ]
+			width: 40
 ]
 
 { #category : #'gt - extensions' }
@@ -217,6 +269,11 @@ GtGQLQueryPathBuilder >> sortPaths: aTypePaths [
 				ifTrue: [ a steps size = b steps size
 						ifFalse: [ a steps size < b steps size ]
 						ifTrue: [ a queryPathViewNameText asString < b queryPathViewNameText asString ] ] ]
+]
+
+{ #category : #'private - accessing' }
+GtGQLQueryPathBuilder >> startType [
+	^ startAccessor startType
 ]
 
 { #category : #'private - traversing' }

@@ -27,7 +27,7 @@ GtGQLQuery >> ensureDictionary [
 { #category : #convenience }
 GtGQLQuery >> graphqlNode [
 	<return: #GraphQLDocumentNode>
-	^ GraphQLParser parse: self operation
+	^ GraphQLParser parseWithErrors: self operation
 ]
 
 { #category : #'gt - extensions' }
@@ -74,6 +74,24 @@ GtGQLQuery >> input [
 { #category : #accessing }
 GtGQLQuery >> input: anObject [
 	input := anObject
+]
+
+{ #category : #testing }
+GtGQLQuery >> isMutationOperation [
+	self graphqlNode
+		allNodesOfType: GraphQLOperationDefinitionNode
+		do: [ :aNode | aNode isPartOfMutation ifTrue: [ ^ true ] ].
+
+	^ false
+]
+
+{ #category : #testing }
+GtGQLQuery >> isQueryOperation [
+	self graphqlNode
+		allNodesOfType: GraphQLOperationDefinitionNode
+		do: [ :aNode | aNode isPartOfQuery ifTrue: [ ^ true ] ].
+
+	^ false
 ]
 
 { #category : #accessing }

@@ -29,10 +29,11 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 ]
 
 { #category : #'gt - extensions' }
-GtGQLSchema class >> typeForObject: aTypeOrField [
-	^ (aTypeOrField isKindOf: GtGQLField)
-		ifTrue: [ aTypeOrField type ]
-		ifFalse: [ aTypeOrField ]
+GtGQLSchema class >> typeForObject: anObject [
+	(anObject isKindOf: GtGQLField) ifTrue: [ ^ anObject type ].
+	(anObject isKindOf: GtGQLInputObject) ifTrue: [ ^ anObject type ].
+
+	^ anObject
 ]
 
 { #category : #accessing }
@@ -51,6 +52,11 @@ GtGQLSchema >> baseTypesCount [
 		propertyAt: #types
 		ifPresent: [ :aDict | self baseTypes size ]
 		ifAbsent: [ 0 ]
+]
+
+{ #category : #accessing }
+GtGQLSchema >> baseTypesWithMutationPaths [
+	^ self baseTypes select: [ :each | each mutationPaths isNotNil ]
 ]
 
 { #category : #accessing }
@@ -232,12 +238,25 @@ GtGQLSchema >> gtTypesFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLSchema >> gtTypesWithMutationPathsFor: aView [
+	<gtView>
+	^ (self class
+		gtTypesFor: aView
+		items: [ self baseTypesWithMutationPaths asSortedCollection: [ :a :b | a name < b name ] ])
+		title: 'Types With Mutation Paths';
+		priority: 48;
+		column: 'Paths'
+			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType mutationPaths size ] ifFalse: [ '' ] ]
+			width: 40
+]
+
+{ #category : #'gt - extensions' }
 GtGQLSchema >> gtTypesWithQueryPathsFor: aView [
 	<gtView>
 	^ (self class
 		gtTypesFor: aView
 		items: [ self baseTypesWithQueryPaths asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Types With Query Types';
+		title: 'Types With Query Paths';
 		priority: 47;
 		column: 'Paths'
 			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType queryPaths size ] ifFalse: [ '' ] ]
