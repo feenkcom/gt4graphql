@@ -96,7 +96,12 @@ GtGQLReport >> gtValueFor: aView [
 		title: 'Fields';
 		priority: 70;
 		object: [ self value ];
-		view: #gtFieldsFor:
+		view: #gtFieldsFor:;
+		send: [ :anAssoc | 
+			self class new
+				value: anAssoc value;
+				context: self context;
+				type: anAssoc value type ]
 ]
 
 { #category : #accessing }

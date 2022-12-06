@@ -19,6 +19,14 @@ GtGQLNonNullable >> defaultVariableValue [
 	^ self type defaultVariableValue
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLNonNullable >> gtTypeFor: aView [
+	<gtView>
+	^ (GtGQLSchema gtTypesFor: aView items: [ {self type} ])
+		title: 'Type';
+		expandUpTo: 1
+]
+
 { #category : #testing }
 GtGQLNonNullable >> isNonNullable [
 	^ true

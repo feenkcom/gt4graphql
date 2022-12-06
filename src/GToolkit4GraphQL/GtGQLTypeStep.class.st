@@ -85,7 +85,7 @@ GtGQLTypeStep >> gtFieldRepricationReasonFor: aView [
 		title: 'Deprecation Reason';
 		priority: 50;
 		object: [ self field ];
-		view: #gtRepricationReasonFor:
+		view: #gtDepricationReasonFor:
 ]
 
 { #category : #'gt - extensions' }

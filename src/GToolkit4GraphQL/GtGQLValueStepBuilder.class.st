@@ -27,7 +27,7 @@ GtGQLValueStepBuilder >> buildStepStartingNode: aParentNode [
 				ifTrue: [ step := self parentStep class new
 							alias: (aNode alias ifNotNil: #source);
 							name: (aNode name ifNotNil: #source);
-							parent: self;
+							parent: self parentStep;
 							ast: aNode.
 					^ self ].
 

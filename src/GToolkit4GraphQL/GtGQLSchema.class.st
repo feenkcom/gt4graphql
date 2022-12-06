@@ -143,7 +143,7 @@ GtGQLSchema >> gtMetaMetaModelFor: aView [
 		gtTypesFor: aView
 		items: [ self metaMetaModelTypes asSortedCollection: [ :a :b | a name < b name ] ])
 		title: 'Meta-Meta-Model';
-		priority: 40
+		priority: 60
 ]
 
 { #category : #accessing }
