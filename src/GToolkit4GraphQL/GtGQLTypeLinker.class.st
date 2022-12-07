@@ -14,7 +14,8 @@ Class {
 	#instVars : [
 		'schema',
 		'interfaceReferences',
-		'unionReferences'
+		'unionReferences',
+		'typeReferences'
 	],
 	#category : #'GToolkit4GraphQL-Builders'
 }
@@ -22,13 +23,20 @@ Class {
 { #category : #'api - applying' }
 GtGQLTypeLinker >> apply [
 	self applyInterfaces.
-	self applyUnions
+	self applyUnions.
+	self applyTypeReferences.
 ]
 
 { #category : #'api - applying' }
 GtGQLTypeLinker >> applyInterfaces [
 	interfaceReferences
 		keysAndValuesDo: [ :aType :implementedInterfaces | aType implementedInterfaces: implementedInterfaces asArray ]
+]
+
+{ #category : #'api - applying' }
+GtGQLTypeLinker >> applyTypeReferences [
+	typeReferences
+		keysAndValuesDo: [ :aTargetType :aReference | aTargetType typeReferences: aReference asArray ]
 ]
 
 { #category : #'api - applying' }
@@ -55,7 +63,8 @@ GtGQLTypeLinker >> baseUnions [
 { #category : #'api - building' }
 GtGQLTypeLinker >> build [
 	self buildInterfaceReferences.
-	self buildUnionReferences
+	self buildUnionReferences.
+	self buildTypeReferences.
 ]
 
 { #category : #'api - building' }
@@ -70,6 +79,35 @@ GtGQLTypeLinker >> buildInterfaceReferences [
 						at: aTargetType
 						ifPresent: [ :aCollection | aCollection add: aSourceInterface ]
 						ifAbsentPut: [ OrderedCollection with: aSourceInterface ] ] ]
+]
+
+{ #category : #'api - applying' }
+GtGQLTypeLinker >> buildTypeReferences [
+	typeReferences := Dictionary new.
+
+	self baseTypes
+		do: [ :aSourceType | 
+			aSourceType isComposite
+				ifTrue: [ aSourceType fields
+						do: [ :aSourceField | 
+							| aTargetType aTypeReference |
+							aTargetType := aSourceField type baseType.
+							aTypeReference := GtGQLTypeReference new
+									targetType: aTargetType;
+									sourceType: aSourceType;
+									sourceField: aSourceField.
+							typeReferences
+								at: aTargetType
+								ifPresent: [ :aCollection | aCollection add: aTypeReference ]
+								ifAbsentPut: [ OrderedCollection with: aTypeReference ].
+
+							(aTargetType isUnion or: [ aTargetType isInterface ])
+								ifTrue: [ aTargetType possibleTypes
+										do: [ :aPossibleType | 
+											typeReferences
+												at: aPossibleType
+												ifPresent: [ :aCollection | aCollection add: aTypeReference ]
+												ifAbsentPut: [ OrderedCollection with: aTypeReference ] ] ] ] ] ]
 ]
 
 { #category : #'api - building' }
@@ -123,6 +161,31 @@ GtGQLTypeLinker >> gtInterfaceReferencesViewInterfacesTextFor: aType [
 						do: [ :anInterface | aStream nextPutAll: anInterface name ]
 						separatedBy: [ aStream nextPutAll: ', ' ] ] ]
 		ifAbsent: [ '' ]
+]
+
+{ #category : #'gt - extensions' }
+GtGQLTypeLinker >> gtTypeReferencesFor: aView [
+	<gtView>
+	typeReferences ifNil: [ ^ aView empty ].
+
+	^ aView columnedTree
+		title: 'Type References';
+		priority: 20;
+		items: [ typeReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
+		children: [ :anObject | 
+			| aType |
+			aType := (anObject isKindOf: GtGQLType)
+					ifTrue: [ anObject ]
+					ifFalse: [ anObject sourceType ].
+
+			typeReferences
+				at: aType
+				ifPresent: [ :aCollection | 
+					aCollection
+						asSortedCollection: [ :a :b | a sourceType name < b sourceType name ] ]
+				ifAbsent: [ #() ] ];
+		column: 'Referenced Type'
+			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ]
 ]
 
 { #category : #'gt - extensions' }

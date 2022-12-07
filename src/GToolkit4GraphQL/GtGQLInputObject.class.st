@@ -36,6 +36,13 @@ GtGQLInputObject >> inputFields: aCollection [
 	self fields: aCollection
 ]
 
+{ #category : #'api - response' }
+GtGQLInputObject >> newValueUsing: aType [
+	"Input objects should not appear in results"
+
+	^ self shouldNotImplement
+]
+
 { #category : #accessing }
 GtGQLInputObject >> propertyFieldName [
 	^ #inputFields

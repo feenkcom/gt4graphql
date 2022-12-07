@@ -4,7 +4,6 @@ Class {
 	#instVars : [
 		'schema',
 		'paths',
-		'typeReferences',
 		'traversedTypes',
 		'currentPath',
 		'context',
@@ -68,27 +67,6 @@ GtGQLQueryPathBuilder >> buildPathsFromStartType [
 GtGQLQueryPathBuilder >> buildQueryPaths [
 	self forQuery.
 	self buildPathsFromStartType
-]
-
-{ #category : #'private - building' }
-GtGQLQueryPathBuilder >> buildTypeReferences [
-	typeReferences := Dictionary new.
-
-	self baseTypes
-		do: [ :aSourceType | 
-			aSourceType isComposite
-				ifTrue: [ aSourceType fields
-						do: [ :aSourceField | 
-							| aTargetType aTypeReference |
-							aTargetType := aSourceField type baseType.
-							aTypeReference := GtGQLTypeReference new
-									targetType: aTargetType;
-									sourceType: aSourceType;
-									sourceField: aSourceField.
-							typeReferences
-								at: aTargetType
-								ifPresent: [ :aCollection | aCollection add: aTypeReference ]
-								ifAbsentPut: [ OrderedCollection with: aTypeReference ] ] ] ]
 ]
 
 { #category : #'api - building' }
@@ -176,31 +154,6 @@ GtGQLQueryPathBuilder >> gtQueryPathsFor: aView [
 					ifTrue: [ anObject queryPaths size ]
 					ifFalse: [ '' ] ]
 			width: 40
-]
-
-{ #category : #'gt - extensions' }
-GtGQLQueryPathBuilder >> gtTypeReferencesFor: aView [
-	<gtView>
-	typeReferences ifNil: [ ^ aView empty ].
-
-	^ aView columnedTree
-		title: 'Type References';
-		priority: 20;
-		items: [ typeReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
-		children: [ :anObject | 
-			| aType |
-			aType := (anObject isKindOf: GtGQLType)
-					ifTrue: [ anObject ]
-					ifFalse: [ anObject sourceType ].
-
-			typeReferences
-				at: aType
-				ifPresent: [ :aCollection | 
-					aCollection
-						asSortedCollection: [ :a :b | a sourceType name < b sourceType name ] ]
-				ifAbsent: [ #() ] ];
-		column: 'Referenced Type'
-			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ]
 ]
 
 { #category : #'private - traversing' }

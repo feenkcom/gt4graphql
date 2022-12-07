@@ -34,7 +34,7 @@ GtGQLModel >> gtPropertiesFor: aView context: aContext [
 	<gtView>
 	^ aView columnedTree
 		title: 'Properties';
-		priority: 70;
+		priority: 49;
 		items: [ self properties associations asSortedCollection: [ :a :b | a key < b key ] ];
 		column: 'Name' text: #key;
 		column: 'Value' text: #value;

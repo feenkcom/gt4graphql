@@ -97,6 +97,26 @@ GtGQLType >> gtQueryPathsFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLType >> gtTypeReferencesFor: aView [
+	<gtView>
+	self typeReferences ifEmpty: [ ^ aView empty ].
+
+	^ aView columnedTree
+		title: 'Type References';
+		priority: 46;
+		items: [ self typeReferences
+				asSortedCollection: [ :a :b | a sourceName < b sourceName ] ];
+		children: [ :aReference | 
+			aReference sourceTypeReferences
+				reject: [ :anotherReference | 
+					anotherReference sourceType = aReference sourceType
+						and: [ anotherReference sourceField = aReference sourceField ] ] ];
+		column: 'Referenced Type'
+			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ];
+		send: #sourceType
+]
+
+{ #category : #'gt - extensions' }
 GtGQLType >> gtTypeReferencesViewReferencedTypeText [
 	^ self name
 ]
@@ -253,4 +273,14 @@ GtGQLType >> queryPaths: aTypePaths [
 { #category : #accessing }
 GtGQLType >> typeName [
 	^ self class name asString allButFirst: 5
+]
+
+{ #category : #accessing }
+GtGQLType >> typeReferences [
+	^ self optionAt: #typeReferences ifAbsent: [ #() ]
+]
+
+{ #category : #accessing }
+GtGQLType >> typeReferences: aCollection [
+	self optionAt: #typeReferences put: aCollection
 ]

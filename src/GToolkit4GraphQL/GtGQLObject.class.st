@@ -18,7 +18,7 @@ GtGQLObject >> gtImplementedInterfacesFor: aView [
 		gtTypesFor: aView
 		items: [ self implementedInterfaces asSortedCollection: [ :a :b | a name < b name ] ])
 		title: 'Implemented Interfaces';
-		priority: 45
+		priority: 46
 ]
 
 { #category : #accessing }
