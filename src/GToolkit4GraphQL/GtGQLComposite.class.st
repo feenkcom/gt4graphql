@@ -11,6 +11,8 @@ GtGQLComposite class >> isAbstract [
 
 { #category : #'api - initialization' }
 GtGQLComposite >> addField: aGQLField [
+	aGQLField parentType: self.
+
 	self
 		propertyAt: self propertyFieldName
 		ifPresent: [ :aDict | aDict at: aGQLField name put: aGQLField ]

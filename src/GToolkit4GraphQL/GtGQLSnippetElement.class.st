@@ -370,25 +370,24 @@ GtGQLSnippetElement >> inputSource [
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionError: anError from: theButton [
-	| aResult |
+	[ | aResult |
 	aResult := GtGQLPreparationProblem new
 			context: self context;
 			operation: self snippet operation input: self snippet input;
 			exception: anError;
-			messageText: ('Problem during execution: {1}' format: { anError }).
+			messageText: ('Problem during execution: {1}' format: {anError}).
 	self snippetViewModel resultValue: aResult.
-	theButton phlow spawnObject: aResult.
-	theButton enable
+	theButton phlow spawnObject: aResult ] ensure: [ theButton enable ]
 ]
 
 { #category : #'private - event handling' }
 GtGQLSnippetElement >> onExecutionSuccess: aResult from: theButton [
-	self snippetViewModel resultValue: aResult.
+	[ self snippetViewModel resultValue: aResult.
 	(aResult isQueryProblem or: [ aResult isSuccess and: [ aResult hasErrors ] ])
 		ifTrue: [ (self showInlineError: aResult)
 				ifFalse: [ theButton phlow spawnObject: aResult report ] ]
-		ifFalse: [ theButton phlow spawnObject: aResult report ].
-	theButton enable
+		ifFalse: [ theButton phlow spawnObject: aResult report ] ]
+		ensure: [ theButton enable ]
 ]
 
 { #category : #accessing }
