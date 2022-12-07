@@ -107,7 +107,20 @@ GtGQLTypeLinker >> buildTypeReferences [
 									targetType: aTargetType;
 									sourceType: aSourceType;
 									sourceField: aSourceField.
-							self addTypeReference: aTypeReference ] ] ]
+							self addTypeReference: aTypeReference.
+
+							(aSourceField isField and: [ aSourceField hasArguments ])
+								ifTrue: [ aSourceField arguments
+										do: [ :aSourceArgument | 
+											| aTargetArgumentType anArgumentReference |
+											aTargetArgumentType := aSourceArgument type baseType.
+											anArgumentReference := GtGQLArgumentTypeReference new
+													targetType: aTargetArgumentType;
+													sourceType: aSourceType;
+													sourceField: aSourceField;
+													sourceArgument: aSourceArgument.
+
+											self addTypeReference: anArgumentReference ] ] ] ] ]
 ]
 
 { #category : #'api - building' }

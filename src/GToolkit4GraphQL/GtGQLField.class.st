@@ -171,6 +171,11 @@ GtGQLField >> isDeprecated: anObject [
 ]
 
 { #category : #testing }
+GtGQLField >> isField [
+	^ true
+]
+
+{ #category : #testing }
 GtGQLField >> isMetaField [
 	^ self name = GtGQLIntrospectionConstants metaMetaTypeName
 ]
