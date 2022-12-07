@@ -12,18 +12,30 @@ Class {
 
 { #category : #accessing }
 GtGQLArgumentTypeReference >> gtTypeReferencesViewReferencedTypeText [
-	| aText |
+	| aText aFieldName anArgumentName |
 	aText := '' asRopedText.
 
 	aText append: self sourceType name asRopedText.
 	aText
 		append: (' >> #' asRopedText foreground: BrGlamorousColors disabledButtonTextColor).
-	aText append: self sourceField name asRopedText bold.
+
+	aFieldName := self sourceField name asRopedText bold.
+
+	self sourceField isDeprecated
+		ifTrue: [ aFieldName
+				lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
+
+	aText append: aFieldName.
 
 	aText
 		append: ('(' asRopedText foreground: BrGlamorousColors disabledButtonTextColor).
+	anArgumentName := self sourceArgument name asRopedText bold.
 
-	aText append: self sourceArgument name asRopedText bold.
+	self sourceArgument isDeprecated
+		ifTrue: [ anArgumentName
+				lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
+
+	aText append: anArgumentName.
 
 	aText
 		append: (': ' asRopedText foreground: BrGlamorousColors disabledButtonTextColor).
