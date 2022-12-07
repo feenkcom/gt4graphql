@@ -101,26 +101,39 @@ GtGQLTypeLinker >> buildTypeReferences [
 			aSourceType isComposite
 				ifTrue: [ aSourceType fields
 						do: [ :aSourceField | 
-							| aTargetType aTypeReference |
-							aTargetType := aSourceField type baseType.
-							aTypeReference := GtGQLTypeReference new
-									targetType: aTargetType;
-									sourceType: aSourceType;
-									sourceField: aSourceField.
-							self addTypeReference: aTypeReference.
+							self buildTypeReferencesForSourceType: aSourceType field: aSourceField.
 
 							(aSourceField isField and: [ aSourceField hasArguments ])
 								ifTrue: [ aSourceField arguments
 										do: [ :aSourceArgument | 
-											| aTargetArgumentType anArgumentReference |
-											aTargetArgumentType := aSourceArgument type baseType.
-											anArgumentReference := GtGQLArgumentTypeReference new
-													targetType: aTargetArgumentType;
-													sourceType: aSourceType;
-													sourceField: aSourceField;
-													sourceArgument: aSourceArgument.
+											self
+												buildTypeReferencesForSourceType: aSourceType
+												field: aSourceField
+												argument: aSourceArgument ] ] ] ] ]
+]
 
-											self addTypeReference: anArgumentReference ] ] ] ] ]
+{ #category : #'private - building' }
+GtGQLTypeLinker >> buildTypeReferencesForSourceType: aSourceType field: aSourceField [
+	| aTargetType aTypeReference |
+	aTargetType := aSourceField type baseType.
+	aTypeReference := GtGQLTypeReference new
+			targetType: aTargetType;
+			sourceType: aSourceType;
+			sourceField: aSourceField.
+	self addTypeReference: aTypeReference
+]
+
+{ #category : #'private - building' }
+GtGQLTypeLinker >> buildTypeReferencesForSourceType: aSourceType field: aSourceField argument: aSourceArgument [
+	| aTargetArgumentType anArgumentReference |
+	aTargetArgumentType := aSourceArgument type baseType.
+	anArgumentReference := GtGQLArgumentTypeReference new
+			targetType: aTargetArgumentType;
+			sourceType: aSourceType;
+			sourceField: aSourceField;
+			sourceArgument: aSourceArgument.
+
+	self addTypeReference: anArgumentReference
 ]
 
 { #category : #'api - building' }
