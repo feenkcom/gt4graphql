@@ -20,6 +20,17 @@ Class {
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
+{ #category : #'private - building' }
+GtGQLTypeLinker >> addTypeReference: aTypeReference [
+	| aTargetType |
+	aTargetType := aTypeReference targetType.
+	self typeReferencesAt: aTargetType putReference: aTypeReference.
+
+	(aTargetType isUnion or: [ aTargetType isInterface ])
+		ifTrue: [ aTargetType possibleTypes
+				do: [ :aPossibleType | self typeReferencesAt: aPossibleType putReference: aTypeReference ] ]
+]
+
 { #category : #'api - applying' }
 GtGQLTypeLinker >> apply [
 	self applyInterfaces.
@@ -81,7 +92,7 @@ GtGQLTypeLinker >> buildInterfaceReferences [
 						ifAbsentPut: [ OrderedCollection with: aSourceInterface ] ] ]
 ]
 
-{ #category : #'api - applying' }
+{ #category : #'api - building' }
 GtGQLTypeLinker >> buildTypeReferences [
 	typeReferences := Dictionary new.
 
@@ -90,24 +101,39 @@ GtGQLTypeLinker >> buildTypeReferences [
 			aSourceType isComposite
 				ifTrue: [ aSourceType fields
 						do: [ :aSourceField | 
-							| aTargetType aTypeReference |
-							aTargetType := aSourceField type baseType.
-							aTypeReference := GtGQLTypeReference new
-									targetType: aTargetType;
-									sourceType: aSourceType;
-									sourceField: aSourceField.
-							typeReferences
-								at: aTargetType
-								ifPresent: [ :aCollection | aCollection add: aTypeReference ]
-								ifAbsentPut: [ OrderedCollection with: aTypeReference ].
+							self buildTypeReferencesForSourceType: aSourceType field: aSourceField.
 
-							(aTargetType isUnion or: [ aTargetType isInterface ])
-								ifTrue: [ aTargetType possibleTypes
-										do: [ :aPossibleType | 
-											typeReferences
-												at: aPossibleType
-												ifPresent: [ :aCollection | aCollection add: aTypeReference ]
-												ifAbsentPut: [ OrderedCollection with: aTypeReference ] ] ] ] ] ]
+							(aSourceField isField and: [ aSourceField hasArguments ])
+								ifTrue: [ aSourceField arguments
+										do: [ :aSourceArgument | 
+											self
+												buildTypeReferencesForSourceType: aSourceType
+												field: aSourceField
+												argument: aSourceArgument ] ] ] ] ]
+]
+
+{ #category : #'private - building' }
+GtGQLTypeLinker >> buildTypeReferencesForSourceType: aSourceType field: aSourceField [
+	| aTargetType aTypeReference |
+	aTargetType := aSourceField type baseType.
+	aTypeReference := GtGQLTypeReference new
+			targetType: aTargetType;
+			sourceType: aSourceType;
+			sourceField: aSourceField.
+	self addTypeReference: aTypeReference
+]
+
+{ #category : #'private - building' }
+GtGQLTypeLinker >> buildTypeReferencesForSourceType: aSourceType field: aSourceField argument: aSourceArgument [
+	| aTargetArgumentType anArgumentReference |
+	aTargetArgumentType := aSourceArgument type baseType.
+	anArgumentReference := GtGQLArgumentTypeReference new
+			targetType: aTargetArgumentType;
+			sourceType: aSourceType;
+			sourceField: aSourceField;
+			sourceArgument: aSourceArgument.
+
+	self addTypeReference: anArgumentReference
 ]
 
 { #category : #'api - building' }
@@ -240,4 +266,12 @@ GtGQLTypeLinker >> schema [
 { #category : #accessing }
 GtGQLTypeLinker >> schema: anObject [
 	schema := anObject
+]
+
+{ #category : #'private - building' }
+GtGQLTypeLinker >> typeReferencesAt: aTargetType putReference: aTypeReference [
+	typeReferences
+		at: aTargetType
+		ifPresent: [ :aCollection | aCollection add: aTypeReference ]
+		ifAbsentPut: [ OrderedCollection with: aTypeReference ]
 ]

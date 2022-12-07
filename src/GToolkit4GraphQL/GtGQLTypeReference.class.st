@@ -11,13 +11,19 @@ Class {
 
 { #category : #'gt - extensions' }
 GtGQLTypeReference >> gtTypeReferencesViewReferencedTypeText [
-	| aText |
+	| aText aFieldName |
 	aText := '' asRopedText.
 
 	aText append: self sourceType name asRopedText.
 	aText
 		append: (' >> #' asRopedText foreground: BrGlamorousColors disabledButtonTextColor).
-	aText append: self sourceField name asRopedText bold.
+
+	aFieldName := self sourceField name asRopedText bold.
+	self sourceField isDeprecated
+		ifTrue: [ aFieldName
+				lineThroughDo: [ :anAttribute | anAttribute color: BrGlamorousColors errorBackgroundColor ] ].
+
+	aText append: aFieldName.
 
 	aText
 		append: ((': ' , self targetType name) asRopedText

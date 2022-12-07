@@ -36,6 +36,11 @@ GtGQLInputObject >> inputFields: aCollection [
 	self fields: aCollection
 ]
 
+{ #category : #testing }
+GtGQLInputObject >> isInputObject [
+	^ true
+]
+
 { #category : #'api - response' }
 GtGQLInputObject >> newValueUsing: aType [
 	"Input objects should not appear in results"

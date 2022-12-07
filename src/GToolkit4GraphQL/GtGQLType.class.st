@@ -107,10 +107,11 @@ GtGQLType >> gtTypeReferencesFor: aView [
 		items: [ self typeReferences
 				asSortedCollection: [ :a :b | a sourceName < b sourceName ] ];
 		children: [ :aReference | 
-			aReference sourceTypeReferences
+			(aReference sourceTypeReferences
 				reject: [ :anotherReference | 
 					anotherReference sourceType = aReference sourceType
-						and: [ anotherReference sourceField = aReference sourceField ] ] ];
+						and: [ anotherReference sourceField = aReference sourceField ] ])
+				asSortedCollection: [ :a :b | a sourceName < b sourceName ] ];
 		column: 'Referenced Type'
 			text: [ :aType | aType gtTypeReferencesViewReferencedTypeText ];
 		send: #sourceType
@@ -153,6 +154,11 @@ GtGQLType >> isFloatType [
 
 { #category : #testing }
 GtGQLType >> isIdType [
+	^ false
+]
+
+{ #category : #testing }
+GtGQLType >> isInputObject [
 	^ false
 ]
 

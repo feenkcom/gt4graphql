@@ -64,6 +64,11 @@ GtGQLModel >> initialize [
 ]
 
 { #category : #testing }
+GtGQLModel >> isField [
+	^ false
+]
+
+{ #category : #testing }
 GtGQLModel >> isInterface [
 	^ false
 ]
