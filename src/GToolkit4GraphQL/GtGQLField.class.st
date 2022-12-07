@@ -92,6 +92,22 @@ GtGQLField >> gtDescriptionFor: aView [
 		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
 ]
 
+{ #category : #'gt - extensions' }
+GtGQLField >> gtParentTypeFor: aView [
+	<gtView>
+	self parentType ifNil: [ ^ aView empty ].
+	(self parentType baseType isKindOf: GtGQLComposite) ifFalse: [ ^ aView empty ].
+
+	^ (GtGQLSchema gtTypesFor: aView items: [ {self parentType baseType} ])
+		title: 'Parent Type';
+		priority: 40;
+		expandUpTo: 1;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Parent Type'
+			tooltip: 'Inspect parent type'
+			action: [ :aButton | aButton phlow spawnObject: self parentType baseType ]
+]
+
 { #category : #accessing }
 GtGQLField >> gtTypeFor: aView [
 	<gtView>
@@ -172,6 +188,23 @@ GtGQLField >> name [
 { #category : #accessing }
 GtGQLField >> name: aString [
 	self propertyAt: #name put: aString
+]
+
+{ #category : #accessing }
+GtGQLField >> parentType [
+	^ parentType
+]
+
+{ #category : #accessing }
+GtGQLField >> parentType: aType [
+	self isMetaField ifTrue: [ ^ self ].
+
+	self
+		assert: [ parentType isNil ]
+		description: [ 'Parent type can be set only once' ].
+	self assert: [ aType isNotNil ] description: [ 'Parent type must be non-nil' ].
+
+	parentType := aType
 ]
 
 { #category : #printing }

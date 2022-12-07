@@ -56,7 +56,7 @@ GtGQLIntrospectionImplicitFieldsBuilder >> buildMetaTypeField [
 
 	anArgumentType := self nonNullStringType.
 
-	aFieldArgument := GtGQLInputObject new.
+	aFieldArgument := GtGQLInputValue new.
 	aFieldArgument name: 'name'.
 	aFieldArgument type: anArgumentType.
 	aFieldArgument description: 'Name of a type that is introspected'.

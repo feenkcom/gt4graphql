@@ -31,7 +31,7 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 { #category : #'gt - extensions' }
 GtGQLSchema class >> typeForObject: anObject [
 	(anObject isKindOf: GtGQLField) ifTrue: [ ^ anObject type ].
-	(anObject isKindOf: GtGQLInputObject) ifTrue: [ ^ anObject type ].
+	(anObject isKindOf: GtGQLInputValue) ifTrue: [ ^ anObject type ].
 
 	^ anObject
 ]
@@ -307,7 +307,7 @@ GtGQLSchema >> importComposites: aNode [
 							def definitions
 								do: [ :arg | 
 									field
-										addArgument: (GtGQLInputObject new
+										addArgument: (GtGQLInputValue new
 												name: arg name source;
 												type: (self typeFor: arg type);
 												yourself) ].
