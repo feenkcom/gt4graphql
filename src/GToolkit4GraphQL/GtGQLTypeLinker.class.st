@@ -20,6 +20,17 @@ Class {
 	#category : #'GToolkit4GraphQL-Builders'
 }
 
+{ #category : #'private - building' }
+GtGQLTypeLinker >> addTypeReference: aTypeReference [
+	| aTargetType |
+	aTargetType := aTypeReference targetType.
+	self typeReferencesAt: aTargetType putReference: aTypeReference.
+
+	(aTargetType isUnion or: [ aTargetType isInterface ])
+		ifTrue: [ aTargetType possibleTypes
+				do: [ :aPossibleType | self typeReferencesAt: aPossibleType putReference: aTypeReference ] ]
+]
+
 { #category : #'api - applying' }
 GtGQLTypeLinker >> apply [
 	self applyInterfaces.
@@ -81,7 +92,7 @@ GtGQLTypeLinker >> buildInterfaceReferences [
 						ifAbsentPut: [ OrderedCollection with: aSourceInterface ] ] ]
 ]
 
-{ #category : #'api - applying' }
+{ #category : #'api - building' }
 GtGQLTypeLinker >> buildTypeReferences [
 	typeReferences := Dictionary new.
 
@@ -96,18 +107,7 @@ GtGQLTypeLinker >> buildTypeReferences [
 									targetType: aTargetType;
 									sourceType: aSourceType;
 									sourceField: aSourceField.
-							typeReferences
-								at: aTargetType
-								ifPresent: [ :aCollection | aCollection add: aTypeReference ]
-								ifAbsentPut: [ OrderedCollection with: aTypeReference ].
-
-							(aTargetType isUnion or: [ aTargetType isInterface ])
-								ifTrue: [ aTargetType possibleTypes
-										do: [ :aPossibleType | 
-											typeReferences
-												at: aPossibleType
-												ifPresent: [ :aCollection | aCollection add: aTypeReference ]
-												ifAbsentPut: [ OrderedCollection with: aTypeReference ] ] ] ] ] ]
+							self addTypeReference: aTypeReference ] ] ]
 ]
 
 { #category : #'api - building' }
@@ -240,4 +240,12 @@ GtGQLTypeLinker >> schema [
 { #category : #accessing }
 GtGQLTypeLinker >> schema: anObject [
 	schema := anObject
+]
+
+{ #category : #'private - building' }
+GtGQLTypeLinker >> typeReferencesAt: aTargetType putReference: aTypeReference [
+	typeReferences
+		at: aTargetType
+		ifPresent: [ :aCollection | aCollection add: aTypeReference ]
+		ifAbsentPut: [ OrderedCollection with: aTypeReference ]
 ]
