@@ -272,7 +272,9 @@ GtGQLValueBuilder >> prepareGtGQLValueConnectionObject: aValue withNodes: aListS
 		listType: aListType;
 		itemType: anItemType;
 		listStep: aListStep;
-		itemStep: aListStep
+		itemStep: aListStep.
+
+	^ true
 ]
 
 { #category : #accessing }
