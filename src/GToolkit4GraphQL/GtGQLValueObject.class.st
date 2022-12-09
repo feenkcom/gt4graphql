@@ -53,6 +53,40 @@ GtGQLValueObject >> fieldNamed: aName ifPresent: aPresentBlock ifAbsent: anAbsen
 ]
 
 { #category : #accessing }
+GtGQLValueObject >> fieldPath: aCollectionOfNames [
+	^ self
+		fieldPath: aCollectionOfNames
+		ifPresent: [ :aValue | aValue ]
+		ifAbsent: [ nil ]
+]
+
+{ #category : #accessing }
+GtGQLValueObject >> fieldPath: aCollectionOfNames ifAbsent: anAbsentBlock [
+	^ self
+		fieldPath: aCollectionOfNames
+		ifPresent: [ :aValue | aValue ]
+		ifAbsent: anAbsentBlock
+]
+
+{ #category : #accessing }
+GtGQLValueObject >> fieldPath: aCollectionOfNames ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
+	aCollectionOfNames size = 1
+		ifTrue: [ ^ self
+				fieldNamed: aCollectionOfNames anyOne
+				ifPresent: aPresentBlock
+				ifAbsent: anAbsentBlock ].
+
+	^ self
+		fieldNamed: aCollectionOfNames first
+		ifPresent: [ :aValue | 
+			aValue
+				fieldPath: aCollectionOfNames allButFirst
+				ifPresent: aPresentBlock
+				ifAbsent: anAbsentBlock ]
+		ifAbsent: anAbsentBlock
+]
+
+{ #category : #accessing }
 GtGQLValueObject >> fields [
 	^ fields
 ]
