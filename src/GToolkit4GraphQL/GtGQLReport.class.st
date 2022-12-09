@@ -138,13 +138,13 @@ GtGQLReport >> printOn: aStream [
 
 	self type ifNil: [ ^ self ].
 
-	aStream
-		nextPut: $(;
-		nextPutAll: self name asString.
+	aStream nextPut: $(.
 
-	self name
-		ifEmpty: [ aStream nextPutAll: ':' ]
-		ifNotEmpty: [ aStream nextPutAll: ': ' ].
+	self name ifNotNil: [ :aName | aStream nextPutAll: aName asString ].
+
+	(self name isNil or: [ self name isEmpty ])
+		ifTrue: [ aStream nextPutAll: ':' ]
+		ifFalse: [ aStream nextPutAll: ': ' ].
 
 	aStream
 		nextPutAll: self baseType name asString;
