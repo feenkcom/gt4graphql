@@ -258,7 +258,7 @@ GtGQLPaginatorStream >> nextCursorValue [
 GtGQLPaginatorStream >> nextInputs [
 	<return: #Dictionary>
 	| anInput aValue |
-	anInput := self lastResult query input copy.
+	anInput := self lastResult query input copy ifNil: [ Dictionary new ].
 	aValue := lastResult isPreparation
 			ifTrue: [ nil ]
 			ifFalse: [ self nextCursorValue ].
