@@ -29,7 +29,12 @@ GtGQLQueryPathBuilder >> build [
 
 { #category : #'api - building' }
 GtGQLQueryPathBuilder >> buildMutationPaths [
-	self forMutation.
+	self forMutation.	
+	
+	"If the mutation type is not set, 
+	the schema likely do not provide a mutation type."
+	self startType ifNil: [ ^ self ].
+
 	self buildPathsFromStartType
 ]
 
