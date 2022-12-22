@@ -88,6 +88,7 @@ GtGQLContext >> gtActionBrowseReportFor: anAction [
 GtGQLContext >> gtMutationFor: aView [
 	<gtView>
 	self schema ifNil: [ ^ aView empty ].
+	self schema mutationType ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Mutation';
@@ -104,6 +105,7 @@ GtGQLContext >> gtMutationFor: aView [
 GtGQLContext >> gtQueryFor: aView [
 	<gtView>
 	self schema ifNil: [ ^ aView empty ].
+	self schema queryType ifNil: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Query';
