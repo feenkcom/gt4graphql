@@ -7,3 +7,8 @@ Trait {
 TGtGQLAuthentication >> configureZnClient: aZnClient [
 	self explicitRequirement
 ]
+
+{ #category : #copying }
+TGtGQLAuthentication >> copyWithAuthentication: anAuthentication [
+	^ GtGQLCompositeAuthentication new authentication: anAuthentication
+]

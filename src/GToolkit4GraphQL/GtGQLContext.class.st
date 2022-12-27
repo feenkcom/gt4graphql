@@ -27,9 +27,8 @@ GtGQLContext >> authentication [
 ]
 
 { #category : #'api - authentication' }
-GtGQLContext >> authentication: anObject [
-
-	authentication := anObject
+GtGQLContext >> authentication: anAuthentication [
+	authentication := authentication copyWithAuthentication: anAuthentication
 ]
 
 { #category : #'api - authentication' }
@@ -52,6 +51,11 @@ GtGQLContext >> buildTypePaths [
 		schema: self schema;
 		context: self;
 		build
+]
+
+{ #category : #'api - authentication' }
+GtGQLContext >> clearAuthentication [
+	authentication := GtGQLNoAuthentication new
 ]
 
 { #category : #accessing }

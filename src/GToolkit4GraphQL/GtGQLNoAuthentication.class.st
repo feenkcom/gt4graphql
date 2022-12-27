@@ -12,3 +12,8 @@ GtGQLNoAuthentication >> configureZnClient: aZnClient [
 
 	
 ]
+
+{ #category : #copying }
+GtGQLNoAuthentication >> copyWithAuthentication: anAuthentication [
+	^ anAuthentication
+]
