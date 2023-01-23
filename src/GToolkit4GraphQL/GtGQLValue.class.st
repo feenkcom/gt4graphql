@@ -76,6 +76,11 @@ GtGQLValue >> gtDataJsonStringFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLValue >> gtFieldsViewCanHaveChildren [
+	^ true
+]
+
+{ #category : #'gt - extensions' }
 GtGQLValue >> gtFieldsViewChildren [
 	^ #()
 ]

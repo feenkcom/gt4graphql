@@ -9,6 +9,11 @@ GtGQLInputObject class >> kindName [
 	^ 'INPUT_OBJECT'
 ]
 
+{ #category : #'api - paths' }
+GtGQLInputObject >> defaultVariableValue [
+	^ Dictionary new
+]
+
 { #category : #'gt - extensions' }
 GtGQLInputObject >> gtTypesNameText [
 	| aText |

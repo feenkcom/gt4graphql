@@ -10,6 +10,11 @@ GtGQLValueScalar >> acceptVisitor: aVisitor [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLValueScalar >> gtFieldsViewCanHaveChildren [
+	^ false
+]
+
+{ #category : #'gt - extensions' }
 GtGQLValueScalar >> gtFieldsViewValueText [
 	^ self value asRopedText
 ]
