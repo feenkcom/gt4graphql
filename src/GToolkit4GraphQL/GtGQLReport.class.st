@@ -91,6 +91,7 @@ GtGQLReport >> gtTypeFor: aView [
 GtGQLReport >> gtValueFor: aView [
 	<gtView>
 	self value ifNil: [ ^ aView empty ].
+	self value gtFieldsViewCanHaveChildren ifFalse: [ ^ aView empty ].
 
 	^ aView forward
 		title: 'Fields';
