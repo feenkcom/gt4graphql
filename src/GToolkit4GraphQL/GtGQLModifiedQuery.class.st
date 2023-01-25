@@ -29,7 +29,7 @@ GtGQLModifiedQuery >> gtPreviousQueryFor: aView [
 		title: 'Previous Query';
 		priority: 11;
 		object: [ self previousQuery ];
-		view: #gtViewFor:
+		view: #gtQueryFor:
 ]
 
 { #category : #'gt - extensions' }
