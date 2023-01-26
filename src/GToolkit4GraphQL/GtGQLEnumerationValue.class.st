@@ -35,6 +35,16 @@ GtGQLEnumerationValue >> fields [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLEnumerationValue >> gtDescriptionFor: aView [
+	<gtView>
+	self description ifNil: [ ^ aView empty ].
+	^ aView explicit
+		title: 'Description';
+		priority: 40;
+		stencil: [ LeCoderTextElement coderElementFor: (self description ifNil: [ '' ]) ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLEnumerationValue >> gtTypesNameText [
 	^ self name
 ]

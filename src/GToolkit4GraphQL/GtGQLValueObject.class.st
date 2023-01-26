@@ -167,3 +167,10 @@ GtGQLValueObject >> userType [
 
 	^ self baseType
 ]
+
+{ #category : #accessing }
+GtGQLValueObject >> value [
+	^ self
+		fieldNamed: #value
+		ifAbsent: [ self doesNotUnderstand: ((Message selector: #value) lookupClass: self class) ]
+]
