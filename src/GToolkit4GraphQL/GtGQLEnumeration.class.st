@@ -55,5 +55,7 @@ GtGQLEnumeration >> values [
 
 { #category : #accessing }
 GtGQLEnumeration >> values: aCollection [
+	aCollection do: [ :eachValue | eachValue parentType: self ].
+
 	self propertyAt: #values put: aCollection
 ]

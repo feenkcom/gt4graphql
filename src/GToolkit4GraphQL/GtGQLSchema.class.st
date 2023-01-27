@@ -323,7 +323,7 @@ GtGQLSchema >> importEnums: aNode [
 			type := self typesDictionary at: each name source.
 			type
 				values: (each definitions
-						collect: [ :enum | GtGQLEnumeration new name: enum value source ]) ]
+						collect: [ :enum | GtGQLEnumerationValue new name: enum value source ]) ]
 ]
 
 { #category : #importing }
