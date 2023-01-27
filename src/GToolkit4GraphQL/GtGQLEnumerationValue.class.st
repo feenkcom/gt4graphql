@@ -1,6 +1,9 @@
 Class {
 	#name : #GtGQLEnumerationValue,
 	#superclass : #GtGQLModel,
+	#instVars : [
+		'parentType'
+	],
 	#category : #'GToolkit4GraphQL-Schema'
 }
 
@@ -45,6 +48,22 @@ GtGQLEnumerationValue >> gtDescriptionFor: aView [
 ]
 
 { #category : #'gt - extensions' }
+GtGQLEnumerationValue >> gtParentTypeFor: aView [
+	<gtView>
+	self parentType ifNil: [ ^ aView empty ].
+	(self parentType baseType isKindOf: GtGQLEnumeration) ifFalse: [ ^ aView empty ].
+
+	^ (GtGQLSchema gtTypesFor: aView items: [ {self parentType baseType} ])
+		title: 'Parent Type';
+		priority: 40;
+		expandUpTo: 1;
+		actionButtonIcon: BrGlamorousVectorIcons inspect
+			label: 'Parent Type'
+			tooltip: 'Inspect parent type'
+			action: [ :aButton | aButton phlow spawnObject: self parentType baseType ]
+]
+
+{ #category : #'gt - extensions' }
 GtGQLEnumerationValue >> gtTypesNameText [
 	^ self name
 ]
@@ -67,6 +86,21 @@ GtGQLEnumerationValue >> name [
 { #category : #accessing }
 GtGQLEnumerationValue >> name: anObject [
 	self propertyAt: #name put: anObject
+]
+
+{ #category : #'gt - extensions' }
+GtGQLEnumerationValue >> parentType [
+	^ parentType
+]
+
+{ #category : #accessing }
+GtGQLEnumerationValue >> parentType: aType [
+	self
+		assert: [ parentType isNil ]
+		description: [ 'Parent type can be set only once' ].
+	self assert: [ aType isNotNil ] description: [ 'Parent type must be non-nil' ].
+
+	parentType := aType
 ]
 
 { #category : #printing }
