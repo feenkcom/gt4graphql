@@ -355,8 +355,10 @@ GtGQLValueBuilder >> visitGtGQLValueEnumeration: aModel [
 { #category : #visiting }
 GtGQLValueBuilder >> visitGtGQLValueList: aValue [
 	| aType anItemStep |
+	aValue userData jsonObject ifNil: [ ^ self ].
 	aType := aValue itemType.
 	anItemStep := aValue itemStep.
+
 	aValue userData
 		do: [ :aChildJson :anIndex | 
 			| aChildModel |
