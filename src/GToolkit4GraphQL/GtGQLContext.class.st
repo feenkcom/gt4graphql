@@ -58,6 +58,11 @@ GtGQLContext >> clearAuthentication [
 	authentication := GtGQLNoAuthentication new
 ]
 
+{ #category : #'api - report' }
+GtGQLContext >> clearReport [
+	self clearOption: #report ifAbsent: [ "ignore" ].
+]
+
 { #category : #accessing }
 GtGQLContext >> client [
 	^ self clientBuilder
