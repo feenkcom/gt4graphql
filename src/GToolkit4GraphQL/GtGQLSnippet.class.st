@@ -201,3 +201,12 @@ GtGQLSnippet >> resultVariableName: aString [
 				oldName: anOldName;
 				resultVariableName: aString)
 ]
+
+{ #category : #printing }
+GtGQLSnippet >> storeOn: aStream [
+	aStream nextPutAll: '(GtGQLSnippet new input: '.
+	self input storeOn: aStream.
+	aStream nextPutAll: '; operation: '.
+	self operation storeOn: aStream.
+	aStream nextPutAll: '; yourself)'
+]
