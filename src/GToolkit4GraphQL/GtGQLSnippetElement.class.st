@@ -172,7 +172,7 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 	element hMatchParent.
 	element padding: (BlInsets all: 10).
 	element
-		aptitude: BrGlamorousCodeEditorAptitude + BrGlamorousEditableLabelAptitude.
+		aptitude: (BrGlamorousEditableLabelAptitude new) + (BrGlamorousCodeEditorAptitude new) .
 	element editor
 		when: BrTextEditorInsertedEvent do: [ :event | self perform: anUpdateSymbol ];
 		when: BrTextEditorDeletedEvent do: [ :event | self perform: anUpdateSymbol ];
@@ -331,8 +331,6 @@ GtGQLSnippetElement >> initialize [
 					hFitContentLimited;
 					styler: GtSelectorStyler new forUnary;
 					inputFilter: GtSelectorInputFilter forUnaryMessage;
-					aptitude: (BrGlamorousCodeEditorAptitude new fontSize: 12)
-							+ (BrGlamorousEditableLabelAptitude new minWidth: 100);
 					constraintsDo: [ :c | c linear vertical alignCenter ];
 					padding: (BlInsets all: 3))
 			as: #variableEditor
