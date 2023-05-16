@@ -156,7 +156,7 @@ GtGQLTypeLinker >> gtInterfaceReferencesFor: aView [
 	interfaceReferences ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Interface References';
+		title: 'Interface references';
 		priority: 21;
 		items: [ interfaceReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
 		children: [ :aType | 
@@ -195,7 +195,7 @@ GtGQLTypeLinker >> gtTypeReferencesFor: aView [
 	typeReferences ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Type References';
+		title: 'Type references';
 		priority: 20;
 		items: [ typeReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
 		children: [ :anObject | 
@@ -220,7 +220,7 @@ GtGQLTypeLinker >> gtUnionReferencesFor: aView [
 	unionReferences ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Union References';
+		title: 'Union references';
 		priority: 22;
 		items: [ unionReferences keys asSortedCollection: [ :a :b | a name < b name ] ];
 		children: [ :aType | 

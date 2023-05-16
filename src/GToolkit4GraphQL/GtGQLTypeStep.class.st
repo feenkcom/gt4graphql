@@ -57,7 +57,7 @@ GtGQLTypeStep >> gtFieldArgumentsFor: aView [
 	self field arguments ifEmpty: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Field Arguments';
+		title: 'Field arguments';
 		priority: 20;
 		object: [ self field ];
 		view: #gtArgumentsFor:
@@ -70,7 +70,7 @@ GtGQLTypeStep >> gtFieldDescriptionFor: aView [
 	self field description ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Field Description';
+		title: 'Field description';
 		priority: 40;
 		object: [ self field ];
 		view: #gtDescriptionFor:
@@ -82,7 +82,7 @@ GtGQLTypeStep >> gtFieldRepricationReasonFor: aView [
 	self isDeprecated ifFalse: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Deprecation Reason';
+		title: 'Deprecation reason';
 		priority: 50;
 		object: [ self field ];
 		view: #gtDepricationReasonFor:
@@ -92,7 +92,7 @@ GtGQLTypeStep >> gtFieldRepricationReasonFor: aView [
 GtGQLTypeStep >> gtFieldTypeFor: aView [
 	<gtView>
 	^ (GtGQLSchema gtTypesFor: aView items: [ {self fieldBaseType} ])
-		title: 'Field Type';
+		title: 'Field type';
 		expandUpTo: 1;
 		actionButtonIcon: BrGlamorousVectorIcons inspect
 			label: 'Field Type'

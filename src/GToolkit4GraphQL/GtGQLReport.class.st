@@ -72,7 +72,7 @@ GtGQLReport >> gtDataJsonStringFor: aView [
 	self value ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'JSON String';
+		title: 'JSON string';
 		priority: 60;
 		object: [ self value ];
 		view: #gtDataJsonStringFor:

@@ -120,7 +120,7 @@ GtGQLPaginatorStream >> extractItems [
 GtGQLPaginatorStream >> gtQueryFor: aView [
 	<gtView>
 	^ aView forward
-		title: 'Future Query';
+		title: 'Future query';
 		priority: 30;
 		tooltip: 'I display a GraphQL operation that will be (or already is) used by the paginator to get all items';
 		object: [ initialResult
@@ -140,7 +140,7 @@ GtGQLPaginatorStream >> gtResultJsonStringFor: aView [
 	self lastResult isSuccess ifFalse: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'JSON String';
+		title: 'JSON string';
 		priority: 20;
 		object: [ self lastResult ];
 		view: #gtResultJsonStringFor:;

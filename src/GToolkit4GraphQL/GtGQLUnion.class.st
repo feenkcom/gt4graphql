@@ -15,7 +15,7 @@ GtGQLUnion >> gtPossibleTypesFor: aView [
 	^ (GtGQLSchema
 		gtTypesFor: aView
 		items: [ self possibleTypes asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Possible Types';
+		title: 'Possible types';
 		priority: 11
 ]
 

@@ -52,7 +52,7 @@ GtGQLPageInfoInserter >> gtActuallAndPreviousQueryDiffFor: aView [
 	self modifiedQuery ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'New Query (two panes)';
+		title: 'New query (two panes)';
 		priority: 1;
 		object: [ self modifiedQuery ];
 		view: #gtQueryFor:
@@ -64,7 +64,7 @@ GtGQLPageInfoInserter >> gtNewQueryFor: aView [
 	self modifiedQuery ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'New Query';
+		title: 'New query';
 		priority: 2;
 		object: [ self modifiedQuery ];
 		view: #gtNewQueryFor:
@@ -76,7 +76,7 @@ GtGQLPageInfoInserter >> gtPreviousQueryFor: aView [
 	self query ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Previous Query';
+		title: 'Previous query';
 		priority: 3;
 		object: [ self query ];
 		view: #gtQueryFor:

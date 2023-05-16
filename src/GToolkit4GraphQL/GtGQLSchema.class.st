@@ -243,7 +243,7 @@ GtGQLSchema >> gtTypesWithMutationPathsFor: aView [
 	^ (self class
 		gtTypesFor: aView
 		items: [ self baseTypesWithMutationPaths asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Types With Mutation Paths';
+		title: 'Types with mutation paths';
 		priority: 48;
 		column: 'Paths'
 			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType mutationPaths size ] ifFalse: [ '' ] ]
@@ -256,7 +256,7 @@ GtGQLSchema >> gtTypesWithQueryPathsFor: aView [
 	^ (self class
 		gtTypesFor: aView
 		items: [ self baseTypesWithQueryPaths asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Types With Query Paths';
+		title: 'Types with query paths';
 		priority: 47;
 		column: 'Paths'
 			text: [ :aType | (aType isKindOf: GtGQLType) ifTrue: [ aType queryPaths size ] ifFalse: [ '' ] ]

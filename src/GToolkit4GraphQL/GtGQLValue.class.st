@@ -69,7 +69,7 @@ GtGQLValue >> gtDataJsonStringFor: aView [
 	self data ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'JSON String';
+		title: 'JSON string';
 		priority: 20;
 		object: [ self data ];
 		view: #gtJsonStringFor:

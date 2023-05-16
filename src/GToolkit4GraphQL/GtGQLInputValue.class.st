@@ -47,7 +47,7 @@ GtGQLInputValue >> gtDepricationReasonFor: aView [
 	<gtView>
 	self isDeprecated ifFalse: [ ^ aView empty ].
 	^ aView explicit
-		title: 'Deprecation Reason';
+		title: 'Deprecation reason';
 		priority: 50;
 		stencil: [ LeCoderTextElement coderElementFor: (self deprecationReason ifNil: [ '' ]) ]
 ]
@@ -69,7 +69,7 @@ GtGQLInputValue >> gtParentTypeFor: aView [
 	(self parentType baseType isKindOf: GtGQLComposite) ifFalse: [ ^ aView empty ].
 
 	^ (GtGQLSchema gtTypesFor: aView items: [ {self parentType baseType} ])
-		title: 'Parent Type';
+		title: 'Parent type';
 		priority: 40;
 		expandUpTo: 1;
 		actionButtonIcon: BrGlamorousVectorIcons inspect
