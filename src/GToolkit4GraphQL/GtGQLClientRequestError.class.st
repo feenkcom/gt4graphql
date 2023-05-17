@@ -14,7 +14,7 @@ GtGQLClientRequestError >> gtRequestHeadersFor: aView [
 	self request ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Request Headers';
+		title: 'Request headers';
 		priority: -5;
 		object: [ self request ];
 		view: #gtHeadersFor:;
@@ -46,7 +46,7 @@ GtGQLClientRequestError >> gtResponseHeadersFor: aView [
 	self response ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Response Headers';
+		title: 'Response headers';
 		priority: -9;
 		object: [ self response ];
 		view: #gtHeadersFor:;

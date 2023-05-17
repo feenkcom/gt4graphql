@@ -13,7 +13,7 @@ TGtGQLWithZnRequestAndResponse >> gtRequestHeadersFor: aView [
 	self request ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Request Headers';
+		title: 'Request headers';
 		priority: 45;
 		object: [ self request ];
 		view: #gtHeadersFor:;
@@ -45,7 +45,7 @@ TGtGQLWithZnRequestAndResponse >> gtResponseHeadersFor: aView [
 	self response ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Response Headers';
+		title: 'Response headers';
 		priority: 35;
 		object: [ self response ];
 		view: #gtHeadersFor:;

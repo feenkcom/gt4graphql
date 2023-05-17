@@ -62,7 +62,7 @@ GtGQLConnectionField >> gtFieldTypeFor: aView [
 	self field ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Field Type';
+		title: 'Field type';
 		priority: 2;
 		object: [ self field ];
 		view: #gtTypeFor:
@@ -74,7 +74,7 @@ GtGQLConnectionField >> gtIndentFor: aView [
 	self ast ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Indent String';
+		title: 'Indent string';
 		priority: 20;
 		object: [ self pageInfoIndent ];
 		view: #gtLiveFor:
@@ -87,7 +87,7 @@ GtGQLConnectionField >> gtMissingPageInfoFieldsFor: aView [
 	self missingPageInfoFields ifEmpty: [ ^ aView empty ].
 
 	^ aView columnedList
-		title: 'Missing PageInfo Fields';
+		title: 'Missing pageinfo fields';
 		priority: 5;
 		items: [ self missingPageInfoFields ];
 		column: 'Name' text: #name

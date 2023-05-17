@@ -54,7 +54,7 @@ GtGQLEnumerationValue >> gtParentTypeFor: aView [
 	(self parentType baseType isKindOf: GtGQLEnumeration) ifFalse: [ ^ aView empty ].
 
 	^ (GtGQLSchema gtTypesFor: aView items: [ {self parentType baseType} ])
-		title: 'Parent Type';
+		title: 'Parent type';
 		priority: 40;
 		expandUpTo: 1;
 		actionButtonIcon: BrGlamorousVectorIcons inspect

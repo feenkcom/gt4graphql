@@ -13,7 +13,7 @@ GtGQLInterface class >> kindName [
 GtGQLInterface >> gtPossibleTypesFor: aView [
 	<gtView>
 	^ (GtGQLSchema gtTypesFor: aView items: [ self possibleTypes ])
-		title: 'Possible Types';
+		title: 'Possible types';
 		priority: 11
 ]
 

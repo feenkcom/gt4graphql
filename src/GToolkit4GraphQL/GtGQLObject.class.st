@@ -17,7 +17,7 @@ GtGQLObject >> gtImplementedInterfacesFor: aView [
 	^ (GtGQLSchema
 		gtTypesFor: aView
 		items: [ self implementedInterfaces asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Implemented Interfaces';
+		title: 'Implemented interfaces';
 		priority: 46
 ]
 
@@ -29,7 +29,7 @@ GtGQLObject >> gtPartOfUnionsFor: aView [
 	^ (GtGQLSchema
 		gtTypesFor: aView
 		items: [ self partOfUnions asSortedCollection: [ :a :b | a name < b name ] ])
-		title: 'Part of Unions';
+		title: 'Part of unions';
 		priority: 46
 ]
 

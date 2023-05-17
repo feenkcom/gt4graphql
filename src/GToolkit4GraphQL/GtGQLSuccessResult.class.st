@@ -43,7 +43,7 @@ GtGQLSuccessResult >> gtResultJsonObjectFor: aView context: aContext [
 	aContext at: #gtTreeExpansionLevel ifAbsentPut: [ 3 ].
 	
 	^ aView forward
-		title: 'JSON Object';
+		title: 'JSON object';
 		priority: 21;
 		object: [ self data ];
 		view: #gtJsonObjectFor:context:
@@ -55,7 +55,7 @@ GtGQLSuccessResult >> gtResultJsonStringFor: aView [
 	self result ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'JSON String';
+		title: 'JSON string';
 		priority: 20;
 		object: [ self data ];
 		view: #gtJsonStringFor:

@@ -121,7 +121,7 @@ GtGQLQueryPathBuilder >> gtMutationPathsFor: aView [
 	schema ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Mutation Paths';
+		title: 'Mutation paths';
 		priority: 11;
 		items: [ (self baseTypes select: [ :each | each mutationPaths isNotNil ])
 				asSortedCollection: [ :a :b | a name < b name ] ];
@@ -144,7 +144,7 @@ GtGQLQueryPathBuilder >> gtQueryPathsFor: aView [
 	schema ifNil: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Query Paths';
+		title: 'Query paths';
 		priority: 10;
 		items: [ (self baseTypes select: [ :each | each queryPaths isNotNil ])
 				asSortedCollection: [ :a :b | a name < b name ] ];

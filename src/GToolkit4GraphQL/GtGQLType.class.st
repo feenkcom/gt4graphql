@@ -58,7 +58,7 @@ GtGQLType >> gtMutationPathsFor: aView [
 	(self hasOptionAt: #mutationPaths) ifFalse: [ ^ aView empty ].
 
 	^ aView columnedList
-		title: 'Mutation Paths';
+		title: 'Mutation paths';
 		priority: 48;
 		items: [ self mutationPaths ];
 		column: ''
@@ -80,7 +80,7 @@ GtGQLType >> gtQueryPathsFor: aView [
 	(self hasOptionAt: #queryPaths) ifFalse: [ ^ aView empty ].
 
 	^ aView columnedList
-		title: 'Query Paths';
+		title: 'Query paths';
 		priority: 47;
 		items: [ self queryPaths ];
 		column: ''
@@ -102,7 +102,7 @@ GtGQLType >> gtTypeReferencesFor: aView [
 	self typeReferences ifEmpty: [ ^ aView empty ].
 
 	^ aView columnedTree
-		title: 'Type References';
+		title: 'Type references';
 		priority: 46;
 		items: [ self typeReferences
 				asSortedCollection: [ :a :b | a sourceName < b sourceName ] ];

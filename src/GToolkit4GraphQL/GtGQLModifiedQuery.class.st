@@ -13,7 +13,7 @@ GtGQLModifiedQuery >> gtNewQueryFor: aView [
 	self operation ifNil: [ ^ aView empty ].
 
 	^ aView textEditor
-		title: 'New Query';
+		title: 'New query';
 		priority: 10;
 		aptitude: [ BrGlamorousCodeEditorAptitude ];
 		styler: [ GraphQLParser gtStyler ];
@@ -26,7 +26,7 @@ GtGQLModifiedQuery >> gtPreviousQueryFor: aView [
 	self previousQuery ifNil: [ ^ aView empty ].
 
 	^ aView forward
-		title: 'Previous Query';
+		title: 'Previous query';
 		priority: 11;
 		object: [ self previousQuery ];
 		view: #gtQueryFor:
