@@ -55,7 +55,7 @@ GtGQLComposite >> gtSearchFieldTypesFor: aSearch [
 		items: [ self fields asArray asAsyncStream
 				collect: [ :eachField | eachField type ifNotNil: #baseType ] ];
 		itemName: #name;
-		filter: (GtSpotterSubstringFilter new itemString: #name);
+		filterBySubstring: #name;
 		wantsToDisplayOnEmptyQuery: false
 ]
 
