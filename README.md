@@ -1,8 +1,6 @@
-# gt4graphql
+# Glamorous Toolkit for GraphQL
 GraphQL support in GToolkit
-
-# Installation 
-
+# Installation
 ```smalltalk
 Metacello new
 	baseline: 'GToolkit4GraphQL';
