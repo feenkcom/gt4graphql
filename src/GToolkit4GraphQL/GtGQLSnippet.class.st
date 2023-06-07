@@ -58,6 +58,12 @@ GtGQLSnippet class >> leJsonV4Name [
 	^ 'GraphQL'
 ]
 
+{ #category : #visiting }
+GtGQLSnippet >> acceptVisitor: aVisitor [
+
+	^ aVisitor visitGQLSnippet: self
+]
+
 { #category : #accessing }
 GtGQLSnippet >> asSnippetViewModel [
 	^ GtGQLSnippetViewModel new snippetModel: self
