@@ -48,7 +48,7 @@ GtGQLCompletionStrategy >> completeFieldOfType: aType andNode: aNode startingWit
 ]
 
 { #category : #completing }
-GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger [
+GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger requested: aBoolean [
 	| prefix ast node |
 	prefix := self completionPrefixAt: positionInteger in: aText.
 	(prefix isNil
@@ -80,15 +80,6 @@ GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger 
 						labeled: label
 						completion: completion
 						position: positionInteger ] ]
-]
-
-{ #category : #completing }
-GtGQLCompletionStrategy >> completionActionStreamFor: aText at: positionInteger requested: aBoolean [
-	minLength := aBoolean ifTrue: [ 0 ] ifFalse: [ 1 ].
-	^ super
-		completionActionStreamFor: aText
-		at: positionInteger
-		requested: aBoolean
 ]
 
 { #category : #completing }
