@@ -36,17 +36,13 @@ GtGQLSnippetViewModel >> onOperationChanged: anAnnouncement [
 
 { #category : #'private - announcement handling' }
 GtGQLSnippetViewModel >> onResultVariableNameChanged: anAnnouncement [
-	| aName |
-	aName := self resultVariableName.
-	aName ifNil: [ ^ self ].
-	aName ifEmpty: [ ^ self ].
-
-	anAnnouncement oldName
-		ifNotNil: [ self snippetBindings removeBindingOf: anAnnouncement oldName ].
-
-	(self snippetBindings bindingOf: aName) value: self resultValue.
-
-	self announce: anAnnouncement
+	LeBindingNameUpdater new
+		oldName: anAnnouncement oldName;
+		newName: self resultVariableName;
+		newValue: self resultValue;
+		bindings: self snippetBindings;
+		onSuccess: [ self announce: anAnnouncement ];
+		update
 ]
 
 { #category : #'private - announcement handling' }
