@@ -233,7 +233,7 @@ GtGQLType >> name: aString [
 ]
 
 { #category : #'api - response' }
-GtGQLType >> newValueUsing: aType [
+GtGQLType >> newValueUsing: aBuilder [
 	^ self subclassResponsibility
 ]
 

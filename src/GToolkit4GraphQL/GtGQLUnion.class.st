@@ -24,6 +24,11 @@ GtGQLUnion >> isUnion [
 	^ true
 ]
 
+{ #category : #'api - response' }
+GtGQLUnion >> newValueUsing: aBuilder [ 
+	^ aBuilder newValueUnionWithType: self
+]
+
 { #category : #accessing }
 GtGQLUnion >> possibleTypes [
 	^ self types
