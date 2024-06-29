@@ -166,6 +166,11 @@ GtGQLValueBuilder >> newValueScalarWithType: aType [
 	^ GtGQLValueScalar new type: aType
 ]
 
+{ #category : #'double dispatch - types' }
+GtGQLValueBuilder >> newValueUnionWithType: aType [
+	^ GtGQLValueUnion new type: aType
+]
+
 { #category : #'private - building' }
 GtGQLValueBuilder >> nonInterfaceType: aType data: aJson [
 	| aNonInterfaceType aSchemaType |
@@ -401,6 +406,22 @@ GtGQLValueBuilder >> visitGtGQLValueScalar: aModel [
 	"nothing to do"
 
 	
+]
+
+{ #category : #visiting }
+GtGQLValueBuilder >> visitGtGQLValueUnion: aValue [
+	| anActualType anActualModel |
+	aValue data jsonObject ifNil: [ ^ self ].
+	anActualType := aValue data
+			at: '__typename'
+			ifPresent: [ :aJson | self schema typeNamed: aJson jsonObject ]
+			ifAbsent: [ ^ self ].
+
+	anActualModel := self
+			buildType: anActualType
+			data: aValue data
+			step: aValue step.
+	aValue actualItem: anActualModel
 ]
 
 { #category : #visiting }
