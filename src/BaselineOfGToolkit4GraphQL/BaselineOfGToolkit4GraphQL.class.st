@@ -13,10 +13,10 @@ BaselineOfGToolkit4GraphQL >> baseline: spec [
 				spec repository: 'github://feenkcom/gt4magritte:v0.6.1010/src' ].
 		spec
 			baseline: 'LepiterEngine' with: [
-				spec repository: 'github://feenkcom/lepiter:v0.6.2395/src' ].
+				spec repository: 'github://feenkcom/lepiter:v0.6.2396/src' ].
 		spec
 			baseline: 'GToolkit4Json' with: [
-				spec repository: 'github://feenkcom/gt4json:v0.6.949/src' ].
+				spec repository: 'github://feenkcom/gt4json:v0.6.950/src' ].
 		spec
 			baseline: 'GToolkit4Changes' with: [
 				spec repository: 'github://feenkcom/gt4changes:v0.6.832/src' ].
