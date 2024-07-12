@@ -2,7 +2,7 @@
 	"repositories" : {
 		"github://feenkcom/gt4json/src" : "v0.6.977",
 		"github://feenkcom/gt4changes/src" : "v0.6.842",
-		"github://feenkcom/lepiter/src" : "v0.6.2442",
+		"github://feenkcom/lepiter/src" : "v0.6.2443",
 		"github://feenkcom/gt4magritte/src" : "v0.6.1020"
 	}
 }
