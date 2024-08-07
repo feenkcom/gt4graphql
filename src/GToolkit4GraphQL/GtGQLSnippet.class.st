@@ -15,7 +15,12 @@ GtGQLSnippet class >> contextMenuItemSpecification [
 	<leSnippetSpecification>
 	^ LeContextMenuItemSpecification new
 		snippetClass: self;
-		title: 'GraphQL'
+		title: self description
+]
+
+{ #category : #'api - accessing menu' }
+GtGQLSnippet class >> description [
+	^ 'GraphQL'
 ]
 
 { #category : #'instance creation' }
