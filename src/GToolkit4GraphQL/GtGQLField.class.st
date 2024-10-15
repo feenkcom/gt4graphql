@@ -177,7 +177,7 @@ GtGQLField >> isField [
 
 { #category : #testing }
 GtGQLField >> isMetaField [
-	^ self name = GtGQLIntrospectionConstants metaMetaTypeName
+	^ self name sameContentAs: GtGQLIntrospectionConstants metaMetaTypeName
 ]
 
 { #category : #testing }
