@@ -101,7 +101,7 @@ GtGQLClient >> post [
 				context: self context;
 				query: self query;
 				exception: anError;
-				messageText: ('Cannot prepare client entity: {1}' format: {anError }) ].
+				messageText: ('Cannot prepare client entity: {1}' format: {anError}) ].
 
 	aClient post.
 
@@ -112,7 +112,7 @@ GtGQLClient >> post [
 				response: aClient response;
 				request: aClient request ].
 
-	aJson := aClient response asJson.
+	aJson := aClient response asGtJson.
 
 	aJson
 		at: #data
