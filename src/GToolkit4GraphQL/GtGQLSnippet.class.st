@@ -74,6 +74,11 @@ GtGQLSnippet >> asSnippetViewModel [
 	^ GtGQLSnippetViewModel new snippetModel: self
 ]
 
+{ #category : #testing }
+GtGQLSnippet >> canMoveToAnotherDatabase [
+	^ true
+]
+
 { #category : #accessing }
 GtGQLSnippet >> contentAsString [
 	^ String
