@@ -114,7 +114,7 @@ GtGQLDataWidgetBuilder >> buildType: aType data: aJson [
 		ifTrue: [ self buildScalarType: aType data: aJson.
 			^ self ].
 
-	self halt
+	self error: 'Unknown Type!'
 ]
 
 { #category : #'private - widgets' }
