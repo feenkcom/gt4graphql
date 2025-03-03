@@ -43,7 +43,7 @@ GtGQLDataWidgetBuilder >> build [
 
 { #category : #'private - building' }
 GtGQLDataWidgetBuilder >> buildBasicValues: aJson [
-	self halt
+	self shouldBeImplemented
 ]
 
 { #category : #'private - building' }
@@ -86,7 +86,7 @@ GtGQLDataWidgetBuilder >> buildField: aField data: aJson [
 
 { #category : #'private - building' }
 GtGQLDataWidgetBuilder >> buildListType: aType data: aJson [
-	self halt
+	self shouldBeImplemented
 ]
 
 { #category : #'private - building' }
