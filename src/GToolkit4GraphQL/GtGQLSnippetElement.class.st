@@ -66,7 +66,7 @@ GtGQLSnippetElement >> contextDropDown [
 				hovered: [ :aStyle | aStyle background: self theme status neutralBackgroundColor darker ]).
 	button := self createDropDownButton.
 
-	dropDownLook := BrGlamorousWithDropdownAptitude
+	dropDownLook := BrGlamorousWithExplicitDropdownAptitude
 			handle: [ self createDropDownButton ]
 			content: [ | aContextVariables hasVariables aListItems |
 				aContextVariables := self contextVariables.
