@@ -70,7 +70,7 @@ GtGQLTypePath >> gtStepsFor: aView [
 				aStep isDeprecated
 					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
 						anIcon
-							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
+							aptitude: (BrGlamorousWithExplicitTooltipAptitude text: 'Deprecated query path') ]
 					ifFalse: [ anIcon background: BlBackground transparent ] ]
 			width: 10;
 		column: 'Step'
