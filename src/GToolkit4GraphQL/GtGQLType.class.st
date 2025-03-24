@@ -68,7 +68,7 @@ GtGQLType >> gtMutationPathsFor: aView [
 				aPath isDeprecated
 					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
 						anIcon
-							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated mutation path') ]
+							aptitude: (BrGlamorousWithExplicitTooltipAptitude text: 'Deprecated mutation path') ]
 					ifFalse: [ anIcon background: BlBackground transparent ] ]
 			width: 10;
 		column: 'Name' text: [ :aPath | aPath queryPathViewNameText ]
@@ -90,7 +90,7 @@ GtGQLType >> gtQueryPathsFor: aView [
 				aPath isDeprecated
 					ifTrue: [ anIcon background: BrGlamorousColors errorBackgroundColor.
 						anIcon
-							aptitude: (BrGlamorousWithLabelTooltipAptitude new text: 'Deprecated query path') ]
+							aptitude: (BrGlamorousWithExplicitTooltipAptitude text: 'Deprecated query path') ]
 					ifFalse: [ anIcon background: BlBackground transparent ] ]
 			width: 10;
 		column: 'Name' text: [ :aPath | aPath queryPathViewNameText ]
