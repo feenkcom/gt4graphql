@@ -10,6 +10,7 @@ Class {
 { #category : #'examples - builder\t' }
 GtGQLIntrospectionTypeBuilderExamples >> basicBuilder [
 	<gtExample>
+	<return: #GtGQLIntrospectionTypeBuilder>
 	| aBuilder |
 	aBuilder := GtGQLIntrospectionTypeBuilder new.
 
@@ -23,6 +24,7 @@ GtGQLIntrospectionTypeBuilderExamples >> basicBuilder [
 { #category : #'examples - builder\t' }
 GtGQLIntrospectionTypeBuilderExamples >> basicSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	| aSchema |
 	aSchema := GtGQLSchema new.
 
@@ -35,6 +37,7 @@ GtGQLIntrospectionTypeBuilderExamples >> basicSchema [
 { #category : #'examples - builder\t' }
 GtGQLIntrospectionTypeBuilderExamples >> nonNullListType [
 	<gtExample>
+	<return: #GtGQLNonNullable>
 	| aBuilder aJson aType aSchema aTypesCount |
 	aBuilder := self basicBuilder.
 	aJson := self nonNullListTypeJsonString.
@@ -59,12 +62,14 @@ GtGQLIntrospectionTypeBuilderExamples >> nonNullListType [
 { #category : #accessing }
 GtGQLIntrospectionTypeBuilderExamples >> nonNullListTypeJson [
 	<gtExample>
+	<return: #GtJson>
 	^ GtJson forJsonString: self nonNullListTypeJsonString
 ]
 
 { #category : #accessing }
 GtGQLIntrospectionTypeBuilderExamples >> nonNullListTypeJsonString [
 	<gtExample>
+	<return: #ByteString>
 	^ '{
 	"kind" : "NON_NULL",
 	"name" : null,
@@ -87,6 +92,7 @@ GtGQLIntrospectionTypeBuilderExamples >> nonNullListTypeJsonString [
 { #category : #'examples - builder\t' }
 GtGQLIntrospectionTypeBuilderExamples >> scalarStringType [
 	<gtExample>
+	<return: #GtGQLScalar>
 	| aBuilder aJson aType aSchema aTypesCount |
 	aBuilder := self basicBuilder.
 	aJson := self scalarStringTypeJsonString.
@@ -111,12 +117,14 @@ GtGQLIntrospectionTypeBuilderExamples >> scalarStringType [
 { #category : #accessing }
 GtGQLIntrospectionTypeBuilderExamples >> scalarStringTypeJson [
 	<gtExample>
+	<return: #GtJson>
 	^ GtJson forJsonString: self scalarStringTypeJsonString
 ]
 
 { #category : #accessing }
 GtGQLIntrospectionTypeBuilderExamples >> scalarStringTypeJsonString [
 	<gtExample>
+	<return: #ByteString>
 	^ '{
 	"kind" : "SCALAR",
 	"name" : "String",

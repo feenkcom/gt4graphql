@@ -7,6 +7,7 @@ Class {
 { #category : #accessing }
 GtGQLPaginatorStreamExamples >> basicPaginator [
 	<gtExample>
+	<return: #GtGQLPaginatorStream>
 	| aPaginator |
 	aPaginator := GtGQLPaginatorStream new.
 
@@ -20,6 +21,7 @@ GtGQLPaginatorStreamExamples >> basicPaginator [
 { #category : #accessing }
 GtGQLPaginatorStreamExamples >> paginatorWithGitHubQueryWithMissingPageInfoField_PreparationResult [
 	<gtExample>
+	<return: #GtGQLPaginatorStream>
 	| aPaginator aResult aQuery |
 	aResult := self preparationResultWithGitHubQueryWithMissingPageInfoField.
 	aPaginator := aResult paginator.
@@ -42,6 +44,7 @@ GtGQLPaginatorStreamExamples >> paginatorWithGitHubQueryWithMissingPageInfoField
 { #category : #accessing }
 GtGQLPaginatorStreamExamples >> preparationResultWithGitHubQueryWithMissingPageInfoField [
 	<gtExample>
+	<return: #GtGQLPreparation>
 	| aResult aQuery aContext |
 	aResult := GtGQLPreparation new.
 

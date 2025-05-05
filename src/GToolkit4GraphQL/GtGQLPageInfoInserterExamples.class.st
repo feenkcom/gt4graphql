@@ -7,6 +7,7 @@ Class {
 { #category : #'examples - inserter' }
 GtGQLPageInfoInserterExamples >> basicInserter [
 	<gtExample>
+	<return: #GtGQLPageInfoInserter>
 	| anInserter |
 	anInserter := GtGQLPageInfoInserter new.
 
@@ -34,6 +35,7 @@ GtGQLPageInfoInserterExamples >> basicInserter [
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithFragment [
 	<gtExample>
+	<return: #ByteString>
 	^ 'fragment CommitInfo on Commit {
 	history(first: $count, after: $after) {
 		edges {
@@ -70,6 +72,7 @@ query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) 
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithInlinedFragment [
 	<gtExample>
+	<return: #ByteString>
 	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
 	repository (owner: $owner, name: $name) {
 		defaultBranchRef {
@@ -104,42 +107,49 @@ GtGQLPageInfoInserterExamples >> gitHubExpectedQueryStringWithInlinedFragment [
 { #category : #'examples - schema' }
 GtGQLPageInfoInserterExamples >> gitHubMiniSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	^ GtGQLDataExamples new gitHubMiniSchema
 ]
 
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubQueryStringWithInlinedFragmentPageInfoField [
 	<gtExample>
+	<return: #ByteString>
 	^ GtGQLDataExamples new gitHubQueryStringWithInlinedFragmentPageInfoField
 ]
 
 { #category : #'examples - queries' }
 GtGQLPageInfoInserterExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithFragmentWithoutPageInfoField
 ]
 
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubQueryWithInlinedFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithInlinedFragmentPageInfoField
 ]
 
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubQueryWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithInlinedFragmentWithoutPageInfoField
 ]
 
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> gitHubQueryWithMissingPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithMissingPageInfoField
 ]
 
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField [
 	<gtExample>
+	<return: #GtGQLPageInfoInserter>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithMissingPageInfoField.
@@ -163,10 +173,12 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField [
 	self
 		assert: anInserter modifiedQuery isNotNil
 		description: [ 'Modified query must exist' ].
-		
+
 	aModifiedQuery := anInserter modifiedQuery.
-	
-	self assert: aModifiedQuery operation equals: self modifiedQueryStringWithAddedPageInfoFields.
+
+	self
+		assert: aModifiedQuery operation
+		equals: self modifiedQueryStringWithAddedPageInfoFields.
 
 	^ anInserter
 ]
@@ -174,6 +186,7 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField [
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField_DefinedConnectoPath [
 	<gtExample>
+	<return: #GtGQLPageInfoInserter>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithMissingPageInfoField.
@@ -211,6 +224,7 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryStringWithMissingPageInfoField_D
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLPageInfoInserter>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithFragmentWithoutPageInfoField.
@@ -247,6 +261,7 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField_DefinedConnectorPath [
 	<gtExample>
+	<return: #GtGQLPageInfoInserter>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithFragmentWithoutPageInfoField.
@@ -284,6 +299,7 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryWithFragmentWithoutPageInfoField
 { #category : #accessing }
 GtGQLPageInfoInserterExamples >> inserterOfQueryWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLPageInfoInserter>
 	| anInserter aQuery aSchema aModifiedQuery |
 	anInserter := self basicInserter.
 	aQuery := self gitHubQueryWithInlinedFragmentWithoutPageInfoField.
@@ -320,6 +336,7 @@ GtGQLPageInfoInserterExamples >> inserterOfQueryWithInlinedFragmentWithoutPageIn
 { #category : #'examples - queries' }
 GtGQLPageInfoInserterExamples >> modifiedQueryStringWithAddedPageInfoFields [
 	<gtExample>
+	<return: #ByteString>
 	^ 'query Repositories($count: Int!, $login: String!, $after: String, $privacy: RepositoryPrivacy) {
 	organization (login: $login) {
 		name
@@ -357,6 +374,7 @@ GtGQLPageInfoInserterExamples >> modifiedQueryStringWithAddedPageInfoFields [
 { #category : #'examples - queries' }
 GtGQLPageInfoInserterExamples >> modifiedQueryStringWithAddedPageInfoFields_DefinedConnectoPath [
 	<gtExample>
+	<return: #ByteString>
 	^ 'query Repositories($count: Int!, $login: String!, $after: String, $privacy: RepositoryPrivacy) {
 	organization (login: $login) {
 		name

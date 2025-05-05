@@ -11,6 +11,7 @@ Class {
 { #category : #'examples - builder' }
 GtGQLIntrospectionSchemaBuilderExamples >> basicIntrospectionSchemaBuilder [
 	<gtExample>
+	<return: #GtGQLIntrospectionSchemaBuilder>
 	| aBuilder |
 	aBuilder := GtGQLIntrospectionSchemaBuilder new.
 
@@ -22,6 +23,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> basicIntrospectionSchemaBuilder [
 { #category : #'examples - builder' }
 GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	| aBuilder aSchema aCharacter aHuman aSearchResult |
 	aBuilder := self starWarsIntrospectionSchemaBuilder.
 
@@ -39,7 +41,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchema [
 	self assert: aCharacter possibleTypes size equals: 2.
 
 	aSearchResult := aSchema typeNamed: 'SearchResult'.
-	
+
 	self
 		assert: aSearchResult isNotNil
 		description: [ 'SearchResult type must exist' ].
@@ -59,6 +61,7 @@ GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchema [
 { #category : #'examples - builder' }
 GtGQLIntrospectionSchemaBuilderExamples >> starWarsIntrospectionSchemaBuilder [
 	<gtExample>
+	<return: #GtGQLIntrospectionSchemaBuilder>
 	| aBuilder aJson aContext |
 	aBuilder := self basicIntrospectionSchemaBuilder.
 	aJson := GtGQLDataExamples new starWarsGraphQLSchemaJsonString.

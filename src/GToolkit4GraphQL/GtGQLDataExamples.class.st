@@ -7,6 +7,7 @@ Class {
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubMiniSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	| anAst aSchema anArgument anOrganizationField |
 	anAst := self gitHubMiniSchemaAst.
 	aSchema := GtGQLSchema new.
@@ -33,6 +34,7 @@ GtGQLDataExamples >> gitHubMiniSchema [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubMiniSchemaAst [
 	<gtExample>
+	<return: #GraphQLDocumentNode>
 	| anAst |
 	anAst := GraphQLParser parseFile: self gitHubMiniSchemaGraphQLFile.
 
@@ -44,6 +46,7 @@ GtGQLDataExamples >> gitHubMiniSchemaAst [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubMiniSchemaGraphQLFile [
 	<gtExample>
+	<return: #FileLocator>
 	| aFile |
 	aFile := FileLocator gtResource
 			/ 'feenkcom/gt4graphql/data/examples/github-mini-schema.graphql'.
@@ -55,6 +58,7 @@ GtGQLDataExamples >> gitHubMiniSchemaGraphQLFile [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithFragmentPageInfoField [
 	<gtExample>
+	<return: #ByteString>
 	^ 'fragment CommitInfo on Commit {
 	history(first: $count, after: $after) {
 		edges {
@@ -91,6 +95,7 @@ query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) 
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #ByteString>
 	^ 'fragment CommitInfo on Commit {
 	history(first: $count, after: $after) {
 		edges {
@@ -121,6 +126,7 @@ query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) 
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentPageInfoField [
 	<gtExample>
+	<return: #ByteString>
 	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
 	repository (owner: $owner, name: $name) {
 		defaultBranchRef {
@@ -155,6 +161,7 @@ GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #ByteString>
 	^ 'query GetCommits($count: Int!, $name: String!, $owner: String!, $after: String) {
 	repository (owner: $owner, name: $name) {
 		defaultBranchRef {
@@ -183,6 +190,7 @@ GtGQLDataExamples >> gitHubQueryStringWithInlinedFragmentWithoutPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
 	<gtExample>
+	<return: #ByteString>
 	^ 'query Repositories($count: Int!, $login: String!, $after: String, $privacy: RepositoryPrivacy) {
 	organization (login: $login) {
 		name
@@ -213,6 +221,7 @@ GtGQLDataExamples >> gitHubQueryStringWithMissingPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryStringWithOrganizationRepositoriesAndOpenAndClosedIssues [
 	<gtExample>
+	<return: #ByteString>
 	^ 'fragment IssueDetails on IssueConnection {
 	__typename
 	totalCount
@@ -271,6 +280,7 @@ query Repositories($count: Int!, $login: String!, $after: String, $privacy: Repo
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self gitHubQueryStringWithFragmentPageInfoField.
@@ -285,6 +295,7 @@ GtGQLDataExamples >> gitHubQueryWithFragmentPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self gitHubQueryStringWithFragmentWithoutPageInfoField.
@@ -299,6 +310,7 @@ GtGQLDataExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithInlinedFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self gitHubQueryStringWithInlinedFragmentPageInfoField.
@@ -313,6 +325,7 @@ GtGQLDataExamples >> gitHubQueryWithInlinedFragmentPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self gitHubQueryStringWithInlinedFragmentWithoutPageInfoField.
@@ -327,6 +340,7 @@ GtGQLDataExamples >> gitHubQueryWithInlinedFragmentWithoutPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithMissingPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self gitHubQueryStringWithMissingPageInfoField.
@@ -341,6 +355,7 @@ GtGQLDataExamples >> gitHubQueryWithMissingPageInfoField [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := GtGQLQuery new.
 	anOperation := self
@@ -356,6 +371,7 @@ GtGQLDataExamples >> gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssu
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubRepositoriesJsonFile [
 	<gtExample>
+	<return: #FileLocator>
 	| aFile |
 	aFile := FileLocator gtResource
 			/ 'feenkcom/gt4graphql/data/examples/github-repositories.json'.
@@ -367,6 +383,7 @@ GtGQLDataExamples >> gitHubRepositoriesJsonFile [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubRepositoriesJsonObject [
 	<gtExample>
+	<return: #Dictionary>
 	| aJson |
 	aJson := STONJSON fromString: self gitHubRepositoriesJsonFile.
 
@@ -380,6 +397,7 @@ GtGQLDataExamples >> gitHubRepositoriesJsonObject [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJson [
 	<gtExample>
+	<return: #GtJson>
 	| aJson |
 	aJson := GtJson
 			forJsonString: self gitHubRepositoriesWithOpenAndClosedIssuesJsonString.
@@ -395,6 +413,7 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJson [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonData [
 	<gtExample>
+	<return: #GtJsonKey>
 	| aJson aData |
 	aJson := self gitHubRepositoriesWithOpenAndClosedIssuesJson.
 	aData := aJson at: #data.
@@ -410,6 +429,7 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonData [
 { #category : #'examples - github' }
 GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 	<gtExample>
+	<return: #ByteString>
 	^ '{
 	"data" : {
 		"organization" : {
@@ -575,6 +595,7 @@ GtGQLDataExamples >> gitHubRepositoriesWithOpenAndClosedIssuesJsonString [
 { #category : #'examples - schema' }
 GtGQLDataExamples >> graphQLIntrospectionSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	| aFile aSchema anAst |
 	aFile := self graphQLIntrospectionSchemaFile.
 
@@ -593,6 +614,7 @@ GtGQLDataExamples >> graphQLIntrospectionSchema [
 { #category : #'examples - schema' }
 GtGQLDataExamples >> graphQLIntrospectionSchemaFile [
 	<gtExample>
+	<return: #FileLocator>
 	| aFile |
 	aFile := FileLocator gtResource
 			/ 'feenkcom/gt4graphql/data/examples/graphql-introspection.graphql'.
@@ -604,6 +626,7 @@ GtGQLDataExamples >> graphQLIntrospectionSchemaFile [
 { #category : #'examples - schema' }
 GtGQLDataExamples >> inputTypeAst [
 	<gtExample>
+	<return: #GraphQLDocumentNode>
 	| anAst |
 	anAst := GraphQLParser parse: self inputTypeGraphQLSchemaString.
 
@@ -615,6 +638,7 @@ GtGQLDataExamples >> inputTypeAst [
 { #category : #'examples - schema' }
 GtGQLDataExamples >> inputTypeGraphQLSchemaString [
 	<gtExample>
+	<return: #ByteString>
 	^ '
 input ReviewInput {
   stars: Int!
@@ -626,6 +650,7 @@ input ReviewInput {
 { #category : #'examples - schema' }
 GtGQLDataExamples >> inputTypeSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	| anAst aSchema aType |
 	anAst := self inputTypeAst.
 	aSchema := GtGQLSchema new.
@@ -647,6 +672,7 @@ GtGQLDataExamples >> inputTypeSchema [
 { #category : #'examples - schema' }
 GtGQLDataExamples >> interfaceAst [
 	<gtExample>
+	<return: #GraphQLDocumentNode>
 	| anAst |
 	anAst := GraphQLParser parse: self interfaceGraphQLSchemaString.
 
@@ -658,6 +684,7 @@ GtGQLDataExamples >> interfaceAst [
 { #category : #'examples - schema' }
 GtGQLDataExamples >> interfaceGraphQLSchemaString [
 	<gtExample>
+	<return: #ByteString>
 	^ '
 interface Character {
   id: ID!
@@ -684,6 +711,7 @@ type Droid implements Character {
 { #category : #'examples - schema' }
 GtGQLDataExamples >> interfaceSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	| anAst aSchema |
 	anAst := self interfaceAst.
 	aSchema := GtGQLSchema new.
@@ -697,6 +725,7 @@ GtGQLDataExamples >> interfaceSchema [
 { #category : #'examples - star wars' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
 	<gtExample>
+	<return: #FileLocator>
 	| aFile |
 	aFile := FileLocator gtResource
 			/ 'feenkcom/gt4graphql/data/examples/starwars-json-schema.json'.
@@ -708,6 +737,7 @@ GtGQLDataExamples >> starWarsGraphQLSchemaJsonFile [
 { #category : #'examples - star wars' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonObject [
 	<gtExample>
+	<return: #Dictionary>
 	| aJson |
 	aJson := STONJSON fromString: self starWarsGraphQLSchemaJsonString.
 
@@ -721,6 +751,7 @@ GtGQLDataExamples >> starWarsGraphQLSchemaJsonObject [
 { #category : #'examples - star wars' }
 GtGQLDataExamples >> starWarsGraphQLSchemaJsonString [
 	<gtExample>
+	<return: #ByteString>
 	| aFile aContents |
 	aFile := self starWarsGraphQLSchemaJsonFile.
 	aContents := aFile contents.

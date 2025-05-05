@@ -10,6 +10,7 @@ Class {
 { #category : #'examples - builder' }
 GtGQLPathBuilderExamples >> basicBuilder [
 	<gtExample>
+	<return: #GtGQLPathBuilder>
 	| aBuilder |
 	aBuilder := GtGQLPathBuilder new.
 
@@ -22,6 +23,7 @@ GtGQLPathBuilderExamples >> basicBuilder [
 { #category : #'examples - builder' }
 GtGQLPathBuilderExamples >> builderWithGitHubQueryWithFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLPathBuilder>
 	| aBuilder aRootNode anAuthorNode |
 	aBuilder := self basicBuilder.
 	aRootNode := self gitHubQueryWithFragmentPageInfoField graphqlNode.
@@ -52,13 +54,18 @@ GtGQLPathBuilderExamples >> builderWithGitHubQueryWithFragmentPageInfoField [
 { #category : #'examples - builder' }
 GtGQLPathBuilderExamples >> builderWithGitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues [
 	<gtExample>
+	<return: #GtGQLPathBuilder>
 	| aBuilder aRootNode aTotalCountNode |
 	aBuilder := self basicBuilder.
-	aRootNode := self gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues graphqlNode.
+	aRootNode := self gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues
+			graphqlNode.
 
 	aRootNode
 		withAllNodesOfType: GraphQLFieldNode
-		do: [ :aNode | ((aNode name ifNotNil: #source) = 'totalCount' and: [ aNode parent isKindOf: GraphQLFragmentDefinitionNode ]) ifTrue: [ aTotalCountNode := aNode ] ].
+		do: [ :aNode | 
+			((aNode name ifNotNil: #source) = 'totalCount'
+				and: [ aNode parent isKindOf: GraphQLFragmentDefinitionNode ])
+				ifTrue: [ aTotalCountNode := aNode ] ].
 
 	self
 		assert: aTotalCountNode isNotNil
@@ -85,6 +92,7 @@ GtGQLPathBuilderExamples >> builderWithGitHubQueryWithOrganizationRepositoriesAn
 { #category : #'examples - builder' }
 GtGQLPathBuilderExamples >> closedIssuesPath [
 	<gtExample>
+	<return: #GtGQLPath>
 	| aBuilder aPath |
 	aBuilder := self
 			builderWithGitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues.
@@ -101,18 +109,22 @@ GtGQLPathBuilderExamples >> closedIssuesPath [
 { #category : #'examples - queries' }
 GtGQLPathBuilderExamples >> gitHubQueryWithFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithFragmentPageInfoField
 ]
 
 { #category : #'examples - queries' }
 GtGQLPathBuilderExamples >> gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues [
 	<gtExample>
-	^ GtGQLDataExamples new gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues
+	<return: #GtGQLQuery>
+	^ GtGQLDataExamples new
+		gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues
 ]
 
 { #category : #'examples - builder' }
 GtGQLPathBuilderExamples >> openIssuesPath [
 	<gtExample>
+	<return: #GtGQLPath>
 	| aBuilder aPath |
 	aBuilder := self
 			builderWithGitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues.
