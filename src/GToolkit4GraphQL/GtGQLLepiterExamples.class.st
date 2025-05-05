@@ -45,24 +45,28 @@ GtGQLLepiterExamples >> deserialize: aString [
 { #category : #'examples - snippet' }
 GtGQLLepiterExamples >> graphQLContext [
 	<gtExample>
+	<return: #ByteString>
 	^ 'aContext'
 ]
 
 { #category : #'examples - snippet' }
 GtGQLLepiterExamples >> graphQLInput [
 	<gtExample>
+	<return: #ByteString>
 	^ '{ "input" : { "name" : "input name" } }'
 ]
 
 { #category : #'examples - snippet' }
 GtGQLLepiterExamples >> graphQLOperation [
 	<gtExample>
+	<return: #ByteString>
 	^ '# This is a GraphQL snippet'
 ]
 
 { #category : #'examples - snippet' }
 GtGQLLepiterExamples >> graphQLSnippet [
 	<gtExample>
+	<return: #GtGQLSnippet>
 	| aSnippet |
 	aSnippet := GtGQLSnippet new.
 
@@ -82,6 +86,7 @@ GtGQLLepiterExamples >> graphQLSnippet [
 { #category : #'examples - page' }
 GtGQLLepiterExamples >> pageWithLevelOneGraphQLSnippet [
 	<gtExample>
+	<return: #LePage>
 	| aPage aSnippet |
 	aPage := LePage new.
 	aSnippet := self graphQLSnippet.

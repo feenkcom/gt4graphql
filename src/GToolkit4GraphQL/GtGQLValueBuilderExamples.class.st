@@ -7,6 +7,7 @@ Class {
 { #category : #'examples - builder' }
 GtGQLValueBuilderExamples >> basicBuilder [
 	<gtExample>
+	<return: #GtGQLValueBuilder>
 	| aBuilder |
 	aBuilder := GtGQLValueBuilder new.
 
@@ -22,6 +23,7 @@ GtGQLValueBuilderExamples >> basicBuilder [
 { #category : #'examples - builder' }
 GtGQLValueBuilderExamples >> githubBuilder [
 	<gtExample>
+	<return: #GtGQLValueBuilder>
 	| aBuilder aContext aQuery aData |
 	aBuilder := self basicBuilder.
 	aContext := self githubContext.
@@ -44,6 +46,7 @@ GtGQLValueBuilderExamples >> githubBuilder [
 { #category : #'examples - builder' }
 GtGQLValueBuilderExamples >> githubBuilderWithValue [
 	<gtExample>
+	<return: #GtGQLValueBuilder>
 	| aBuilder anOrganization aRepositories aRepository anOpenIssues aClosedIssues anOwner isVerifiedOwner |
 	aBuilder := self githubBuilder.
 
@@ -106,6 +109,7 @@ GtGQLValueBuilderExamples >> githubBuilderWithValue [
 { #category : #'examples - support' }
 GtGQLValueBuilderExamples >> githubContext [
 	<gtExample>
+	<return: #GtGQLContext>
 	| aContext aSchema |
 	aContext := GtGQLContext new.
 	aSchema := GtGQLDataExamples new gitHubMiniSchema.
@@ -120,13 +124,14 @@ GtGQLValueBuilderExamples >> githubContext [
 { #category : #'examples - support' }
 GtGQLValueBuilderExamples >> githubData [
 	<gtExample>
-	^ GtGQLDataExamples new
-		gitHubRepositoriesWithOpenAndClosedIssuesJsonData
+	<return: #GtJsonKey>
+	^ GtGQLDataExamples new gitHubRepositoriesWithOpenAndClosedIssuesJsonData
 ]
 
 { #category : #'examples - support' }
 GtGQLValueBuilderExamples >> githubQuery [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new
 		gitHubQueryWithOrganizationRepositoriesAndOpenAndClosedIssues
 ]

@@ -7,13 +7,16 @@ Class {
 { #category : #accessing }
 GtGQLModifiedQueryExamples >> basicModifiedQuery [
 	<gtExample>
+	<return: #GtGQLModifiedQuery>
 	| aModifiedQuery |
 	aModifiedQuery := GtGQLModifiedQuery new.
 
 	self
 		assert: aModifiedQuery operation isNil
 		description: [ 'Query operation must be nil' ].
-	self assert: aModifiedQuery input isNil description: [ 'Query input must be nil' ].
+	self
+		assert: aModifiedQuery input isNil
+		description: [ 'Query input must be nil' ].
 	self
 		assert: aModifiedQuery previousQuery isNil
 		description: [ 'Previous query must be nil' ].
@@ -24,6 +27,7 @@ GtGQLModifiedQueryExamples >> basicModifiedQuery [
 { #category : #accessing }
 GtGQLModifiedQueryExamples >> modifiedQueryWithOperation [
 	<gtExample>
+	<return: #GtGQLModifiedQuery>
 	| aModifiedQuery anOperation aPreviousQuery |
 	aModifiedQuery := self basicModifiedQuery.
 	anOperation := 'query MyQuery { 

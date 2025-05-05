@@ -7,6 +7,7 @@ Class {
 { #category : #accessing }
 GtGQLQueryExamples >> basicQuery [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery |
 	aQuery := GtGQLQuery new.
 
@@ -21,6 +22,7 @@ GtGQLQueryExamples >> basicQuery [
 { #category : #accessing }
 GtGQLQueryExamples >> queryWithInput_AsDictionary [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anInput |
 	aQuery := self basicQuery.
 	anInput := Dictionary new
@@ -45,6 +47,7 @@ GtGQLQueryExamples >> queryWithInput_AsDictionary [
 { #category : #accessing }
 GtGQLQueryExamples >> queryWithInput_AsEmptyString [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anInput |
 	aQuery := self basicQuery.
 	anInput := ''.
@@ -67,6 +70,7 @@ GtGQLQueryExamples >> queryWithInput_AsEmptyString [
 { #category : #accessing }
 GtGQLQueryExamples >> queryWithInput_AsInvalidString [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anInput |
 	aQuery := self basicQuery.
 	anInput := '{ [] }'.
@@ -89,6 +93,7 @@ GtGQLQueryExamples >> queryWithInput_AsInvalidString [
 { #category : #accessing }
 GtGQLQueryExamples >> queryWithInput_AsString [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anInput |
 	aQuery := self basicQuery.
 	anInput := '{ "variable" : 42 }'.
@@ -115,6 +120,7 @@ GtGQLQueryExamples >> queryWithInput_AsString [
 { #category : #accessing }
 GtGQLQueryExamples >> queryWithOperation [
 	<gtExample>
+	<return: #GtGQLQuery>
 	| aQuery anOperation |
 	aQuery := self basicQuery.
 	anOperation := 'query MyQuery { 

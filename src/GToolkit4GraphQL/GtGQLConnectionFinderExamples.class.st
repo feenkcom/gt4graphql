@@ -7,6 +7,7 @@ Class {
 { #category : #'examples - finder' }
 GtGQLConnectionFinderExamples >> basicFinder [
 	<gtExample>
+	<return: #GtGQLConnectionFinder>
 	| aFinder |
 	aFinder := GtGQLConnectionFinder new.
 
@@ -23,6 +24,7 @@ GtGQLConnectionFinderExamples >> basicFinder [
 { #category : #'examples - finder' }
 GtGQLConnectionFinderExamples >> finderOfQueryStringWithInlinedFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLConnectionFinder>
 	| aFinder aQuery aSchema |
 	aFinder := self basicFinder.
 	aQuery := self gitHubQueryWithInlinedFragmentPageInfoField.
@@ -49,6 +51,7 @@ GtGQLConnectionFinderExamples >> finderOfQueryStringWithInlinedFragmentPageInfoF
 { #category : #'examples - finder' }
 GtGQLConnectionFinderExamples >> finderOfQueryStringWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLConnectionFinder>
 	| aFinder aQuery aSchema |
 	aFinder := self basicFinder.
 	aQuery := self gitHubQueryWithInlinedFragmentWithoutPageInfoField.
@@ -75,6 +78,7 @@ GtGQLConnectionFinderExamples >> finderOfQueryStringWithInlinedFragmentWithoutPa
 { #category : #'examples - finder' }
 GtGQLConnectionFinderExamples >> finderOfQueryStringWithMissingPageInfoField [
 	<gtExample>
+	<return: #GtGQLConnectionFinder>
 	| aFinder aQuery aSchema |
 	aFinder := self basicFinder.
 	aQuery := self gitHubQueryWithMissingPageInfoField.
@@ -101,6 +105,7 @@ GtGQLConnectionFinderExamples >> finderOfQueryStringWithMissingPageInfoField [
 { #category : #'examples - finder' }
 GtGQLConnectionFinderExamples >> finderOfQueryWithFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLConnectionFinder>
 	| aFinder aQuery aSchema |
 	aFinder := self basicFinder.
 	aQuery := self gitHubQueryWithFragmentPageInfoField.
@@ -127,6 +132,7 @@ GtGQLConnectionFinderExamples >> finderOfQueryWithFragmentPageInfoField [
 { #category : #'examples - finder' }
 GtGQLConnectionFinderExamples >> finderOfQueryWithFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLConnectionFinder>
 	| aFinder aQuery aSchema |
 	aFinder := self basicFinder.
 	aQuery := self gitHubQueryWithFragmentWithoutPageInfoField.
@@ -153,35 +159,41 @@ GtGQLConnectionFinderExamples >> finderOfQueryWithFragmentWithoutPageInfoField [
 { #category : #'examples - schema' }
 GtGQLConnectionFinderExamples >> gitHubMiniSchema [
 	<gtExample>
+	<return: #GtGQLSchema>
 	^ GtGQLDataExamples new gitHubMiniSchema
 ]
 
 { #category : #'examples - queries' }
 GtGQLConnectionFinderExamples >> gitHubQueryWithFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithFragmentPageInfoField
 ]
 
 { #category : #'examples - queries' }
 GtGQLConnectionFinderExamples >> gitHubQueryWithFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithFragmentWithoutPageInfoField
 ]
 
 { #category : #'examples - queries' }
 GtGQLConnectionFinderExamples >> gitHubQueryWithInlinedFragmentPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithInlinedFragmentPageInfoField
 ]
 
 { #category : #'examples - queries' }
 GtGQLConnectionFinderExamples >> gitHubQueryWithInlinedFragmentWithoutPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithInlinedFragmentWithoutPageInfoField
 ]
 
 { #category : #'examples - queries' }
 GtGQLConnectionFinderExamples >> gitHubQueryWithMissingPageInfoField [
 	<gtExample>
+	<return: #GtGQLQuery>
 	^ GtGQLDataExamples new gitHubQueryWithMissingPageInfoField
 ]
