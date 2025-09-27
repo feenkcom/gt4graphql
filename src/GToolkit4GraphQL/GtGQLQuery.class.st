@@ -41,7 +41,7 @@ GtGQLQuery >> gtQueryFor: aView [
 		aptitude: [ BrGlamorousCodeEditorAptitude ];
 		styler: [ GraphQLParser gtStyler ];
 		text: [ self operation ];
-		actionButtonIcon: BrGlamorousIcons tree
+		actionButtonIcon: BrGlamorousVectorIcons tree
 			label: 'AST'
 			tooltip: 'Inspect GraphQL AST structure'
 			action: [ :aButton | aButton phlow spawnObject: self graphqlNode ]
