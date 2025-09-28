@@ -306,7 +306,7 @@ GtGQLSnippetElement >> initialize [
 				beSmallSize;
 				constraintsDo: [ :c | c linear vertical alignCenter ];
 				aptitude: BrGlamorousButtonWithIconAptitude;
-				icon: BrGlamorousIcons playinspect asElement;
+				icon: BrGlamorousVectorIcons playinspect asElement;
 				label: 'Execute' asString;
 				action: [ :aButton | self executeQuery: aButton ];
 				withAsyncFutureDo: [ :anElementFuture | 
