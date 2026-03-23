@@ -1,8 +1,8 @@
 {
 	"repositories" : {
-		"github://feenkcom/gt4json/src" : "v0.7.126",
-		"github://feenkcom/gt4changes/src" : "v0.7.75",
-		"github://feenkcom/lepiter/src" : "v0.7.164",
-		"github://feenkcom/gt4magritte/src" : "v0.7.67"
+		"github://feenkcom/gt4json/src" : "v0.7.127",
+		"github://feenkcom/gt4changes/src" : "v0.7.76",
+		"github://feenkcom/lepiter/src" : "v0.7.165",
+		"github://feenkcom/gt4magritte/src" : "v0.7.68"
 	}
 }
