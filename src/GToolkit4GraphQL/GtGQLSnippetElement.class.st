@@ -164,7 +164,7 @@ GtGQLSnippetElement >> createNewSnippet [
 	self snippetViewModel focusNextSnippet
 ]
 
-{ #category : #accessing }
+{ #category : #initialization }
 GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 	| element |
 	element := BrEditor new.
@@ -179,16 +179,11 @@ GtGQLSnippetElement >> createSourceEditor: anUpdateSymbol [
 		when: BlInfiniteDataSourceChanged
 			do: [ :event | self perform: anUpdateSymbol ].
 	element
-		addShortcut: (BrEditorShortcut loseFocus
-				combination: (self class keyboardShortcut: #LoseFocus));
-		addShortcut: (LeSnippetIndentSnippetShortcut new
-				combination: (self class keyboardShortcut: #IndentSnippet));
-		addShortcut: (LeSnippetUnindentSnippetShortcut new
-				combination: (self class keyboardShortcut: #UnindentSnippet));
-		addShortcut: (LeSnippetMoveSnippetUpShortcut new
-				combination: (self class keyboardShortcut: #MoveSnippetUp));
-		addShortcut: (LeSnippetMoveSnippetDownShortcut new
-				combination: (self class keyboardShortcut: #MoveSnippetDown));
+		addShortcut: BrEditorShortcut loseFocus;
+		addShortcut: LeSnippetIndentSnippetShortcut new;
+		addShortcut: LeSnippetUnindentSnippetShortcut new;
+		addShortcut: LeSnippetMoveSnippetUpShortcut new;
+		addShortcut: LeSnippetMoveSnippetDownShortcut new;
 		addShortcut: (BlShortcutWithAction new
 				combination: BlKeyCombination builder primary return build;
 				action: [ :anEvent :aShortcut | self createNewSnippet ]).
