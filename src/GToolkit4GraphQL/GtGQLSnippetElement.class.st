@@ -264,7 +264,7 @@ GtGQLSnippetElement >> initialize [
 		addShortcut: (BlShortcutWithAction new
 				combination: BlKeyCombination primaryR;
 				repeatable: false;
-				action: [ :element | self renameInOperation ]);
+				action: [ :element | self renameInOperationForTextEditorElement: element ]);
 		addShortcut: (BlShortcutWithAction new
 				combination: BlKeyCombination primaryB;
 				repeatable: false;
@@ -285,7 +285,7 @@ GtGQLSnippetElement >> initialize [
 		addShortcut: (BlShortcutWithAction new
 				combination: BlKeyCombination primaryR;
 				repeatable: false;
-				action: [ :element | self renameInInput ]).
+				action: [ :element | self renameInInputForTextEditorElement: element ]).
 	inputEditor editor
 		when: BrTextEditorCursorReachedBoundaryEvent
 		do: [ :event | self exitInputEditorWith: event ].
@@ -448,7 +448,7 @@ GtGQLSnippetElement >> operationSource [
 ]
 
 { #category : #refactoring }
-GtGQLSnippetElement >> renameInInput [
+GtGQLSnippetElement >> renameInInputDocumentId: aDocumentId [
 	| jsonAst cursor jsonInterval name intervals action |
 	jsonAst := self inputAst.
 	(jsonAst isKindOf: JSONObjectNode) ifFalse: [ ^ self ].
@@ -469,13 +469,21 @@ GtGQLSnippetElement >> renameInInput [
 	action := GtCompositeRenameAction
 			locations: {jsonInterval}
 			element: self inputEditor.
+	action documentId: aDocumentId.
 	action forVariableOrUnaryMessage.
 	action addLocations: intervals to: self operationEditor editor.
 	action install
 ]
 
 { #category : #refactoring }
-GtGQLSnippetElement >> renameInOperation [
+GtGQLSnippetElement >> renameInInputForTextEditorElement: element [
+	element
+		selectedStringAndIntervalDo: [ :aSelectedString :aSelectedInterval :aTextSize :aDocumentId :aCaretOffset | self renameInInputDocumentId: aDocumentId ]
+		orCursorPositionDo: [ :aStringPosition :aTextSize :aDocumentId :aCaretOffset | self renameInInputDocumentId: aDocumentId ]
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> renameInOperationDocumentId: aDocumentId [
 	| jsonAst nodeToRename intervals jsonInterval name action |
 	nodeToRename := self operationNodeAtCursor.
 	(nodeToRename isKindOf: GraphQLVariableNode) ifFalse: [ ^ self ].
@@ -494,10 +502,18 @@ GtGQLSnippetElement >> renameInOperation [
 	action := GtCompositeRenameAction
 			locations: intervals
 			element: self operationEditor.
+	action documentId: aDocumentId.
 	action forVariableOrUnaryMessage.
 	jsonInterval
 		ifNotNil: [ action addLocations: {jsonInterval} to: self inputEditor editor ].
 	action install
+]
+
+{ #category : #refactoring }
+GtGQLSnippetElement >> renameInOperationForTextEditorElement: element [
+	element
+		selectedStringAndIntervalDo: [ :aSelectedString :aSelectedInterval :aTextSize :aDocumentId :aCaretOffset | self renameInOperationDocumentId: aDocumentId ]
+		orCursorPositionDo: [ :aStringPosition :aTextSize :aDocumentId :aCaretOffset | self renameInOperationDocumentId: aDocumentId ]
 ]
 
 { #category : #accessing }
