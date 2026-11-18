@@ -122,7 +122,7 @@ GtGQLValueBuilder >> listTypeOfItemType: anItemType [
 { #category : #accessing }
 GtGQLValueBuilder >> mutationType [
 	<return: #GtGQLType>
-	^ self schema ifNotNil: #mutationType
+	^ self schema ifNotNil: [ :v | v mutationType ]
 ]
 
 { #category : #'double dispatch - types' }
@@ -213,7 +213,7 @@ GtGQLValueBuilder >> operationStep [
 	| aNode |
 	^ GtGQLValueStep new
 		ast: (aNode := self operationNode);
-		name: (aNode type ifNotNil: #source)
+		name: (aNode type ifNotNil: [ :v | v source ])
 ]
 
 { #category : #'private - building' }
@@ -295,7 +295,7 @@ GtGQLValueBuilder >> query: anObject [
 { #category : #accessing }
 GtGQLValueBuilder >> queryType [
 	<return: #GtGQLType>
-	^ self schema ifNotNil: #queryType
+	^ self schema ifNotNil: [ :v | v queryType ]
 ]
 
 { #category : #accessing }
@@ -313,7 +313,7 @@ GtGQLValueBuilder >> result: aResult [
 { #category : #accessing }
 GtGQLValueBuilder >> schema [
 	<return: #GtGQLSchema>
-	^ self context ifNotNil: #schema
+	^ self context ifNotNil: [ :v | v schema ]
 ]
 
 { #category : #'private - building' }

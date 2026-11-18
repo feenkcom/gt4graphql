@@ -11,7 +11,7 @@ GtGQLNonNullable class >> kindName [
 
 { #category : #accessing }
 GtGQLNonNullable >> baseType [
-	^ self type ifNotNil: #baseType
+	^ self type ifNotNil: [ :v | v baseType ]
 ]
 
 { #category : #'api - paths' }
@@ -44,7 +44,7 @@ GtGQLNonNullable >> isRequired [
 
 { #category : #accessing }
 GtGQLNonNullable >> name [
-	^ (self type ifNotNil: #name ifNil: [ '?' ]) , '!'
+	^ (self type ifNotNil: [ :v | v name ] ifNil: [ '?' ]) , '!'
 ]
 
 { #category : #'api - response' }

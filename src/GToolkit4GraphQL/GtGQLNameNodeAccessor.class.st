@@ -20,7 +20,7 @@ GtGQLNameNodeAccessor >> fieldName: anObject [
 { #category : #'api - testing' }
 GtGQLNameNodeAccessor >> isFieldNode: aNode [
 	<return: #Boolean>
-	^ (aNode name ifNotNil: #source) = self fieldName
+	^ (aNode name ifNotNil: [ :v | v source ]) = self fieldName
 ]
 
 { #category : #printing }

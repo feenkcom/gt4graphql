@@ -107,13 +107,13 @@ GtGQLValueList >> printOn: aStream [
 
 	aStream
 		nextPut: $(;
-		nextPutAll: (self listType ifNotNil: #name);
+		nextPutAll: (self listType ifNotNil: [ :v | v name ]);
 		nextPut: $)
 ]
 
 { #category : #accessing }
 GtGQLValueList >> size [
-	^ items ifNotNil: #size ifNil: [ 0 ]
+	^ items ifNotNil: [ :v | v size ] ifNil: [ 0 ]
 ]
 
 { #category : #accessing }

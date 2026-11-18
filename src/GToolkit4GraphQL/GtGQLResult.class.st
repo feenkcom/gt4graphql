@@ -102,5 +102,5 @@ GtGQLResult >> report [
 { #category : #accessing }
 GtGQLResult >> schema [
 	<return: #GtGQLSchema>
-	^ self context ifNotNil: #schema
+	^ self context ifNotNil: [ :v | v schema ]
 ]

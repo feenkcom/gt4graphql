@@ -88,7 +88,7 @@ GtGQLPath >> leafStep [
 
 { #category : #accessing }
 GtGQLPath >> leafStepResultName [
-	^ self leafStep ifNotNil: #resultName
+	^ self leafStep ifNotNil: [ :v | v resultName ]
 ]
 
 { #category : #printing }

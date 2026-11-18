@@ -124,7 +124,7 @@ GtGQLInputValue >> isDeprecated: anObject [
 
 { #category : #testing }
 GtGQLInputValue >> isRequired [
-	^ self type ifNotNil: #isRequired ifNil: [ false ]
+	^ self type ifNotNil: [ :v | v isRequired ] ifNil: [ false ]
 ]
 
 { #category : #accessing }

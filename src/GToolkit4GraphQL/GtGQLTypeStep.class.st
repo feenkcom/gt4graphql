@@ -20,7 +20,7 @@ GtGQLTypeStep >> field: anObject [
 
 { #category : #accessing }
 GtGQLTypeStep >> fieldBaseType [
-	^ self fieldType ifNotNil: #baseType
+	^ self fieldType ifNotNil: [ :v | v baseType ]
 ]
 
 { #category : #accessing }
@@ -30,7 +30,7 @@ GtGQLTypeStep >> fieldName [
 
 { #category : #accessing }
 GtGQLTypeStep >> fieldType [
-	^ self field ifNotNil: #type
+	^ self field ifNotNil: [ :v | v type ]
 ]
 
 { #category : #accessing }

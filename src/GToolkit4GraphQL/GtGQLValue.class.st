@@ -39,7 +39,7 @@ GtGQLValue >> acceptVisitor: aVisitor [
 
 { #category : #accessing }
 GtGQLValue >> baseType [
-	^ self type ifNotNil: #baseType
+	^ self type ifNotNil: [ :v | v baseType ]
 ]
 
 { #category : #accessing }
@@ -110,7 +110,7 @@ GtGQLValue >> parent: anObject [
 { #category : #accessing }
 GtGQLValue >> schema [
 	<return: #GtGQLSchema>
-	^ self context ifNotNil: #schema
+	^ self context ifNotNil: [ :v | v schema ]
 ]
 
 { #category : #accessing }
