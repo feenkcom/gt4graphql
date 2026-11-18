@@ -39,7 +39,8 @@ GtGQLModifiedQuery >> gtQueryFor: aView [
 		title: 'Query';
 		priority: 1;
 		stencil: [ | aFromOperation aToOperation change |
-			aFromOperation := (self previousQuery ifNotNil: #operation) ifNil: [ '' ].
+			aFromOperation := (self previousQuery ifNotNil: [ :v | v operation ])
+					ifNil: [ '' ].
 			aToOperation := self operation ifNil: [ '' ].
 			change := GtDiffBuilder
 					computeDifferencesFrom: aFromOperation

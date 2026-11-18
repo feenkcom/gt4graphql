@@ -65,8 +65,8 @@ GtGQLPathBuilder >> visitDocument: aNode [
 { #category : #visiting }
 GtGQLPathBuilder >> visitField: aNode [
 	| aName anAlias |
-	anAlias := aNode alias ifNotNil: #source.
-	aName := aNode name ifNotNil: #source.
+	anAlias := aNode alias ifNotNil: [ :v | v source ].
+	aName := aNode name ifNotNil: [ :v | v source ].
 	currentPath
 		add: (GtGQLPathStep new
 				alias: anAlias;

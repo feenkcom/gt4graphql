@@ -39,7 +39,7 @@ GtGQLPaginatorStream >> connectorPath: anObject [
 { #category : #accessing }
 GtGQLPaginatorStream >> context [
 	<return: #GtGQLContext>
-	^ self lastResult ifNotNil: #context
+	^ self lastResult ifNotNil: [ :v | v context ]
 ]
 
 { #category : #accessing }

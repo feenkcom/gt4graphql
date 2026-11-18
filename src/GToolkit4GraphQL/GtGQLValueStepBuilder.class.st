@@ -25,8 +25,8 @@ GtGQLValueStepBuilder >> buildStepStartingNode: aParentNode [
 		do: [ :aNode | 
 			((aNode isKindOf: GraphQLFieldNode) and: [ accessor isFieldNode: aNode ])
 				ifTrue: [ step := self parentStep class new
-							alias: (aNode alias ifNotNil: #source);
-							name: (aNode name ifNotNil: #source);
+							alias: (aNode alias ifNotNil: [ :v | v source ]);
+							name: (aNode name ifNotNil: [ :v | v source ]);
 							parent: self parentStep;
 							ast: aNode.
 					^ self ].
@@ -53,13 +53,13 @@ GtGQLValueStepBuilder >> hasStep [
 { #category : #'private - building' }
 GtGQLValueStepBuilder >> newStepInFragmentSpread: aSpreadNode [
 	| aFragmentName |
-	aFragmentName := aSpreadNode name ifNotNil: #source.
+	aFragmentName := aSpreadNode name ifNotNil: [ :v | v source ].
 	aFragmentName ifNil: [ ^ self ].
 
 	aSpreadNode topParent
 		allNodesOfType: GraphQLFragmentDefinitionNode
 		do: [ :aFragmentNode | 
-			(aFragmentNode name ifNotNil: #source) = aFragmentName
+			(aFragmentNode name ifNotNil: [ :v | v source ]) = aFragmentName
 				ifTrue: [ self buildStepStartingNode: aFragmentNode ] ]
 ]
 

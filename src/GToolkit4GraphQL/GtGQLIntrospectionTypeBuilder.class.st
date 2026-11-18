@@ -120,5 +120,5 @@ GtGQLIntrospectionTypeBuilder >> type [
 { #category : #accessing }
 GtGQLIntrospectionTypeBuilder >> typeName [
 	<return: #String>
-	^ self type ifNotNil: #name ifNil: [ '?' ]
+	^ self type ifNotNil: [ :v | v name ] ifNil: [ '?' ]
 ]

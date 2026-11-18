@@ -11,7 +11,7 @@ GtGQLList class >> kindName [
 
 { #category : #accessing }
 GtGQLList >> baseType [
-	^ self type ifNotNil: #baseType
+	^ self type ifNotNil: [ :v | v baseType ]
 ]
 
 { #category : #'api - paths' }
@@ -31,7 +31,7 @@ GtGQLList >> isPrimitive [
 
 { #category : #accessing }
 GtGQLList >> name [
-	^ '[' , (self type ifNotNil: #name ifNil: [ '?' ]) , ']'
+	^ '[' , (self type ifNotNil: [ :v | v name ] ifNil: [ '?' ]) , ']'
 ]
 
 { #category : #'api - response' }

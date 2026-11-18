@@ -272,7 +272,7 @@ GtGQLIntrospectionSchemaQueryBuilder >> nextPutTypeRefFragmentInto: aStream [
 { #category : #accessing }
 GtGQLIntrospectionSchemaQueryBuilder >> operation [
 	<return: #String>
-	^ query ifNotNil: #operation
+	^ query ifNotNil: [ :v | v operation ]
 ]
 
 { #category : #accessing }

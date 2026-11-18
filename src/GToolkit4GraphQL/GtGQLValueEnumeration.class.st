@@ -16,5 +16,5 @@ GtGQLValueEnumeration >> gtFieldsViewValueText [
 
 { #category : #accessing }
 GtGQLValueEnumeration >> value [
-	^ self data ifNotNil: #jsonObject
+	^ self data ifNotNil: [ :v | v jsonObject ]
 ]

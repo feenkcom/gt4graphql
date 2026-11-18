@@ -30,7 +30,9 @@ GtGQLPathBuilderExamples >> builderWithGitHubQueryWithFragmentPageInfoField [
 
 	aRootNode
 		withAllNodesOfType: GraphQLFieldNode
-		do: [ :aNode | (aNode name ifNotNil: #source) = 'author' ifTrue: [ anAuthorNode := aNode ] ].
+		do: [ :aNode | 
+			(aNode name ifNotNil: [ :v | v source ]) = 'author'
+				ifTrue: [ anAuthorNode := aNode ] ].
 
 	self
 		assert: anAuthorNode isNotNil
@@ -63,7 +65,7 @@ GtGQLPathBuilderExamples >> builderWithGitHubQueryWithOrganizationRepositoriesAn
 	aRootNode
 		withAllNodesOfType: GraphQLFieldNode
 		do: [ :aNode | 
-			((aNode name ifNotNil: #source) = 'totalCount'
+			((aNode name ifNotNil: [ :v | v source ]) = 'totalCount'
 				and: [ aNode parent isKindOf: GraphQLFragmentDefinitionNode ])
 				ifTrue: [ aTotalCountNode := aNode ] ].
 

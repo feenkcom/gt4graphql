@@ -31,17 +31,17 @@ GtGQLConnectionField >> field: anObject [
 
 { #category : #'accessing - field' }
 GtGQLConnectionField >> fieldName [
-	^ self field ifNotNil: #name
+	^ self field ifNotNil: [ :v | v name ]
 ]
 
 { #category : #'accessing - field' }
 GtGQLConnectionField >> fieldType [
-	^ self field ifNotNil: #type
+	^ self field ifNotNil: [ :v | v type ]
 ]
 
 { #category : #'accessing - field' }
 GtGQLConnectionField >> fieldTypeName [
-	^ self fieldType ifNotNil: #name
+	^ self fieldType ifNotNil: [ :v | v name ]
 ]
 
 { #category : #'gt - extensions' }
@@ -155,7 +155,7 @@ GtGQLConnectionField >> pageInfoAstAliasAndName [
 	^ self pageInfoAst
 		ifNotNil: [ :anAst | 
 			(anAst alias ifNotNil: [ :aToken | aToken source , ': ' ] ifNil: [ '' ])
-				, (anAst name ifNotNil: #source ifNil: [ '' ]) ]
+				, (anAst name ifNotNil: [ :v | v source ] ifNil: [ '' ]) ]
 		ifNil: [ '' ]
 ]
 
@@ -168,7 +168,7 @@ GtGQLConnectionField >> pageInfoField [
 
 { #category : #'accessing - field' }
 GtGQLConnectionField >> pageInfoFieldName [
-	^ self pageInfoField ifNotNil: #name ifNil: [ '' ]
+	^ self pageInfoField ifNotNil: [ :v | v name ] ifNil: [ '' ]
 ]
 
 { #category : #'accessing - ast' }
@@ -190,13 +190,13 @@ GtGQLConnectionField >> path [
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> pathString [
-	^ self path ifNotNil: #resultPathString ifNil: [ '?' ]
+	^ self path ifNotNil: [ :v | v resultPathString ] ifNil: [ '?' ]
 ]
 
 { #category : #'accessing - ast' }
 GtGQLConnectionField >> pathText [
 	^ self path
-		ifNotNil: #resultPathText
+		ifNotNil: [ :v | v resultPathText ]
 		ifNil: [ '?' asRopedText foreground: BrGlamorousColors errorBackgroundColor ]
 ]
 
