@@ -48,5 +48,5 @@ GtGQLValueScalar >> stringDescription [
 
 { #category : #accessing }
 GtGQLValueScalar >> value [
-	^ self data ifNotNil: #jsonObject
+	^ self data ifNotNil: [ :v | v jsonObject ]
 ]

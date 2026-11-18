@@ -15,7 +15,7 @@ Class {
 
 { #category : #accessing }
 GtGQLReport >> baseType [
-	^ self type ifNotNil: #baseType
+	^ self type ifNotNil: [ :v | v baseType ]
 ]
 
 { #category : #'api - report names' }
@@ -56,7 +56,7 @@ GtGQLReport >> createName [
 { #category : #accessing }
 GtGQLReport >> data [
 	<return: #GtJson>
-	^ self value ifNotNil: #data
+	^ self value ifNotNil: [ :v | v data ]
 ]
 
 { #category : #'utility - debugging' }

@@ -22,7 +22,7 @@ GtGQLAliasNodeAccessor >> isFieldNode: aNode [
 	<return: #Boolean>
 	^ aNode alias
 		ifNotNil: [ :aToken | aToken source = self aliasName ]
-		ifNil: [ (aNode name ifNotNil: #source) = self aliasName ]
+		ifNil: [ (aNode name ifNotNil: [ :v | v source ]) = self aliasName ]
 ]
 
 { #category : #printing }

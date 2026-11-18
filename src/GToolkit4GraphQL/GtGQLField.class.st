@@ -65,7 +65,8 @@ GtGQLField >> gtArgumentsFor: aView [
 							italic ].
 
 				aText ];
-		column: 'Type' text: [ :each | each type ifNotNil: #name ifNil: [ '' ] ];
+		column: 'Type'
+			text: [ :each | each type ifNotNil: [ :v | v name ] ifNil: [ '' ] ];
 		column: 'Default Value' text: [ :each | each defaultValue ifNil: [ '' ] ];
 		column: 'Description'
 			text: [ :each | each description ifNil: [ '' ] ]
@@ -182,7 +183,7 @@ GtGQLField >> isMetaField [
 
 { #category : #testing }
 GtGQLField >> isRequired [
-	^ self type ifNotNil: #isRequired ifNil: [ false ]
+	^ self type ifNotNil: [ :v | v isRequired ] ifNil: [ false ]
 ]
 
 { #category : #accessing }

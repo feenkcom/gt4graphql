@@ -25,17 +25,17 @@ GtGQLValueUnion >> actualItem: aGtGQLValue [
 
 { #category : #'gt - extensions' }
 GtGQLValueUnion >> gtFieldsViewChildren [
-	^ self actualItem ifNotNil: #gtFieldsViewChildren ifNil: [ #() ]
+	^ self actualItem ifNotNil: [ :v | v gtFieldsViewChildren ] ifNil: [ #() ]
 ]
 
 { #category : #'gt - extensions' }
 GtGQLValueUnion >> gtFieldsViewValueText [
 	^ self actualItem
-		ifNotNil: #gtFieldsViewValueText
+		ifNotNil: [ :v | v gtFieldsViewValueText ]
 		ifNil: [ self value asRopedText ]
 ]
 
 { #category : #accessing }
 GtGQLValueUnion >> value [
-	^ self data ifNotNil: #jsonObject
+	^ self data ifNotNil: [ :v | v jsonObject ]
 ]

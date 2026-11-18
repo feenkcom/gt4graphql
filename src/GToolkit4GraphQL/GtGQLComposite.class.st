@@ -53,7 +53,7 @@ GtGQLComposite >> gtSearchFieldTypesFor: aSearch [
 		priority: 20;
 		title: 'Field Types';
 		items: [ self fields asArray asAsyncStream
-				collect: [ :eachField | eachField type ifNotNil: #baseType ] ];
+				collect: [ :eachField | eachField type ifNotNil: [ :v | v baseType ] ] ];
 		itemName: #name;
 		filterBySubstring: #name;
 		wantsToDisplayOnEmptyQuery: false

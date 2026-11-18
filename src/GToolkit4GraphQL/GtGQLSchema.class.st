@@ -13,12 +13,13 @@ GtGQLSchema class >> gtTypesFor: aView items: aBlock [
 			text: [ :each | each gtTypesNameText ]
 			weight: 2;
 		column: 'Type'
-			text: [ :each | (self typeForObject: each) ifNotNil: #name ifNil: [ '' ] ];
+			text: [ :each | (self typeForObject: each) ifNotNil: [ :v | v name ] ifNil: [ '' ] ];
 		column: 'Class'
 			text: [ :each | 
 				(self typeForObject: each)
 					ifNotNil: [ :aType | aType baseType typeName ]
-					ifNil: [ '' ] ] width: 100;
+					ifNil: [ '' ] ]
+			width: 100;
 		items: aBlock;
 		children: [ :each | 
 			(self typeForObject: each)
