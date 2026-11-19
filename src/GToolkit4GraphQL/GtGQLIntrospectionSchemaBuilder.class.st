@@ -47,20 +47,20 @@ GtGQLIntrospectionSchemaBuilder >> buildImplicitFields [
 GtGQLIntrospectionSchemaBuilder >> buildSchema [
 	| aResultJson aSchemaJson |
 	aResultJson := self ensureJson.
-	aSchemaJson := aResultJson atPath: #(data __schema).
+	aSchemaJson := aResultJson atPath: #('data' '__schema').
 
 	self
 		ifJson: aSchemaJson
-		at: #types
+		at: 'types'
 		notNilDo: [ :aChild | self createTypesFromJson: aChild ].
 
 	self
 		ifJson: aSchemaJson
-		at: #queryType
+		at: 'queryType'
 		notNilDo: [ :aChild | 
 			self
 				ifJson: aChild
-				at: #name
+				at: 'name'
 				notNilDo: [ :aNameJson | 
 					| aType |
 					aType := schema typeNamed: aNameJson jsonObject.
@@ -69,11 +69,11 @@ GtGQLIntrospectionSchemaBuilder >> buildSchema [
 
 	self
 		ifJson: aSchemaJson
-		at: #mutationType
+		at: 'mutationType'
 		notNilDo: [ :aChild | 
 			self
 				ifJson: aChild
-				at: #name
+				at: 'name'
 				notNilDo: [ :aNameJson | 
 					| aType |
 					aType := schema typeNamed: aNameJson jsonObject.
@@ -81,11 +81,11 @@ GtGQLIntrospectionSchemaBuilder >> buildSchema [
 
 	self
 		ifJson: aSchemaJson
-		at: #subscriptionType
+		at: 'subscriptionType'
 		notNilDo: [ :aChild | 
 			self
 				ifJson: aChild
-				at: #name
+				at: 'name'
 				notNilDo: [ :aNameJson | 
 					| aType |
 					aType := schema typeNamed: aNameJson jsonObject.
@@ -93,12 +93,12 @@ GtGQLIntrospectionSchemaBuilder >> buildSchema [
 
 	self
 		ifJson: aSchemaJson
-		at: #directives
+		at: 'directives'
 		notNilDo: [ :aChild | schema directives: (self createDirectivesFromJson: aChild) ].
 
 	self
 		ifJson: aSchemaJson
-		at: #types
+		at: 'types'
 		notNilDo: [ :aChild | self populateTypesExtraPropertiesFromJson: aChild ]
 ]
 
@@ -143,27 +143,27 @@ GtGQLIntrospectionSchemaBuilder >> createDirectiveFromJson: aJson [
 
 	self
 		ifJson: aJson
-		at: #name
+		at: 'name'
 		notNilDo: [ :aChild | aDirective name: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #description
+		at: 'description'
 		notNilDo: [ :aChild | aDirective description: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #locations
+		at: 'locations'
 		notNilDo: [ :aChild | aDirective locations: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #args
+		at: 'args'
 		notNilDo: [ :aChild | aDirective arguments: (self createInputFieldsFromJson: aChild) ].
 
 	self
 		ifJson: aJson
-		at: #isRepeatable
+		at: 'isRepeatable'
 		notNilDo: [ :aChild | aDirective isRepeatable: aChild jsonObject ].
 
 	^ aDirective
@@ -181,22 +181,22 @@ GtGQLIntrospectionSchemaBuilder >> createEnumValueFromJson: aJson [
 
 	self
 		ifJson: aJson
-		at: #name
+		at: 'name'
 		notNilDo: [ :aChild | aValue name: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #description
+		at: 'description'
 		notNilDo: [ :aChild | aValue description: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #isDeprecated
+		at: 'isDeprecated'
 		notNilDo: [ :aChild | aValue isDeprecated: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #deprecationReason
+		at: 'deprecationReason'
 		notNilDo: [ :aChild | aValue deprecationReason: aChild jsonObject ].
 
 	^ aValue
@@ -214,32 +214,32 @@ GtGQLIntrospectionSchemaBuilder >> createFieldFromJson: aJson [
 
 	self
 		ifJson: aJson
-		at: #type
+		at: 'type'
 		notNilDo: [ :aChildJson | aField type: (self typeNameOfTypeJson: aChildJson) ].
 
 	self
 		ifJson: aJson
-		at: #name
+		at: 'name'
 		notNilDo: [ :aChildJson | aField name: aChildJson jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #description
+		at: 'description'
 		notNilDo: [ :aChildJson | aField description: aChildJson jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #args
+		at: 'args'
 		notNilDo: [ :aChild | aField arguments: (self createInputFieldsFromJson: aChild) ].
 
 	self
 		ifJson: aJson
-		at: #isDeprecated
+		at: 'isDeprecated'
 		notNilDo: [ :aChildJson | aField isDeprecated: aChildJson jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #deprecationReason
+		at: 'deprecationReason'
 		notNilDo: [ :aChildJson | aField deprecationReason: aChildJson jsonObject ].
 
 	^ aField
@@ -257,32 +257,32 @@ GtGQLIntrospectionSchemaBuilder >> createInputFieldFromJson: aJson [
 
 	self
 		ifJson: aJson
-		at: #name
+		at: 'name'
 		notNilDo: [ :aChild | aType name: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #description
+		at: 'description'
 		notNilDo: [ :aChild | aType description: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #type
+		at: 'type'
 		notNilDo: [ :aChild | aType type: (self createTypeFromJson: aChild) ].
 
 	self
 		ifJson: aJson
-		at: #defaultValue
+		at: 'defaultValue'
 		notNilDo: [ :aChild | aType defaultValue: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #isDeprecated
+		at: 'isDeprecated'
 		notNilDo: [ :aChild | aType isDeprecated: aChild jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #deprecationReason
+		at: 'deprecationReason'
 		notNilDo: [ :aChild | aType deprecationReason: aChild jsonObject ].
 
 	^ aType
@@ -306,37 +306,37 @@ GtGQLIntrospectionSchemaBuilder >> createTypeFromJson: aJson [
 
 	self
 		ifJson: aJson
-		at: #description
+		at: 'description'
 		notNilDo: [ :aChildJson | aType description: aChildJson jsonObject ].
 
 	self
 		ifJson: aJson
-		at: #fields
+		at: 'fields'
 		notNilDo: [ :aChildJson | aType fields: (self createFieldsFromJson: aChildJson) ].
 
 	self
 		ifJson: aJson
-		at: #interfaces
+		at: 'interfaces'
 		notNilDo: [ :aChildJson | aType interfaces: (self createTypesFromJson: aChildJson) ].
 
 	self
 		ifJson: aJson
-		at: #possibleTypes
+		at: 'possibleTypes'
 		notNilDo: [ :aChildJson | aType possibleTypes: (self createTypesFromJson: aChildJson) ].
 
 	self
 		ifJson: aJson
-		at: #enumValues
+		at: 'enumValues'
 		notNilDo: [ :aChildJson | aType values: (self createEnumValuesFromJson: aChildJson) ].
 
 	self
 		ifJson: aJson
-		at: #inputFields
+		at: 'inputFields'
 		notNilDo: [ :aChildJson | aType inputFields: (self createInputFieldsFromJson: aChildJson) ].
 
 	self
 		ifJson: aJson
-		at: #ofType
+		at: 'ofType'
 		notNilDo: [ :aChildJson | aType type: (self createTypeFromJson: aChildJson) ].
 
 	^ aType
@@ -409,7 +409,7 @@ GtGQLIntrospectionSchemaBuilder >> populateTypeExtraPropertiesFromJson: aJson [
 		ifNil: [ self error: ('"{1}" type must exist' format: {aMetaTypeName}) ].
 
 	aType := aJson
-			at: #name
+			at: 'name'
 			ifPresent: [ :aChild | self schema typeNamed: aChild jsonObject ]
 			ifAbsent: [ self error: 'Inconsistent JSON' ].
 

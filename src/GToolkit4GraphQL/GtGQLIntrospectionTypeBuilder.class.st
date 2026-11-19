@@ -60,17 +60,17 @@ GtGQLIntrospectionTypeBuilder >> ofTypeFromJson: aJson [
 	<return: #GtGQLType>
 	| aKind aClass aType |
 	aJson ifNil: [ ^ nil ].
-	aKind := aJson at: #kind ifAbsent: [ ^ nil ].
+	aKind := aJson at: 'kind' ifAbsent: [ ^ nil ].
 	aClass := GtGQLType typeClassForKindName: aKind.
 	aType := aClass new.
 
 	aJson
-		at: #name
+		at: 'name'
 		ifPresent: [ :aName | aName ifNotNil: [ aType name: aName ] ]
 		ifAbsent: [  "ignore" ].
 
 	aJson
-		at: #ofType
+		at: 'ofType'
 		ifPresent: [ :ofTypeJson | 
 			ofTypeJson
 				ifNotNil: [ (self ofTypeFromJson: ofTypeJson) ifNotNil: [ :ofType | aType type: ofType ] ] ]

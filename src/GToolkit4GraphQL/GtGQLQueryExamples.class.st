@@ -103,7 +103,7 @@ GtGQLQueryExamples >> queryWithInput_AsString [
 	self
 		assert: aQuery input
 		equals: (Dictionary new
-				at: #variable put: 42;
+				at: 'variable' put: 42;
 				yourself).
 
 	self
