@@ -14,7 +14,7 @@ GtGQLAliasNodeAccessor >> aliasName [
 
 { #category : #accessing }
 GtGQLAliasNodeAccessor >> aliasName: anObject [
-	aliasName := anObject
+	aliasName := anObject ifNotNil: [ anObject asString ]
 ]
 
 { #category : #'api - testing' }

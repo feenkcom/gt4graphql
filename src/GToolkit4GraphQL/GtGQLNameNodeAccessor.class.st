@@ -14,7 +14,7 @@ GtGQLNameNodeAccessor >> fieldName [
 
 { #category : #accessing }
 GtGQLNameNodeAccessor >> fieldName: anObject [
-	fieldName := anObject
+	fieldName := anObject ifNotNil: [ anObject asString ]
 ]
 
 { #category : #'api - testing' }
