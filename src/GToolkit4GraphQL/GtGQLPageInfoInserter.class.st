@@ -124,8 +124,9 @@ GtGQLPageInfoInserter >> insertField: aField [
 { #category : #'private - insertion' }
 GtGQLPageInfoInserter >> insertSome [
 	self unfulfilledFields
-		do: [ :aField | 
-			(self connectorPaths includes: aField path resultPath)
+		do: [ :aField | | aPath |
+			aPath := (aField path resultPath collect: [ :each | each asString ]) asArray.
+			(self connectorPaths anySatisfy: [ :each | (each collect: [ :eachName | eachName asString ]) asArray = aPath ])
 				ifTrue: [ modifiedQuery ifNil: [ self createNewQuery ].
 					self insertField: aField ] ]
 ]

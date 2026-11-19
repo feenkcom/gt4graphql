@@ -14,13 +14,15 @@ GtGQLValueObject >> acceptVisitor: aVisitor [
 
 { #category : #'api - initialization' }
 GtGQLValueObject >> atFieldNamed: aName put: aModel [
+	| aKey |
+	aKey := aName asString.
 	self
-		assert: [ (fields includesKey: aName) not ]
+		assert: [ (fields includesKey: aKey) not ]
 		description: [ 'Cannot add twice a same field value' ].
 
 	aModel parent: self.
 
-	fields at: aName put: aModel
+	fields at: aKey put: aModel
 ]
 
 { #category : #'reflective operations' }
@@ -29,7 +31,7 @@ GtGQLValueObject >> doesNotUnderstand: message [
 
 	| key |
 	key := message selector.
-	(key isUnary and: [ fields includesKey: key ])
+	(key isUnary and: [ fields includesKey: key asString ])
 		ifTrue: [ ^ self fieldNamed: key ].
 	^ super doesNotUnderstand: message
 ]
@@ -41,13 +43,13 @@ GtGQLValueObject >> fieldNamed: aName [
 
 { #category : #accessing }
 GtGQLValueObject >> fieldNamed: aName ifAbsent: anAbsentBlock [
-	^ fields at: aName ifAbsent: anAbsentBlock
+	^ fields at: aName asString ifAbsent: anAbsentBlock
 ]
 
 { #category : #accessing }
 GtGQLValueObject >> fieldNamed: aName ifPresent: aPresentBlock ifAbsent: anAbsentBlock [
 	^ fields
-		at: aName
+		at: aName asString
 		ifPresent: aPresentBlock
 		ifAbsent: anAbsentBlock
 ]

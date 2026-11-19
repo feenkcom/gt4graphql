@@ -15,15 +15,15 @@ GtGQLComposite >> addField: aGQLField [
 
 	self
 		propertyAt: self propertyFieldName
-		ifPresent: [ :aDict | aDict at: aGQLField name put: aGQLField ]
+		ifPresent: [ :aDict | aDict at: aGQLField name asString put: aGQLField ]
 		ifAbsentPut: [ Dictionary new
-				at: aGQLField name put: aGQLField;
+				at: aGQLField name asString put: aGQLField;
 				yourself ]
 ]
 
 { #category : #accessing }
 GtGQLComposite >> fieldNamed: aName [
-	^ self fields at: aName ifAbsent: [ nil ]
+	^ self fields at: aName asString ifAbsent: [ nil ]
 ]
 
 { #category : #accessing }
