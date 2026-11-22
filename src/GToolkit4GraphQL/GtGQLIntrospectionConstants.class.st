@@ -46,17 +46,17 @@ query SchemaFields($name: String = "__Type") {
 
 { #category : #'api - constants' }
 GtGQLIntrospectionConstants class >> metaMetaTypeName [
-	^ #__typename
+	^ '__typename'
 ]
 
 { #category : #'api - constants' }
 GtGQLIntrospectionConstants class >> schemaFieldName [
-	^ #__schema
+	^ '__schema'
 ]
 
 { #category : #'api - constants' }
 GtGQLIntrospectionConstants class >> typeFieldName [
-	^ #__type
+	^ '__type'
 ]
 
 { #category : #'api - constants' }
