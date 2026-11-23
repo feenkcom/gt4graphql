@@ -416,13 +416,16 @@ GtGQLIntrospectionSchemaBuilder >> populateTypeExtraPropertiesFromJson: aJson [
 	aType metaType: aMetaType.
 
 	aJson
-		do: [ :aChild :aKey | 
+		do: [ :aChild :aJsonKey | 
+			| aKey |
+			"The JSON keys are Strings; the type properties are keyed by Symbols (see GtGQLModel>>#assertFields:value:)"
+			aKey := aJsonKey asSymbol.
 			aChild jsonObject
 				ifNotNil: [ aType
 						propertyAt: aKey
 						ifPresent: [ :aValue | aValue ]
 						ifAbsentPut: [ aMetaType fields
-								detect: [ :eachField | eachField name = aKey ]
+								detect: [ :eachField | eachField name = aJsonKey ]
 								ifFound: [ :aField | aType propertyAt: aKey put: aChild jsonObject ]
 								ifNone: [ aType propertyAt: aKey put: aChild jsonObject ] ] ] ]
 ]
